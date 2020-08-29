@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils.html import mark_safe
 
 
 class Departamento(models.Model):
@@ -14,13 +15,22 @@ class Departamento(models.Model):
     precio = models.PositiveIntegerField(null=True, blank=False)
     metros_cuadrados = models.PositiveIntegerField(null=True, blank=False)
     def __str__(self):
-        return "Departamento {}, Direccion: {}".format(self.titulo,self.direccion)
+        return "ID {} Dep. {} Direc. {}".format(self.id,self.titulo,self.direccion)
     
-
+  
 class ImagenesDepartamento(models.Model):
     departamento = models.ForeignKey(Departamento,
                                      related_name="departamento_imagenes", on_delete=models.CASCADE)
     imagen = models.ImageField(upload_to='departamentos/%Y/%m',blank=True)
+
+    def mostrar_imagen(self):
+        if self.imagen:
+            return mark_safe('<img src="/media/%s" width="50" height="50" />' % (self.imagen))
+        else:
+            return mark_safe('<img src="/media/default.jpg" width="50" height="50" />')
+    mostrar_imagen.short_description = 'imagen'
     def __str__(self):
-        return "Imagenes de deaprtamento {}".format(self.departamento)
+        return "Imagen departamento {}".format(self.departamento)
     
+
+  

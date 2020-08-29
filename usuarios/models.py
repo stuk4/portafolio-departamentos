@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
-
+from django.utils.html import mark_safe
 
 
 class User(AbstractUser):
@@ -10,9 +10,17 @@ class User(AbstractUser):
     N_tarjeta = models.IntegerField(null=True,blank=False)
     imagen = models.ImageField(upload_to='usuarios/%Y/%m',blank=True)
     
+    #Metodo para mostrar imagen en admin
+    def mostrar_imagen(self):
+        if self.imagen:
+            return mark_safe('<img src="/media/%s" width="50" height="50" />' % (self.imagen))
+        else:
+            return mark_safe('<img src="/media/default.jpg" width="50" height="50" />')
+
+    mostrar_imagen.short_description = 'imagen'
     def __str__(self):
         return "{} {} Rut: {}".format(self.first_name,self.last_name,self.rut)
-    
+
 
     class Meta:
         # Nombres del modelo en singular y plural

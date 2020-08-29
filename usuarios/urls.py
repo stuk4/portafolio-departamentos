@@ -2,9 +2,10 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.urls import path
 from . import views
-# Urls de citt
+# Urls de usuarios /usuarios/
 urlpatterns = [
-   
+   path('login/',views.login_view,name="login"),
+   path('logout/',views.logout_view,name="logout")
 ]
 #Configuracion de imagenes
 if settings.DEBUG:

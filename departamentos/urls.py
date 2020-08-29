@@ -1,10 +1,12 @@
 from django.conf import settings
 from django.conf.urls.static import static
 from django.urls import path
+
 from . import views
 # Urls de citt
 urlpatterns = [
-   
+    path('departamentos/',views.listar_departamentos,name="Departamentos"),
+
 ]
 #Configuracion de imagenes
 if settings.DEBUG:

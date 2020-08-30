@@ -4,15 +4,6 @@
   object-fit: cover;
 }
 
-article, aside, figcaption, figure, footer, header, hgroup, main, nav, section {
-}
-
-#contenedor {
-}
-
-#contenedor {
-}
-
 #contenedor {
   z-index: 1000;
 }
@@ -32,8 +23,6 @@ article, aside, figcaption, figure, footer, header, hgroup, main, nav, section {
   text-transform: uppercase;
 }
 
-h3 {
-}
 
 .snip1563 span, .snip1563 a {
   margin: 0;
@@ -47,8 +36,6 @@ h3 {
   opacity: 0.9;
 }
 
-p {
-}
 
 .container-custom {
   display: flex;

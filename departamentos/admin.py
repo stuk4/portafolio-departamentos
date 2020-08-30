@@ -20,7 +20,12 @@ class CustomUserAdmin(admin.ModelAdmin):
     list_display = ["id","titulo","direccion",'mantencion','estado_mantencion']
     list_filter = ('titulo','direccion',)
     list_editable = ('estado_mantencion','mantencion')  
-
+        # Metodo para asignar redireccion cuando se edita una imagen
+ 
+    
+    def response_change(self,request, obj):
+        print('==========> ',obj.id)
+        return redirect('Departamento',obj.id)
 # Customizacion de modelo ImagenesDepartamentos en admin
 @admin.register(ImagenesDepartamento)
 class CustomUserAdmin(admin.ModelAdmin):

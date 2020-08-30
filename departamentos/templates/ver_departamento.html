@@ -1,0 +1,71 @@
+{% extends 'base.html'%} 
+{% load static %} 
+{% block extra_css %}
+
+<link rel="stylesheet" href="{% static 'css/ver_departamento.css' %}" />
+{% endblock extra_css %}
+ {% block contenido %}
+ <div class="card">
+	<div class="container-fliud">
+		<div class="wrapper row">
+			<div class="preview col-md-6">
+				
+				<div id="preview-big" class="preview-pic tab-content">
+					{% if departamento.imagen %}
+					<div class="tab-pane active" id="pic-0"><img src="{{ departamento.imagen.url }}" /></div>
+					{% else %}
+					<div class="tab-pane active" id="pic-0"><img src="{% static 'img/default.jpg' %}" /></div>
+					{% endif %}
+
+					{% for imagen in imagenes %}
+					{% if imagen %}
+					
+					<div class="tab-pane " id="pic-{{ forloop.counter }}"><img src="{{ imagen.imagen.url }}" /></div>
+					{% endif %}
+				 	{% endfor %}
+				 
+				</div>
+				<ul id="preview" class="preview-thumbnail nav nav-tabs">
+					{% if departamento.imagen %}
+					<li class="active"><a data-target="#pic-0" data-toggle="tab"><img src="{{ departamento.imagen.url }}" /></a></li>
+					{% else %}
+					<li class="active"><a data-target="#pic-0" data-toggle="tab"><img src="{% static 'img/default.jpg' %}" /></a></li>
+					{% endif %}
+					{% for imagen in imagenes %}
+					{% if imagen %}
+				  <li class=""><a data-target="#pic-{{ forloop.counter }}" data-toggle="tab"><img src="{{ imagen.imagen.url }}" /></a></li>
+					
+					{% endif %}
+				  {% endfor %}
+				</ul>
+				
+			</div>
+			<div class="details col-md-6">
+				<h3 class="product-title">{{ departamento.direccion }}</h3>
+				<div class="rating">
+		
+					<span class="review-no">41 reviews</span>
+				</div>
+				<p class="product-description">{{ departamento.descripcion }}</p>
+				<h4 class="price"><span>${{departamento.precio }}</span>/Dia </h4>
+				<!-- <p class="vote"><strong>91%</strong> of buyers enjoyed this product! <strong>(87 votes)</strong></p> -->
+				<h6 class="sizes">m²: {{ departamento.metros_cuadrados }}
+					<span class="size" data-toggle="tooltip" title="small">Dorm- {{departamento.dormitorios }}</span>
+					<span class="size" data-toggle="tooltip" title="medium">Baños- {{ departamento.baños }}</span>
+				
+				</h6>
+				<!-- <h5 class="colors">colors :
+					<span class="color orange not-available" data-toggle="tooltip" title="Not In store"></span>
+					<span class="color green"></span>
+					<span class="color blue"></span>
+				</h5> -->
+				{% if user.is_staff %}
+				<div class="action">
+					<a class="btn btn-info" href="/admin/departamentos/departamento/{{ departamento.id }}/change/" role="button">Editar </a>
+				</div>
+				{% endif %}
+			</div>
+		</div>
+	</div>
+</div>
+{% endblock contenido %}

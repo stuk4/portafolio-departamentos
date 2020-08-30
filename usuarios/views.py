@@ -18,7 +18,8 @@ def login_view(request):
             user = authenticate(request,username = username, password = password)
             
         except Exception as err:
-            print(err)
+            messages.error(request,'Lo sentimos hubo un problema')
+            return render(request,'login.html')
         
     
         if user:
@@ -28,14 +29,46 @@ def login_view(request):
 
         
         else:
-           
-            print('CREDENCIALES')
+         
             messages.error(request,'Credenciales incorrectas')
             return render(request,'login.html')
     else:
      
         return render(request,'login.html')
-    
 
 def logout_view(request):
-    return True
+    if request.method == 'POST':
+        logout(request)
+        
+    return redirect('login')
+
+def registro(request):
+    
+    if request.method == 'POST':
+       
+        try:
+            
+            user = User.objects.create_user(username=request.POST['email'],password=request.POST['password'],is_active=True)
+
+        except:
+            messages.error(request,'Usuario ya registrado')
+            return render(request,'Registro.html')
+       
+        user.email = request.POST.get('email')
+        user.first_name = request.POST.get('name')
+        user.last_name = request.POST.get('lastname')
+        user.telefono = request.POST.get('phone')
+        user.fecha_nacimiento = request.POST.get('date')
+        user.N_tarjeta = request.POST.get('card')
+        try:
+           
+            user.save()
+            messages.success(request,'Registrado con exito')
+            return render(request,'Registro.html')
+        except Exception as err:
+            context = {'alerta':'ok-alerta'}
+            messages.error(request,'Verifique los campos porfavor')
+            print(err)
+            return render(request,'Registro.html')
+    
+    return render(request,'Registro.html')

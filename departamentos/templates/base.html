@@ -14,7 +14,9 @@
       rel="stylesheet"
       href="{% static  'css/Navigation-with-Button.css' %}"
     />
+    <link rel="stylesheet" href="{% static 'font/font-awesome.min.css' %}">
     <link rel="stylesheet" href="{% static  'css/styles.css' %}" />
+    <!-- <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,700" rel="stylesheet"> -->
     {% block extra_css %} 
     {% endblock extra_css %}
   </head>
@@ -37,7 +39,7 @@
         <div class="collapse navbar-collapse" id="navcol-1">
           <ul class="nav navbar-nav mr-auto">
             <li class="nav-item" role="presentation">
-              <a class="nav-link  {% if request.resolver_match.url_name == "Departamentos" %}active{% endif %}" href="#">Arriendos</a>
+              <a class="nav-link  {% if request.resolver_match.url_name == "Departamentos" %}active{% endif %}" href="{% url 'Departamentos' %}">Arriendos</a>
             </li>
             <li class="nav-item" role="presentation">
               <a class="nav-link" href="#">Second Item</a>
@@ -63,21 +65,25 @@
           </ul>
           <span class="navbar-text actions">
             
-            <a
-            class="btn btn-light btn-sm action-button  "
-            role="button"
-            href="#"
-            style="background-color: rgb(244, 71, 107)"
-            >Salir</a
-            >
+     
                 {% if user.is_anonymous %}
             <a
               class="btn btn-light btn-sm action-button  "
               role="button"
-              href="#"
+              href="{% url 'login' %}"
               style="background-color: rgb(244, 71, 107)"
               >Ingresar</a
               >
+              {% else  %}
+              <form id="form-logout" method="POST"  action="{% url 'logout' %}">{% csrf_token %}
+                <a
+                class="btn btn-light btn-sm action-button  "
+                role="button"
+                onclick="document.getElementById('form-logout').submit();"
+                style="background-color: rgb(244, 71, 107)"
+                >Salir</a>
+
+              </form>
               {% endif %}
             </span
           >
@@ -88,14 +94,7 @@
       data-aos="fade"
       data-aos-delay="100"
       id="contenedor"
-      style="
-        padding-top: 100px;
-        width: 100%;
-        background-color: #f9f7ff;
-        min-height: 100vh;
-        padding-right: 5%;
-        padding-left: 5%;
-      "
+  
     >
       {% block contenido %}
        {% endblock contenido %}

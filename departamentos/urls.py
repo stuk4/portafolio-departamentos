@@ -5,7 +5,8 @@ from django.urls import path
 from . import views
 # Urls de citt
 urlpatterns = [
-    path('departamentos/',views.listar_departamentos,name="Departamentos"),
+    path('',views.listar_departamentos,name="Departamentos"),
+    path('departamento/<int:id>/',views.ver_departamento,name="Departamento")
 
 ]
 #Configuracion de imagenes

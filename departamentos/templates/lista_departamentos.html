@@ -22,8 +22,8 @@
         <span>{{ departamento.dormitorios }} - dorm</span>
         
         <p>  {{ departamento.baños }} - baños </p>
-        <p>  {{ departamento.baños }} - M2 </p>
-        <a id="ver" href="#">Ver más </a>
+        <p>  {{ departamento.baños }}/M2 </p>
+        <a id="ver" href="{% url 'Departamento' departamento.id %}">Ver más </a>
       </figcaption>
       <a href="#"></a>
     </figure>

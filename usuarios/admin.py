@@ -18,6 +18,6 @@ class CustomUserAdmin(UserAdmin):
    list_display = ["mostrar_imagen",
                     "username", 
                     "is_superuser"]
-   fieldsets = (("User", {"fields": ("rut","telefono","fecha_nacimiento","N_tarjeta","imagen",)}),) + auth_admin.UserAdmin.fieldsets
+   fieldsets = (("User", {"fields": ("telefono","fecha_nacimiento","N_tarjeta","imagen",)}),) + auth_admin.UserAdmin.fieldsets
 
 

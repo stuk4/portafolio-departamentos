@@ -10,6 +10,7 @@ class Departamento(models.Model):
     descripcion = models.TextField(null=True)
     direccion = models.CharField(max_length=60)
     estado_mantencion = models.BooleanField(default=False,null=True, blank=True)
+    imagen = models.ImageField(upload_to='departamentos_principal/%Y/%m',blank=True)
     mantencion = models.DateField(
         null=True, blank=True, auto_now=False, auto_now_add=False)
     precio = models.PositiveIntegerField(null=True, blank=False)
@@ -22,6 +23,7 @@ class ImagenesDepartamento(models.Model):
     departamento = models.ForeignKey(Departamento,
                                      related_name="departamento_imagenes", on_delete=models.CASCADE)
     imagen = models.ImageField(upload_to='departamentos/%Y/%m',blank=True)
+    
 
     def mostrar_imagen(self):
         if self.imagen:

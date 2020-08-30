@@ -4,7 +4,6 @@ from django.utils.html import mark_safe
 
 
 class User(AbstractUser):
-    rut = models.CharField(null=True,blank=False,max_length=13)
     telefono = models.IntegerField(null=True,blank=False)
     fecha_nacimiento = models.DateField( null=True,blank=False,auto_now=False, auto_now_add=False)
     N_tarjeta = models.IntegerField(null=True,blank=False)
@@ -19,7 +18,7 @@ class User(AbstractUser):
 
     mostrar_imagen.short_description = 'imagen'
     def __str__(self):
-        return "{} {} Rut: {}".format(self.first_name,self.last_name,self.rut)
+        return "{} {} ".format(self.first_name,self.last_name)
 
 
     class Meta:

@@ -4,18 +4,8 @@
   object-fit: cover;
 }
 
-article, aside, figcaption, figure, footer, header, hgroup, main, nav, section {
-}
 
-#contenedor {
-}
 
-#contenedor {
-}
-
-#contenedor {
-  z-index: 1000;
-}
 
 .departamento-contenedor {
   margin-top: 10px;
@@ -76,3 +66,13 @@ p {
   width: 100px;
 }
 
+
+#contenedor {
+  z-index: 1000;
+  padding-top: 100px;
+  width: 100%;
+  background-color:whitesmoke;
+  min-height: 100vh;
+  padding-right: 5%;
+  padding-left: 5%;
+}

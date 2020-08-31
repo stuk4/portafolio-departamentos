@@ -40,7 +40,7 @@
   left: 0;
   right: 0;
   content: '';
-  background-color: red;
+  background-color: rgb(23,162,184);
   opacity: 0.5;
   -webkit-transition: all 0.45s ease;
   transition: all 0.45s ease;
@@ -73,7 +73,7 @@
   bottom: 0;
   left: 0;
   right: 0;
-  background-color: rgb(244,71,107);
+  background-color:rgb(23,162,184);
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.7);
   content: '';
   opacity: 0.5;

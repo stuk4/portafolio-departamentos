@@ -5,7 +5,7 @@ from django.utils.html import mark_safe
 class Departamento(models.Model):
 
     titulo = models.CharField(null=True, blank=False, max_length=50)
-    baños = models.PositiveIntegerField(null=True, blank=False)
+    banos = models.PositiveIntegerField(null=True, blank=False,verbose_name="baños")
     dormitorios = models.PositiveIntegerField(null=True, blank=False)
     descripcion = models.TextField(null=True)
     direccion = models.CharField(max_length=60)
@@ -17,6 +17,13 @@ class Departamento(models.Model):
     metros_cuadrados = models.PositiveIntegerField(null=True, blank=False)
     def __str__(self):
         return "ID {} Dep. {} Direc. {}".format(self.id,self.titulo,self.direccion)
+    def mostrar_imagen(self):
+        if self.imagen:
+            return mark_safe('<img src="/media/%s" width="50" height="50" />' % (self.imagen))
+        else:
+            return mark_safe('<img src="/media/default.jpg" width="50" height="50" />')
+    mostrar_imagen.short_description = 'imagen'
+  
     
   
 class ImagenesDepartamento(models.Model):

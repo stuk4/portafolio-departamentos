@@ -1,0 +1,133 @@
+{% extends "admin/base.html" %}
+
+{% block title %}
+
+{{ title }} | {{ site_title|default:_('Django site admin') }}{% endblock %}
+
+{% block extrastyle %}
+    <!-- Header  -->
+    <style>
+        <!-- #header{
+            background:rgba(225,98,98);
+        } -->
+        #branding h1, #branding h1 a:link, #branding h1 a:visited {
+           color:white;
+        }
+        #content h1{
+            display: none;
+        }
+        #header{
+            background:black;
+        }
+        div.breadcrumbs{
+            background:rgba(255,255,255);
+        }
+        div .breadcrumbs  {
+            color:black
+        }
+        div .breadcrumbs a {
+            color:rgb(23,162,184)
+        }
+    </style>
+    <!-- Filtro  -->
+    <style>
+        #changelist-filter h2{
+            background: rgb(23,162,184);
+            border-top-left-radius: 8px;
+            border-top-right-radius: 8px;
+       
+       }
+    </style>
+    <!-- Menu -->
+    <style>
+    
+       #user-tools a{
+
+        padding:5px;
+        font-size: 11px;
+        border-radius: 10px;
+        }
+     
+       #user-tools a:last-of-type{
+        visibility: hidden;
+       
+   }
+       #user-tools a:last-of-type::after{
+           visibility: visible;
+           position: relative;
+          
+           right: 100px;
+           border-radius: 10px;
+           content:'Salir';
+           background-color:rgb(23,162,184) ;
+           padding:5px;
+       }
+       @media (max-width:1060px) {
+        #user-tools a:last-of-type::after {
+            top: -10px;
+            right:10px ;
+        }
+        }
+        @media (max-width:1024px) {
+            #user-tools a:last-of-type::after {
+                right: 100px;
+                top:auto;
+              
+            }
+      }
+      
+       
+    </style>
+    <!-- Lateral inicio  -->
+    <style>
+        .dashboard .module table th a{
+            color:black;
+        }
+        .dashboard .module table th a:hover{
+            color:rgb(133, 85, 85);
+        }
+    </style>
+     <!-- Lateral editando -->
+    <style>
+        .module caption{
+            background: rgb(23,162,184);
+            border-top-left-radius: 8px;
+            border-top-right-radius: 8px;
+             }
+             #nav-sidebar .module th a{
+                color:black;
+            }
+         
+             #nav-sidebar .module th a:hover{
+                color:rgb(133, 85, 85);
+            }
+    </style>
+    <!-- Botones -->
+    <style>
+        .submit-row input[type="submit"], button {
+             background:rgb(23,162,184);
+        }
+    </style>
+    <!-- usuarios -->
+    <style>
+        .module h2, .module caption, .inline-group h2{
+            background:rgb(23,162,184);
+            border-top-left-radius: 8px;
+            border-top-right-radius: 8px;
+        }
+        .selector-chosen h2 {
+            background:rgb(23,162,184) !important;
+            border-top-left-radius: 8px !important;
+            border-top-right-radius: 8px !important;
+        }
+    </style>
+{% endblock %}
+
+{% block branding %}
+<h1 id="site-name"><a href="{% url 'admin:index' %}">{{ site_header|default:_('Django administration') }}</a></h1>
+{% endblock %}
+
+{% block nav-global %}
+
+
+{% endblock %}

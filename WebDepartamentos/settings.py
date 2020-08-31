@@ -56,7 +56,7 @@ ROOT_URLCONF = 'WebDepartamentos.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates'], ## Cambio directorio de templates
+        'DIRS': [BASE_DIR / 'templates/'], ## Cambio directorio de templates
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [

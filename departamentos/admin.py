@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Departamento,ImagenesDepartamento
+from .models import Departamento,ImagenesDepartamento,InventarioDepartamentos
 from django.contrib.auth.admin import UserAdmin 
 from django.contrib.auth import admin as auth_admin
 
@@ -9,6 +9,8 @@ from django.http import HttpResponseRedirect
 
 from django.urls import reverse
 
+
+admin.site.register(InventarioDepartamentos)
 # Customizacion de modelo Departamento en admin
 @admin.register(Departamento)
 class CustomUserAdmin(admin.ModelAdmin):

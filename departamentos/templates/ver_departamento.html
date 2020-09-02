@@ -18,7 +18,7 @@
 					{% endif %}
 
 					{% for imagen in imagenes %}
-					{% if imagen %}
+					{% if imagen.imagen %}
 					
 					<div class="tab-pane " id="pic-{{ forloop.counter }}"><img src="{{ imagen.imagen.url }}" /></div>
 					{% endif %}
@@ -32,7 +32,7 @@
 					<li class="active"><a data-target="#pic-0" data-toggle="tab"><img src="{% static 'img/default.jpg' %}" /></a></li>
 					{% endif %}
 					{% for imagen in imagenes %}
-					{% if imagen %}
+					{% if imagen.imagen %}
 				  <li class=""><a data-target="#pic-{{ forloop.counter }}" data-toggle="tab"><img src="{{ imagen.imagen.url }}" /></a></li>
 					
 					{% endif %}

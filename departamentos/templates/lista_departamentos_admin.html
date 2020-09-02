@@ -12,7 +12,6 @@
     <div class="card-body">
         <div class="table-responsive">
             <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-                {% for departamento in departamentos %}
                 <thead>
                     <tr>
                         <th> Editar </th>
@@ -22,9 +21,12 @@
                         <th>Baños</th>
                         <th>M²</th>
                         <th>Precio/Dia</th>
+                        <th>Imagenes</th>
+                        <th>Inventario</th>
                     </tr>
                 </thead>
                 
+                {% for departamento in departamentos %}
 
                 <tbody>
                     <tr>
@@ -41,11 +43,88 @@
                         <td>{{ departamento.banos }}</td>
                         <td>{{ departamento.metros_cuadrados }}</td>
                         <td>${{ departamento.precio }}</td>
+                        <td  align="center">
+                                 <!-- Boton modal -->
+                                 <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#ver-imagen-{{ departamento.id }}">
+                                    Ver
+                                </button>
+                                
+                                <!-- Modal -->
+                                <div class="modal fade" id="ver-imagen-{{ departamento.id }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable ">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                        <h5 class="modal-title" id="exampleModalLabel">Imagenes departamento {{ departamento.id }}</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <div class="card mb-4">
+                                                    <div class="card-header">
+                                                        <form enctype="multipart/form-data" method="POST"   >{% csrf_token %}
+                                                            <i class="fas fa-images"></i>
+                                                            <div class="form-group">
+                                                                <input type="hidden" name="idDep" value="{{ departamento.id }}">
+                                                               <input type="file" required accept="image/*" name="imagenDep" class="form-control-file" id="imagen-input">
+
+                                                            </div>
+                                                            <button type="submit" class="btn btn-info" href="/admin/departamentos/departamento/{{ departamento.id }}/change/" > + Agregar </button>
+                                                            
+                                                        </form>
+                                                    </div>
+                                                    <div class="card-body">
+                                                        <div class="table-responsive">
+                                                            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                                                <thead>
+                                                                    <tr>
+                                                                        <th>Foto</th>
+                                                                        <th>Eliminar</th>
+                                                                    
+                                                                    </tr>
+                                                                </thead>
+                                                            
+                                                                <tbody>
+                                                                    {% for imagen in imagenes %}
+                                                                    {% if imagen.imagen %}
+                                                                    {% if imagen.departamento.id == departamento.id  %}
+                                                                
+                                                                    <tr> 
+                                                                        <td><img class="mx-auto img-fluid w-50  mx-auto d-block img-thumbnail" src="{{ imagen.imagen.url }}" alt=""></td>
+                                                                        <td class="align-middle" > <a class="btn btn-danger"  href="{% url 'Eliminar imagen departamento' imagen.id  %}" role="button"> Eliminar</a></td>
+                                                                    
+                                                                    </tr>
+                                                                    {% endif %}
+                                                                    {% endif %}
+                                                                    
+                                                                    {% endfor %}
+                                                                
+                                                                
+                                                                </tr>
+                                                            
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
+                                                    </div>
+
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                                        
+                                        </div>
+                                    </div>
+                                    </div>
+                                </div>
+
+                        </td>
+                        <td></td>
                     </tr>
                 
                 </tbody>
                 {% endfor %}
             </table>
+                                   
         </div>
     </div>
 </div>
@@ -54,4 +133,27 @@
 {% block extra_js %} 
 
 <script src="{% static 'js/menu_admin.js' %}" ></script>
+{% if messages %}
+{% for message in messages  %}
+  <script>   
+  
+  {% if message.tags == 'error' %}
+  Swal.fire({
+    title: 'Error!',
+    text: '{{ message }}',
+    icon: 'error',
+    confirmButtonText: 'Ok'
+  })
+  {% else  %}
+  Swal.fire({
+    title: 'Exito!',
+    text: '{{ message }}',
+    icon: 'success',
+    confirmButtonText: 'Ok'
+
+  })
+{% endif %}
+  </script>
+  {% endfor %}
+{% endif %}
 {% endblock extra_js %}

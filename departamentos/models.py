@@ -29,7 +29,7 @@ class Departamento(models.Model):
 class ImagenesDepartamento(models.Model):
     departamento = models.ForeignKey(Departamento,
                                      related_name="departamento_imagenes", on_delete=models.CASCADE)
-    imagen = models.ImageField(upload_to='departamentos/%Y/%m',blank=True)
+    imagen = models.ImageField(upload_to='departamentos/%Y/%m',blank=False,null=True)
     
 
     def mostrar_imagen(self):
@@ -40,6 +40,7 @@ class ImagenesDepartamento(models.Model):
     mostrar_imagen.short_description = 'imagen'
     def __str__(self):
         return "Imagen departamento {}".format(self.departamento)
+
     
 
   

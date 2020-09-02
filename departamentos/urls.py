@@ -6,7 +6,8 @@ from . import views
 # Urls de citt
 urlpatterns = [
     path('',views.listar_departamentos,name="Departamentos"),
-    path('departamento/<int:id>/',views.ver_departamento,name="Departamento")
+    path('departamentos/admin/',views.listar_departamentos_admin,name="Administracion departamentos"),
+    path('departamento/<int:id>/',views.ver_departamento,name="Departamento"),
 
 ]
 #Configuracion de imagenes

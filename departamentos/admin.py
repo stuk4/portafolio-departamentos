@@ -43,8 +43,8 @@ class CustomUserAdmin(admin.ModelAdmin):
 
     list_filter = ('id',)
     # Metodo para asignar redireccion cuando se edita una imagen
-    def response_change(self,request, obj):
-        return redirect('/')
+    # def response_change(self,request, obj):
+    #     return redirect('/')
 
 
 

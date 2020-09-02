@@ -1,0 +1,57 @@
+{% extends 'base_admin.html' %}
+{% load static %}
+{% block extra_css %} 
+<link rel="stylesheet" href="{% static 'css/styles_admin.css'%}">
+{% endblock extra_css %}
+{% block contenido %}
+<div class="card mb-4">
+    <div class="card-header">
+        <i class="fas fa-table mr-1"></i>
+        Departamentos
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                {% for departamento in departamentos %}
+                <thead>
+                    <tr>
+                        <th> Editar </th>
+                        <th>ID</th>
+                        <th>Dirección</th>
+                        <th>Dorm.</th>
+                        <th>Baños</th>
+                        <th>M²</th>
+                        <th>Precio/Dia</th>
+                    </tr>
+                </thead>
+                
+
+                <tbody>
+                    <tr>
+                        <td> 
+                            {% if user.is_staff %}
+                            <div class="action">
+                                <a class="btn btn-info" href="/admin/departamentos/departamento/{{ departamento.id }}/change/" role="button">Editar </a>
+                            </div>
+                            {% endif %}
+                        </td>
+                        <td>{{ departamento.id }}</td>
+                        <td>{{ departamento.direccion }}</td>
+                        <td>{{ departamento.dormitorios }}</td>
+                        <td>{{ departamento.banos }}</td>
+                        <td>{{ departamento.metros_cuadrados }}</td>
+                        <td>${{ departamento.precio }}</td>
+                    </tr>
+                
+                </tbody>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock contenido %}
+
+{% block extra_js %} 
+
+<script src="{% static 'js/menu_admin.js' %}" ></script>
+{% endblock extra_js %}

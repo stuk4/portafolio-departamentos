@@ -36,12 +36,19 @@ def login_view(request):
      
         return render(request,'login.html')
 
+
+        
+# Regla de segurdad: Solo si es activo puede hacer post logout
+@user_passes_test(lambda u:u.is_active,login_url=('Departamentos'))  
 def logout_view(request):
     if request.method == 'POST':
         logout(request)
         
     return redirect('login')
 
+
+# Regla de segurdad: Solo si es anonimo puede ver registro
+@user_passes_test(lambda u:u.is_anonymous,login_url=('Departamentos'))  
 def registro(request):
     
     if request.method == 'POST':

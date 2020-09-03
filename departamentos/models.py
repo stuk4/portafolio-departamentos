@@ -42,13 +42,13 @@ class ImagenesDepartamento(models.Model):
         return "Imagen departamento {}".format(self.departamento)
 
 class InventarioDepartamentos(models.Model):
-    estados = (('Buen estado','Buena estado'),
+    estados = (('Buen estado','Buen estado'),
             ('Mal estado','Mal estado'))
     departamento = models.ForeignKey(Departamento,
                                      related_name="departamento_inventario", on_delete=models.CASCADE)
     nombre = models.CharField(null=False,blank=False,max_length=50)
     estado =models.CharField(max_length=20,choices=estados,default='Buen estado',null=True,blank=False)
     precio = models.PositiveIntegerField(null=False, blank=False)
-    
+
 
   

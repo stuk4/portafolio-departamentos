@@ -7,7 +7,7 @@
 <div class="card mb-4">
     <div class="card-header">
         <i class="fas fa-table mr-1"></i>
-        Departamentos
+        Departamentos  <a class="btn btn-info " href="/admin/departamentos/departamento/add/?_to_field=id&_popup=1" role="button"><i class="fas fa-plus"></i> </a>
     </div>
     <div class="card-body">
         <div class="table-responsive">
@@ -33,7 +33,7 @@
                         <td> 
                             {% if user.is_staff %}
                             <div class="action">
-                                <a class="btn btn-info" href="/admin/departamentos/departamento/{{ departamento.id }}/change/" role="button">Editar </a>
+                                <a class="btn btn-info" href="/admin/departamentos/departamento/{{ departamento.id }}/change/?_to_field=id&_popup=1" role="button">Editar </a>
                             </div>
                             {% endif %}
                         </td>
@@ -44,32 +44,33 @@
                         <td>{{ departamento.metros_cuadrados }}</td>
                         <td>${{ departamento.precio }}</td>
                         <td  align="center">
-                                 <!-- Boton modal -->
-                                 <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#ver-imagen-{{ departamento.id }}">
+                                 <!-- Modal ver imagenes -->
+                                 <button type="button" class="btn btn-primary"  data-toggle="modal" data-target="#ver-imagen-{{ departamento.id }}">
                                     Ver
                                 </button>
                                 
-                                <!-- Modal ver imagenes -->
+                               
                                 <div class="modal fade" id="ver-imagen-{{ departamento.id }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                                     <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable ">
                                     <div class="modal-content">
                                         <div class="modal-header">
                                         <h5 class="modal-title" id="exampleModalLabel">Imagenes departamento {{ departamento.id }}</h5>
-                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <button type="button" name="btn-imagenes"  class="close" data-dismiss="modal" aria-label="Close">
                                             <span aria-hidden="true">&times;</span>
                                         </button>
                                         </div>
                                         <div class="modal-body">
                                             <div class="card mb-4">
-                                                    <div class="card-header">
+                                                    <div class="card-header text-center ">
                                                         <form enctype="multipart/form-data" method="POST"   >{% csrf_token %}
-                                                            <i class="fas fa-images"></i>
+                                                            
                                                             <div class="form-group">
                                                                 <input type="hidden" name="idDep" value="{{ departamento.id }}">
                                                                <input type="file" required accept="image/*" name="imagenDep" class="form-control-file" id="imagen-input">
 
                                                             </div>
-                                                            <button type="submit" class="btn btn-info" href="/admin/departamentos/departamento/{{ departamento.id }}/change/" > + Agregar </button>
+                                                            
+                                                            <button type="submit" class="btn btn-info" name="btn-imagenes" >  <i class="fas fa-images"></i> Agregar </button>
                                                             
                                                         </form>
                                                     </div>
@@ -117,8 +118,114 @@
                                     </div>
                                 </div>
                                 <!-- Fin modal ver imagenes -->
+                    </td>
+                             <td>
+                                <!-- Modal ver inventario -->
+                                <button type="button" class="btn btn-custom-{{ departamento.id }}"  data-toggle="modal" data-target="#ver-inventario-{{ departamento.id }}">
+                                Ver
+                            </button>
+                            
+                            
+                            <div class="modal fade" id="ver-inventario-{{ departamento.id }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                <div class="modal-dialog modal-lg  modal-dialog-centered modal-dialog-scrollable ">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModalLabel">Inventario departamento {{ departamento.id }}</h5>
+                                    <button type="button" class="close"  data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div class="card mb-4">
+                                                <div class=" card-header">
+                                                    <form enctype="multipart/form-data" method="POST"   >{% csrf_token %}
+                                                        
+                                                        <div class="form-group">
+                                                            <input type="hidden" name="idInv" value="{{ departamento.id }}">
+                                                            <div class="row">
+                                                                <div class="col">
+                                                                    <input class="form-control" placeholder="Nombre" required name="nombreInv" type="text">
+                                                                </div>
+                                                                <div class="col">
+                                                                    <input type="number" placeholder="precio" name="precioInv" class="form-control">
+                                                                </div>
+                                                            </div>
+                                                            
+                                                        </div>
+                                                       
+                                                        <button type="submit" class="btn align-middle float-right  btn-info" name="btn-inventario" >  <i class="fas fa-cubes"></i> Agregar </button>
+                                                        
+                                                    </form>
+                                                </div>
+                                                <div class="card-body">
+                                                    <div class="table-responsive">
+                                                        <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th>Nombre</th>
+                                                                    <th>Estado</th>
+                                                                    <th>Precio</th>
+                                                                    <th>Eliminar</th>
+                                                                
+                                                                </tr>
+                                                            </thead>
+                                                        
+                                                            <tbody>
+                                                                {% for inventario in inventarios %}
+ 
+                                                                {% if inventario.departamento.id == departamento.id  %}
+                                                                
+                                                                <!-- If si el inventario tiene algo en mal estado el boton de ver cambia de color -->
+                                                                {% if 'Mal estado' in inventario.get_estado_display   %}
+                                                                <style>
+                                                                    .btn-custom-{{ departamento.id }}{
+
+                                                                        background-color:rgb(255,193,7);    
+
+                                                                    }
+                                                                </style>
+                                                                {% elif 'Buen estado' in inventario.get_estado_display   %}
+                                                                <style>
+                                                                    .btn-custom-{{ departamento.id }}{
+
+                                                                        background-color:rgb(40,167,69) ;  
+
+                                                                    }
+                                                                </style>
+                                                                
+                                                                {% endif  %}
+
+                                                                <tr> 
+                                                                    <td>{{ inventario.nombre}}</td>
+                                                                    <td>{{ inventario.estado }} <a class="btn btn-info"  href="{% url 'Actualizar inventario departamento' inventario.id  %}"  role="button"> <i class="fas fa-exchange-alt"></i></a> </td>
+                                                                    <td>${{ inventario.precio }} </td>
+                                                                    <td class="align-middle" > <a class="btn btn-danger "  href="{% url 'Eliminar inventario departamento' inventario.id  %}"  role="button"> Eliminar</a></td>
+                                                                
+                                                                </tr>
+                                                                {% endif %}
+                                                             
+                                                                
+                                                                {% endfor %}
+                                                            
+                                                            
+                                                            </tr>
+                                                        
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                                    
+                                    </div>
+                                </div>
+                                </div>
+                            </div>
+                            <!-- Fin modal ver inventario -->
                         </td>
-                        <td></td>
                     </tr>
                 
                 </tbody>

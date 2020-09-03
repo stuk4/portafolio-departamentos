@@ -26,6 +26,8 @@ class CustomUserAdmin(admin.ModelAdmin):
     # Metodo para asignar redireccion cuando se edita una imagen
     def response_change(self,request, obj):
         return redirect('Administracion departamentos')
+    def response_add(self,request,obj):
+        return redirect('Administracion departamentos')
 
 # Customizacion de modelo ImagenesDepartamentos en admin
 @admin.register(ImagenesDepartamento)

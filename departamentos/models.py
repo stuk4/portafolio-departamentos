@@ -25,8 +25,8 @@ class Departamento(models.Model):
     mostrar_imagen.short_description = 'imagen'
   
     
-  
-class ImagenesDepartamento(models.Model):
+#   ImagenesDepartamento
+class Imagen(models.Model):
     departamento = models.ForeignKey(Departamento,
                                      related_name="departamento_imagenes", on_delete=models.CASCADE)
     imagen = models.ImageField(upload_to='departamentos/%Y/%m',blank=False,null=True)
@@ -40,8 +40,8 @@ class ImagenesDepartamento(models.Model):
     mostrar_imagen.short_description = 'imagen'
     def __str__(self):
         return "Imagen departamento {}".format(self.departamento)
-
-class InventarioDepartamentos(models.Model):
+# InventarioDepartamentos
+class Inventario(models.Model):
     estados = (('Buen estado','Buen estado'),
             ('Mal estado','Mal estado'))
     departamento = models.ForeignKey(Departamento,

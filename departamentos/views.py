@@ -1,5 +1,5 @@
 from django.shortcuts import render,get_object_or_404,redirect
-from departamentos.models import Departamento,ImagenesDepartamento,InventarioDepartamentos
+from departamentos.models import Departamento,Imagen,Inventario
 from usuarios.models import User
 from django.contrib.auth.decorators import user_passes_test
 from django.contrib import messages
@@ -19,7 +19,7 @@ def listar_departamentos(request):
 def ver_departamento(request,id):
 
     departamento = get_object_or_404(Departamento,id=id)
-    imagenes = ImagenesDepartamento.objects.filter(departamento=id)
+    imagenes = Imagen.objects.filter(departamento=id)
   
     context = {'departamento':departamento,
                 'imagenes':imagenes}
@@ -36,8 +36,8 @@ def listar_departamentos_admin(request):
 
     # Variables de para listar en mi template 
     departamentos = Departamento.objects.all()
-    imagenes = ImagenesDepartamento.objects.all()
-    inventarios = InventarioDepartamentos.objects.all()
+    imagenes = Imagen.objects.all()
+    inventarios = Inventario.objects.all()
     
 
     context = {'departamentos':departamentos,
@@ -49,7 +49,7 @@ def listar_departamentos_admin(request):
 
     # Metodo post para agregar imagenes
     if request.method == 'POST' and 'btn-imagenes' in request.POST:
-        imagen = ImagenesDepartamento()
+        imagen = Imagen()
         
         departamento = get_object_or_404(Departamento,id=request.POST.get('idDep'))
 
@@ -73,7 +73,7 @@ def listar_departamentos_admin(request):
 
     # Metodo post para agregar inventario
     if request.method == 'POST' and 'btn-inventario' in request.POST:
-        inventario = InventarioDepartamentos()
+        inventario = Inventario()
         departamento = get_object_or_404(Departamento,id=request.POST.get('idInv'))
         inventario.departamento = departamento
         inventario.nombre = request.POST.get('nombreInv')
@@ -95,7 +95,7 @@ def listar_departamentos_admin(request):
 # Regla de seguridad: Solo si esadmin puede eliminar
 @user_passes_test(lambda u:u.is_superuser,login_url=('login'))  
 def eliminar_inventario_departamento(request,id):
-    inventario = InventarioDepartamentos.objects.filter(id=id)
+    inventario = Inventario.objects.filter(id=id)
     try:
         messages.success(request,'Inventario eliminado ')
         inventario.delete()
@@ -109,7 +109,7 @@ def eliminar_inventario_departamento(request,id):
 # Regla de seguridad: Solo si es admin puede eliminar
 @user_passes_test(lambda u:u.is_superuser,login_url=('login'))  
 def eliminar_imagen_departamento(request,id):
-    imagen = ImagenesDepartamento.objects.filter(id=id)
+    imagen = Imagen.objects.filter(id=id)
     try:
         imagen.delete()
         # messages.success(request,'Imagen {} eliminada'.format(imagen.imagen.url))
@@ -127,9 +127,9 @@ def eliminar_imagen_departamento(request,id):
 @user_passes_test(lambda u:u.is_superuser,login_url=('login'))  
 def actualizar_estado_inventario(request,id):  
     
-    inventario = InventarioDepartamentos.objects.filter(id=id)
+    inventario = Inventario.objects.filter(id=id)
     # Esto lo hago para obtener los fields del model 
-    check_estado =  InventarioDepartamentos.objects.get(id=id)
+    check_estado =  Inventario.objects.get(id=id)
 
     if check_estado.estado == 'Buen estado':
         try:

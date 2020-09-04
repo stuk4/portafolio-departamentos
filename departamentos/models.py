@@ -28,7 +28,7 @@ class Departamento(models.Model):
 #   ImagenesDepartamento
 class Imagen(models.Model):
     departamento = models.ForeignKey(Departamento,
-                                     related_name="departamento_imagenes", on_delete=models.CASCADE)
+                                     related_name="imagenes", on_delete=models.CASCADE)
     imagen = models.ImageField(upload_to='departamentos/%Y/%m',blank=False,null=True)
     
 
@@ -45,10 +45,11 @@ class Inventario(models.Model):
     estados = (('Buen estado','Buen estado'),
             ('Mal estado','Mal estado'))
     departamento = models.ForeignKey(Departamento,
-                                     related_name="departamento_inventario", on_delete=models.CASCADE)
+                                     related_name="inventario", on_delete=models.CASCADE)
     nombre = models.CharField(null=False,blank=False,max_length=50)
     estado =models.CharField(max_length=20,choices=estados,default='Buen estado',null=True,blank=False)
     precio = models.PositiveIntegerField(null=False, blank=False)
-
+    def __str__(self):
+        return 'Nombre: {} Estado:{}'.format(self.nombre,self.estado)
 
   

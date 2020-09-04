@@ -11,6 +11,7 @@
    
         <link rel="stylesheet" href="{% static  'css/bootstrap.min.css' %}" />
         <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/js/all.min.js" crossorigin="anonymous"></script>
+        <link rel="stylesheet" href="{% static 'css/styles_admin.css'%}">
         {% block extra_css %}
         {% endblock extra_css %}
     </head>
@@ -49,22 +50,25 @@
                     <div class="sb-sidenav-menu">
                         <div class="nav">
                             <div class="sb-sidenav-menu-heading">Departamentos</div>
-                            <a class="nav-link" href="index.html">
-                                <div class="sb-nav-link-icon "><i class="fas fa-tachometer-alt"></i></div>
-                                Departamentos
-                            </a>
-                            <div class="sb-sidenav-menu-heading">Departamentos mantencion </div>
                             <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseLayouts" aria-expanded="false" aria-controls="collapseLayouts">
-                                <div class="sb-nav-link-icon"><i class="fas fa-columns"></i></div>
-                                Layouts
+                                <div class="sb-nav-link-icon"><i class="fas fa-building"></i></div>
+                                Departamentos
                                 <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
                             </a>
                             <div class="collapse" id="collapseLayouts" aria-labelledby="headingOne" data-parent="#sidenavAccordion">
                                 <nav class="sb-sidenav-menu-nested nav">
-                                    <a class="nav-link" href="layout-static.html">Static Navigation</a>
-                                    <a class="nav-link" href="layout-sidenav-light.html">Light Sidenav</a>
+                                    <a class="nav-link {% if request.resolver_match.url_name == "Administracion departamentos" %}active{% endif %}" href="{% url 'Administracion departamentos' %}">Disponibles</a>
+                                    <a class="nav-link" href="layout-sidenav-light.html">Reservados</a>
+                                    <a class="nav-link" href="layout-sidenav-light.html">Arrendados</a>
+                                    <a class="nav-link" href="layout-sidenav-light.html">Mantención</a>
                                 </nav>
                             </div>
+                            <div class="sb-sidenav-menu-heading">Usuarios</div>
+                            <a class="nav-link" href="{% url 'Administracion usuarios' %}">
+                                <div class="sb-nav-link-icon "><i class="fas fa-users"></i></div>
+                                Usuarios
+                            </a>
+                        
                             <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePages" aria-expanded="false" aria-controls="collapsePages">
                                 <div class="sb-nav-link-icon"><i class="fas fa-book-open"></i></div>
                                 Pages
@@ -120,7 +124,7 @@
             <div id="layoutSidenav_content">
                 <main>
                     <div class="container-fluid">
-                        <h1 class="mt-4">Departamentos</h1>
+                        <h1 class="mt-4">{{ request.resolver_match.url_name }}</h1>
                         <ol class="breadcrumb mb-4">
                             <li class="breadcrumb-item active">{{ request.resolver_match.url_name }}</li>
                         </ol>
@@ -141,6 +145,7 @@
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
         <script src="{% static 'js/jquery.min.js' %}"></script>
         <script src="{% static 'js/bootstrap.min.js' %}"></script>
+        <script src="{% static 'js/menu_admin.js' %}" ></script>
         {% block extra_js %} 
         {% endblock extra_js %}
     </body>

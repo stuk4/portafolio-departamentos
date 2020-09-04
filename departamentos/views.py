@@ -1,7 +1,9 @@
 from django.shortcuts import render,get_object_or_404,redirect
 from departamentos.models import Departamento,ImagenesDepartamento,InventarioDepartamentos
+from usuarios.models import User
 from django.contrib.auth.decorators import user_passes_test
 from django.contrib import messages
+#  Views correspondientes a vistas del cliente
 def listar_departamentos(request):
     # Se es administrador o funcionario redirecciona al sitio administracion
     if request.user.is_staff:
@@ -24,7 +26,10 @@ def ver_departamento(request,id):
 
     return render(request,'ver_departamento.html',context)
 
+# Fin de vistas corrrespondientes a parte del cliente
 
+
+# Vistas correspondientes parte del admin
 # Regla de seguridad: Solo si es  admin puede entrar
 @user_passes_test(lambda u:u.is_superuser,login_url=('login'))  
 def listar_departamentos_admin(request):
@@ -42,7 +47,7 @@ def listar_departamentos_admin(request):
     
 
 
-            # Metodo post para agregar imagenes
+    # Metodo post para agregar imagenes
     if request.method == 'POST' and 'btn-imagenes' in request.POST:
         imagen = ImagenesDepartamento()
         
@@ -86,6 +91,7 @@ def listar_departamentos_admin(request):
 
 
     return render(request,'lista_departamentos_admin.html',context)
+
 # Regla de seguridad: Solo si esadmin puede eliminar
 @user_passes_test(lambda u:u.is_superuser,login_url=('login'))  
 def eliminar_inventario_departamento(request,id):
@@ -99,7 +105,8 @@ def eliminar_inventario_departamento(request,id):
         messages.error(request,'No se pudo eliminar el inventario')
         return redirect('Administracion departamentos')
     return redirect('Administracion departamentos')
-# Regla de seguridad: Solo si esadmin puede eliminar
+
+# Regla de seguridad: Solo si es admin puede eliminar
 @user_passes_test(lambda u:u.is_superuser,login_url=('login'))  
 def eliminar_imagen_departamento(request,id):
     imagen = ImagenesDepartamento.objects.filter(id=id)
@@ -115,6 +122,9 @@ def eliminar_imagen_departamento(request,id):
         return redirect('Administracion departamentos')
     return redirect('Administracion departamentos')
 
+
+# Regla de seguridad: Solo si es admin puede actualizar estado
+@user_passes_test(lambda u:u.is_superuser,login_url=('login'))  
 def actualizar_estado_inventario(request,id):  
     
     inventario = InventarioDepartamentos.objects.filter(id=id)
@@ -147,4 +157,9 @@ def actualizar_estado_inventario(request,id):
             return redirect('Administracion departamentos')
 
     return redirect('Administracion departamentos')
-    
+
+def listar_usuarios(request):
+    usuarios = User.objects.all()
+    context = {'usuarios':usuarios}
+    return render(request,'listar_usuarios_admin.html',context)
+# Fin de vistas correspondientes a parte del admin

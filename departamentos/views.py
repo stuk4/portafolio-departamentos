@@ -3,6 +3,8 @@ from departamentos.models import Departamento,Imagen,Inventario
 from usuarios.models import User
 from django.contrib.auth.decorators import user_passes_test
 from django.contrib import messages
+
+
 #  Views correspondientes a vistas del cliente
 def listar_departamentos(request):
     # Se es administrador o funcionario redirecciona al sitio administracion

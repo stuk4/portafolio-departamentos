@@ -25,7 +25,7 @@ class Departamento(models.Model):
     mostrar_imagen.short_description = 'imagen'
   
     
-#   ImagenesDepartamento
+
 class Imagen(models.Model):
     departamento = models.ForeignKey(Departamento,
                                      related_name="imagenes", on_delete=models.CASCADE)
@@ -40,7 +40,7 @@ class Imagen(models.Model):
     mostrar_imagen.short_description = 'imagen'
     def __str__(self):
         return "Imagen departamento {}".format(self.departamento)
-# InventarioDepartamentos
+
 class Inventario(models.Model):
     estados = (('Buen estado','Buen estado'),
             ('Mal estado','Mal estado'))

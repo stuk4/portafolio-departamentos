@@ -159,9 +159,42 @@ def actualizar_estado_inventario(request,id):
             return redirect('Administracion departamentos')
 
     return redirect('Administracion departamentos')
-
+    # Regla de seguridad: Solo si es admin puede ver usuarios
+@user_passes_test(lambda u:u.is_superuser,login_url=('login'))  
 def listar_usuarios(request):
     usuarios = User.objects.all()
     context = {'usuarios':usuarios}
     return render(request,'listar_usuarios_admin.html',context)
+
+def actualizar_estado_usuario(request,id):
+    usuario = User.objects.filter(id=id)
+    # Esto lo hago para obtener los fields del model 
+    check_estado =  User.objects.get(id=id)
+    if check_estado.is_active:
+ 
+        try:
+
+            usuario.update(is_active=False)
+            messages.success(request,'Estado de {} {} actualizado'.format(check_estado.first_name,check_estado.last_name))
+            return redirect('Administracion usuarios')
+            
+        except Exception as err:
+
+            messages.error(request,'No se pudo actualizar el estado')
+            return redirect('Administracion usuarios')
+            
+    else:
+        try:
+
+            usuario.update(is_active=True)
+            messages.success(request,'Estado de {} {} actualizado'.format(check_estado.first_name,check_estado.last_name))
+            return redirect('Administracion usuarios')
+
+        except Exception as err:
+
+            print(err)
+            messages.error(request,'No se pudo actualizar el estado')
+            return redirect('Administracion usuarios')
+
+    return redirect('Administracion usuarios')
 # Fin de vistas correspondientes a parte del admin

@@ -5,17 +5,24 @@
 <div class="card mb-4">
     <div class="card-header">
         <i class="fas fa-users"></i>
-       Usuarios
+       Usuarios 
+       {% if user.is_superuser %}
+       <a class="btn btn-info " href="/admin/usuarios/user/add/?_to_field=id&_popup=1" role="button"><i class="fas fa-plus"></i> </a>
+       {% endif %}
     </div>
     <div class="card-body">
         <div class="table-responsive">
             <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                 <thead>
                     <tr>
+                        {% if user.is_superuser %}
+                        <th>Editar</th>
+                        {% endif %}
                         <th>ID</th>
                         <th>Nombre</th>
                         <th>Correo</th>
                         <th>Telefono</th>
+                        <th>Tipo</th>
                         <th>Estado</th>
                     </tr>
                 </thead>
@@ -23,20 +30,41 @@
                 <tbody>
                     {% for usuario in usuarios %}
                     <tr>
+                        {% if user.is_superuser %}
+                        <td>    
+                            <a class="btn btn-info" href="/admin/usuarios/user/{{ usuario.id }}/change/?_to_field=id&_popup=1" role="button">Editar </a>
+                        </td>
+                        {% endif %}
+                      
                         <td>{{  usuario.id }}</td>
                         <td>{{ usuario.first_name }}</td>
                         <td>{{ usuario.email }}</td>
                         <td>{{ usuario.telefono  }}</td>
                         <td>
+                            {% if usuario.is_staff %}
+                                Funcionario
+                            {% else  %}
+                                Cliente
+                            {% endif %}
+                            
+                        </td>
+                        <td>
                             {% if usuario.is_active %}
                                 {%  if usuario.is_superuser %}
                                 ADMIN
                                 {% else %}
-                                Activo  <a class="btn btn-info"  href="{% url 'Actualizar estado usuario' usuario.id  %}"  role="button"> <i class="fas fa-exchange-alt"></i></a>
-                                
+                                Activo  
+                                {% if user.is_staff %}
+                                {% else %}
+                                <a class="btn btn-info"  href="{% url 'Actualizar estado usuario' usuario.id  %}"  role="button"> <i class="fas fa-exchange-alt"></i></a>
+                                {% endif %}
                                 {% endif %}
                             {% else %}
-                                Inactivo  <a class="btn btn-info"  href="{% url 'Actualizar estado usuario' usuario.id  %}"  role="button"> <i class="fas fa-exchange-alt"></i></a>
+                                Inactivo 
+                                {% if user.is_staff %}
+                                {% else %}
+                                <a class="btn btn-info"  href="{% url 'Actualizar estado usuario' usuario.id  %}"  role="button"> <i class="fas fa-exchange-alt"></i></a>
+                                {% endif %}
                             {% endif %}
                         </td>
                     

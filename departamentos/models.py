@@ -9,7 +9,7 @@ class Departamento(models.Model):
     dormitorios = models.PositiveIntegerField(null=True, blank=False)
     descripcion = models.TextField(null=True)
     direccion = models.CharField(max_length=60)
-    estado_mantencion = models.BooleanField(default=False,null=True, blank=True)
+    estado_mantencion = models.BooleanField(default=True,null=True, blank=True)
     imagen = models.ImageField(upload_to='departamentos_principal/%Y/%m',blank=True)
     mantencion = models.DateField(
         null=True, blank=True, auto_now=False, auto_now_add=False)
@@ -52,4 +52,11 @@ class Inventario(models.Model):
     def __str__(self):
         return 'Nombre: {} Estado:{}'.format(self.nombre,self.estado)
 
-  
+class Arriendo(models.Model):
+     usuario = models.ForeignKey("usuarios.User", related_name="arriendo", on_delete=models.CASCADE)
+     departamento = models.ForeignKey(Departamento, related_name="arriendo", on_delete=models.CASCADE)
+     dia_llegada = models.DateField(
+        null=True, blank=True, auto_now=False, auto_now_add=False)
+     dias_estadia =  models.PositiveIntegerField(null=False,blank=False,verbose_name="días_estadia" )
+     abono = models.PositiveIntegerField(null=False,blank=False )
+     diferencia = models.PositiveIntegerField(null=True,blank=True )

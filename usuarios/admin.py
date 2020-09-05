@@ -4,12 +4,10 @@ from .models import User
 
 
 from django.contrib.auth.admin import UserAdmin 
-
-
-
 from django.contrib.auth import admin as auth_admin
 
 
+from django.shortcuts import  redirect
 
 
 
@@ -19,5 +17,9 @@ class CustomUserAdmin(UserAdmin):
                     "username", 
                     "is_superuser"]
    fieldsets = (("User", {"fields": ("telefono","fecha_nacimiento","N_tarjeta","imagen",)}),) + auth_admin.UserAdmin.fieldsets
+   def response_add(self,request,obj):
+      return redirect('Administracion usuarios')
+   def response_change(self,request, obj):
+      return redirect('Administracion usuarios')
 
 

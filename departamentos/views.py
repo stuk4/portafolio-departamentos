@@ -33,7 +33,7 @@ def ver_departamento(request,id):
 
 # Vistas correspondientes parte del admin
 # Regla de seguridad: Solo si es  admin puede entrar
-@user_passes_test(lambda u:u.is_superuser,login_url=('login'))  
+@user_passes_test(lambda u:u.is_staff,login_url=('login'))  
 def listar_departamentos_admin(request):
 
     # Variables de para listar en mi template 
@@ -160,12 +160,13 @@ def actualizar_estado_inventario(request,id):
 
     return redirect('Administracion departamentos')
     # Regla de seguridad: Solo si es admin puede ver usuarios
-@user_passes_test(lambda u:u.is_superuser,login_url=('login'))  
+@user_passes_test(lambda u:u.is_staff,login_url=('login'))  
 def listar_usuarios(request):
     usuarios = User.objects.all()
     context = {'usuarios':usuarios}
     return render(request,'listar_usuarios_admin.html',context)
-
+    # Regla de seguridad: Solo si es admin puede actualizar usuarios
+@user_passes_test(lambda u:u.is_superuser,login_url=('login'))  
 def actualizar_estado_usuario(request,id):
     usuario = User.objects.filter(id=id)
     # Esto lo hago para obtener los fields del model 

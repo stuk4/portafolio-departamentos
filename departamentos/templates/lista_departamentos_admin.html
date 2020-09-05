@@ -7,14 +7,19 @@
 <div class="card mb-4">
     <div class="card-header">
         <i class="fas fa-table mr-1"></i>
-        Departamentos  <a class="btn btn-info " href="/admin/departamentos/departamento/add/?_to_field=id&_popup=1" role="button"><i class="fas fa-plus"></i> </a>
+        Departamentos 
+        {% if user.is_superuser %}
+         <a class="btn btn-info " href="/admin/departamentos/departamento/add/?_to_field=id&_popup=1" role="button"><i class="fas fa-plus"></i> </a>
+         {% endif %}
     </div>
     <div class="card-body">
         <div class="table-responsive">
             <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                 <thead>
                     <tr>
+                        {% if user.is_superuser %}
                         <th> Editar </th>
+                        {% endif %}
                         <th>ID</th>
                         <th>Dirección</th>
                         <th>Dorm.</th>
@@ -30,13 +35,13 @@
 
                 <tbody>
                     <tr>
+                        {% if user.is_superuser %}
                         <td> 
-                            {% if user.is_staff %}
                             <div class="action">
                                 <a class="btn btn-info" href="/admin/departamentos/departamento/{{ departamento.id }}/change/?_to_field=id&_popup=1" role="button">Editar </a>
                             </div>
-                            {% endif %}
                         </td>
+                        {% endif %}
                         <td>{{ departamento.id }}</td>
                         <td>{{ departamento.direccion }}</td>
                         <td>{{ departamento.dormitorios }}</td>
@@ -62,6 +67,7 @@
                                         <div class="modal-body">
                                             <div class="card mb-4">
                                                     <div class="card-header text-center ">
+                                                        {% if user.is_superuser %}
                                                         <form enctype="multipart/form-data" method="POST"   >{% csrf_token %}
                                                             
                                                             <div class="form-group">
@@ -73,6 +79,7 @@
                                                             <button type="submit" class="btn btn-info" name="btn-imagenes" >  <i class="fas fa-images"></i> Agregar </button>
                                                             
                                                         </form>
+                                                        {% endif %}
                                                     </div>
                                                     <div class="card-body">
                                                         <div class="table-responsive">
@@ -138,6 +145,7 @@
                                     <div class="modal-body">
                                         <div class="card mb-4">
                                                 <div class=" card-header">
+                                                    {% if user.is_superuser %}
                                                     <form enctype="multipart/form-data" method="POST"   >{% csrf_token %}
                                                         
                                                         <div class="form-group">
@@ -156,6 +164,7 @@
                                                         <button type="submit" class="btn align-middle float-right  btn-info" name="btn-inventario" >  <i class="fas fa-cubes"></i> Agregar </button>
                                                         
                                                     </form>
+                                                    {% endif %}
                                                 </div>
                                                 <div class="card-body">
                                                     <div class="table-responsive">
@@ -165,7 +174,9 @@
                                                                     <th>Nombre</th>
                                                                     <th>Estado</th>
                                                                     <th>Precio</th>
+                                                                    {% if user.is_superuser %}
                                                                     <th>Eliminar</th>
+                                                                    {% endif %}
                                                                 
                                                                 </tr>
                                                             </thead>
@@ -192,10 +203,15 @@
                                                                 </script>
                                                                 <tr> 
                                                                     <td>{{ inventario.nombre}}</td>
-                                                                    <td>{{ inventario.estado }} <a class="btn btn-info"  href="{% url 'Actualizar inventario departamento' inventario.id  %}"  role="button"> <i class="fas fa-exchange-alt"></i></a> </td>
-                                                                    <td>${{ inventario.precio }} {{ departamento.inventario.all }} </td>
+                                                                    <td>{{ inventario.estado }}
+                                                                        {% if user.is_superuser %}
+                                                                         <a class="btn btn-info"  href="{% url 'Actualizar inventario departamento' inventario.id  %}"  role="button"> <i class="fas fa-exchange-alt"></i></a> 
+                                                                         {% endif %}
+                                                                    </td>
+                                                                    <td>${{ inventario.precio }}</td>
+                                                                    {% if user.is_superuser %}
                                                                     <td class="align-middle" > <a class="btn btn-danger "  href="{% url 'Eliminar inventario departamento' inventario.id  %}"  role="button"> Eliminar</a></td>
-                                                                
+                                                                    {% endif %}
                                                                 </tr>
                                                                 {% endif %}
                                                              

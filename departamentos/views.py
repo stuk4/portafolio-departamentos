@@ -73,7 +73,9 @@ def ver_departamento(request,id):
 def listar_departamentos_admin(request):
 
     # Variables de para listar en mi template 
-    departamentos = Departamento.objects.all()
+    print()
+    # Solo los departamentos que no contengan reserva y no esten en mantencion seran mostrados
+    departamentos = Departamento.objects.exclude(reserva__isnull=False).filter(estado_mantencion=False)
     imagenes = Imagen.objects.all()
     inventarios = Inventario.objects.all()
     
@@ -129,6 +131,17 @@ def listar_departamentos_admin(request):
 
 
     return render(request,'lista_departamentos_admin.html',context)
+def eliminar_departamento(request,id):
+    
+    departamento = Departamento.objects.exclude(reserva__isnull=False).filter(estado_mantencion=False)
+    try:
+        messages.success(request,'Departamento eliminado')
+        departamento.delete()
+        return redirect('Administracion departamentos')
+    except Exception as err:
+        print('Error VELIMINARDEPTO ==',err)
+        messages.error(request,'No se pudo eliminar el departamento')
+        return redirect('Administracion departamentos')
 
 # Regla de seguridad: Solo si esadmin puede eliminar
 @user_passes_test(lambda u:u.is_superuser,login_url=('login'))  

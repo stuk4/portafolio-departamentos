@@ -77,7 +77,7 @@
       icon: 'error',
       confirmButtonText: 'Ok'
     })
-    {% else  %}
+    {% else %}
     Swal.fire({
       title: 'Exito!',
       text: '{{ message }}',
@@ -85,6 +85,7 @@
       confirmButtonText: 'Ok'
   
     })
+
   {% endif %}
     </script>
     {% endfor %}

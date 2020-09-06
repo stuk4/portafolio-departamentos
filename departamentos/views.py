@@ -25,6 +25,10 @@ def ver_departamento(request,id):
     imagenes = Imagen.objects.filter(departamento=id)
     context = {'departamento':departamento,
                 'imagenes':imagenes}
+    # Condicion si el usuario esta logeado verifica si contiene una reserva
+    if request.user.is_active:
+        tiene_reserva = Reserva.objects.filter(usuario=request.user.id).exists()
+       
 
     if request.method == 'POST':
         # Objetos arriendo y reserva
@@ -35,21 +39,22 @@ def ver_departamento(request,id):
         reserva.usuario = usuario
         reserva.departamento = departamento
         reserva.dia_llegada = request.POST.get('diallegada')
-     
+
         reserva.dias_estadia = request.POST.get('diasestadia',True)
         abono = round((departamento.precio *float(request.POST.get('diasestadia'))) * 0.1)
         reserva.abono = abono
-        
+        # diferencia = round((departamento.precio *int(request.POST.get('diasestadia')) )- abono)
+        # Atrapo errores relacionado al objeto reserva
         try:
-   
+            # Condicion si tiene una reserva no deja reservar
+            if tiene_reserva:
+                messages.error(request,'Lo sentimos usted ya tiene una reseva')
+                return render(request,'ver_departamento.html',context)
+
             reserva.save()
-            try:
-                arriendo.reserva = reserva
-                arriendo.diferencia = round((departamento.precio *int(request.POST.get('diasestadia')) )- abono)
-                arriendo.save()
-            except Exception as err:
-                print('Error al guardar arriendo == ',err)
-                messages.error(request,'Lo sentimos no se realizo la reserva')
+         
+
+            #Return si sale todo bien con reserva
             messages.success(request,'Depto {} reservado!!'.format(departamento.direccion))
             return render(request,'ver_departamento.html',context)
         except Exception as err:
@@ -57,6 +62,7 @@ def ver_departamento(request,id):
             messages.error(request,'Lo sentimos no se realizo la reserva')
             return render(request,'ver_departamento.html',context)
     return render(request,'ver_departamento.html',context)
+
 
 # Fin de vistas corrrespondientes a parte del cliente
 

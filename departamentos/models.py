@@ -65,6 +65,7 @@ class Reserva(models.Model):
 class Arriendo(models.Model):
      reserva = models.ForeignKey(Reserva, related_name="arriendo", on_delete=models.CASCADE)
      diferencia = models.PositiveIntegerField(null=True,blank=True )
+     total = models.PositiveIntegerField(null=False,blank=False )
      def __str__(self):
          return '{}'.format(self.reserva)
      

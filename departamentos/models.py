@@ -52,11 +52,22 @@ class Inventario(models.Model):
     def __str__(self):
         return 'Nombre: {} Estado:{}'.format(self.nombre,self.estado)
 
-class Arriendo(models.Model):
-     usuario = models.ForeignKey("usuarios.User", related_name="arriendo", on_delete=models.CASCADE)
-     departamento = models.ForeignKey(Departamento, related_name="arriendo", on_delete=models.CASCADE)
-     dia_llegada = models.DateField(
+class Reserva(models.Model):
+    usuario = models.ForeignKey("usuarios.User", related_name="reserva", on_delete=models.CASCADE)
+    departamento = models.ForeignKey(Departamento, related_name="reserva", on_delete=models.CASCADE)
+    dia_llegada = models.DateField(
         null=True, blank=True, auto_now=False, auto_now_add=False)
-     dias_estadia =  models.PositiveIntegerField(null=False,blank=False,verbose_name="días_estadia" )
-     abono = models.PositiveIntegerField(null=False,blank=False )
+    abono = models.PositiveIntegerField(null=False,blank=False )
+    dias_estadia =  models.PositiveIntegerField(null=False,blank=False,verbose_name="días estadia" )
+    def __str__(self):
+        return 'Usuario: {} Depto: {}'.format(self.usuario,self.departamento)
+    
+class Arriendo(models.Model):
+     reserva = models.ForeignKey(Reserva, related_name="arriendo", on_delete=models.CASCADE)
      diferencia = models.PositiveIntegerField(null=True,blank=True )
+     def __str__(self):
+         return '{}'.format(self.reserva)
+     
+    
+
+

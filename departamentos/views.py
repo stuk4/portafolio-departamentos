@@ -1,5 +1,5 @@
 from django.shortcuts import render,get_object_or_404,redirect
-from departamentos.models import Departamento,Imagen,Inventario
+from departamentos.models import Departamento,Imagen,Inventario,Reserva,Arriendo
 from usuarios.models import User
 from django.contrib.auth.decorators import user_passes_test
 from django.contrib import messages
@@ -21,11 +21,41 @@ def listar_departamentos(request):
 def ver_departamento(request,id):
 
     departamento = get_object_or_404(Departamento,id=id)
+   
     imagenes = Imagen.objects.filter(departamento=id)
-  
     context = {'departamento':departamento,
                 'imagenes':imagenes}
 
+    if request.method == 'POST':
+        # Objetos arriendo y reserva
+        reserva = Reserva()
+        arriendo = Arriendo()
+
+        usuario = get_object_or_404(User,id=request.user.id)
+        reserva.usuario = usuario
+        reserva.departamento = departamento
+        reserva.dia_llegada = request.POST.get('diallegada')
+     
+        reserva.dias_estadia = request.POST.get('diasestadia',True)
+        abono = round((departamento.precio *float(request.POST.get('diasestadia'))) * 0.1)
+        reserva.abono = abono
+        
+        try:
+   
+            reserva.save()
+            try:
+                arriendo.reserva = reserva
+                arriendo.diferencia = round((departamento.precio *int(request.POST.get('diasestadia')) )- abono)
+                arriendo.save()
+            except Exception as err:
+                print('Error al guardar arriendo == ',err)
+                messages.error(request,'Lo sentimos no se realizo la reserva')
+            messages.success(request,'Depto {} reservado!!'.format(departamento.direccion))
+            return render(request,'ver_departamento.html',context)
+        except Exception as err:
+            print('Error al guardar Reserva ===',err)
+            messages.error(request,'Lo sentimos no se realizo la reserva')
+            return render(request,'ver_departamento.html',context)
     return render(request,'ver_departamento.html',context)
 
 # Fin de vistas corrrespondientes a parte del cliente

@@ -42,18 +42,70 @@
 			</div>
 			<div class="details col-md-6">
 				<h3 class="product-title">{{ departamento.direccion }}</h3>
-				<div class="rating">
-		
-					<span class="review-no">41 reviews</span>
-				</div>
-				<p class="product-description">{{ departamento.descripcion }}</p>
 				<h4 class="price"><span>${{departamento.precio }}</span>/Dia </h4>
+				
+				<p class="product-description">{{ departamento.descripcion }}</p>
+			
 				<!-- <p class="vote"><strong>91%</strong> of buyers enjoyed this product! <strong>(87 votes)</strong></p> -->
 				<h6 class="sizes">m²: {{ departamento.metros_cuadrados }}
 					<span class="size" data-toggle="tooltip" title="small">Dorm- {{departamento.dormitorios }}</span>
 					<span class="size" data-toggle="tooltip" title="medium">baños- {{ departamento.banos }}</span>
 				
 				</h6>
+				{% if user.is_active %}
+				<div class="form-group">
+					<!-- Button trigger modal -->
+					<button type="button" class="btn btn-info mt-5" data-toggle="modal" data-target="#exampleModal">
+						Reservar
+					</button>
+					
+					<!-- Modal -->
+					<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+						<div class="modal-dialog">
+						<div class="modal-content">
+							<div class="modal-header">
+							<h5 class="modal-title" id="exampleModalLabel">Reservar Dep. {{ departamento.direccion }}</h5>
+							<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+								<span aria-hidden="true">&times;</span>
+							</button>
+							</div>
+							<div class="modal-body">
+							<form method="POST">{% csrf_token %}
+								
+									<div class="form-group">
+										<div class="row">
+											<div class="col">
+												<label  for="llegada">Fecha de llegada:</label>
+												<input required class="form-control" id="llegada" type="date" name="diallegada" />
+											</div>
+											<div class="col">
+												<label for="diasestadia">Dias de estadia:</label>
+												<input required type="number" max="100" min="2" class="form-control" name="diasestadia" id="diasestadia">
+											</div>
+										</div>
+										
+									</div>
+									<div class="form-group d-flex justify-content-center align-items-end flex-column">
+										<h4  class="price"><span>$</span> <span id="eltotal">0</span> /Total </h4>
+										<h4  class="price"><span>$</span> <span id="elabono">0</span> /Abono </h4>
+									</div>
+									<div class="form-group d-flex justify-content-center">
+										
+											<button type="submit" class="btn btn-info">Abonar</button>
+										
+									</div>
+									 
+							</form>
+							</div>
+							<div class="modal-footer">
+							<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+							<button type="button" class="btn btn-primary">Save changes</button>
+							</div>
+						</div>
+						</div>
+					</div>
+				</div>
+				{% endif %}
 				<!-- <h5 class="colors">colors :
 					<span class="color orange not-available" data-toggle="tooltip" title="Not In store"></span>
 					<span class="color green"></span>
@@ -65,3 +117,44 @@
 	</div>
 </div>
 {% endblock contenido %}
+{% block extra_js %}
+<script>
+
+	const dias =document.getElementById("diasestadia")
+	const total = document.getElementById("eltotal")
+	const abono = document.getElementById("elabono")
+	const inner = (e) =>{
+		total.innerHTML = ""
+		total.innerHTML = e.target.value * {{ departamento.precio }};
+		abono.innerHTML = Math.round( (e.target.value * {{ departamento.precio }}) * 0.1);
+	}
+	dias.addEventListener('input',inner)
+	dias.addEventListener('propertychange', inner);
+	
+</script>
+
+
+{% if messages %}
+{% for message in messages  %}
+  <script>   
+  
+  {% if message.tags == 'error' %}
+  Swal.fire({
+	title: 'Error!',
+	text: '{{ message }}',
+	icon: 'error',
+	confirmButtonText: 'Ok'
+  })
+  {% else  %}
+  Swal.fire({
+	title: 'Exito!',
+	text: '{{ message }}',
+	icon: 'success',
+	confirmButtonText: 'Ok'
+
+  })
+{% endif %}
+  </script>
+  {% endfor %}
+{% endif %}
+{% endblock extra_js %}

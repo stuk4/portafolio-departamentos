@@ -24,6 +24,7 @@ def login_view(request):
     
         if user:
             login(request,user)
+            messages.info(request,'Bienvenid@ {}'.format(request.user.first_name))
             return HttpResponseRedirect(reverse('Departamentos'))
 
         
@@ -32,7 +33,9 @@ def login_view(request):
             messages.error(request,'Credenciales incorrectas')
             return render(request,'login.html')
     else:
-     
+        if request.user.is_active:
+
+            messages.info(request,'Bienvenido {}'.format(request.user.first_name))
         return render(request,'login.html')
 
 

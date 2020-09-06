@@ -33,3 +33,29 @@
   </div>
 </section>
 {% endblock contenido %}
+{% block extra_js %}
+{% if messages %}
+{% for message in messages  %}
+  <script>   
+  
+  {% if message.tags == 'info' %}
+  const Toast = Swal.mixin({
+    toast: true,
+    position: 'top-end',
+    showConfirmButton: false,
+    timer: 3000,
+    onOpen: (toast) => {
+      toast.addEventListener('mouseenter', Swal.stopTimer)
+      toast.addEventListener('mouseleave', Swal.resumeTimer)
+    }
+  })
+  
+  Toast.fire({
+    icon: 'success',
+    title: '{{ message }}'
+  })
+  {% endif %}
+  </script>
+  {% endfor %}
+{% endif %}
+{% endblock extra_js %}

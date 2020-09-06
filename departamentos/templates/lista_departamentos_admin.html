@@ -22,12 +22,13 @@
                         {% endif %}
                         <th>ID</th>
                         <th>Dirección</th>
-                        <th>Dorm.</th>
-                        <th>Baños</th>
-                        <th>M²</th>
+                        <th>Detalles</th>
                         <th>Precio/Dia</th>
                         <th>Imagenes</th>
                         <th>Inventario</th>
+                        {% if user.is_superuser %}
+                        <th>Eliminar</th>
+                        {% endif %}
                     </tr>
                 </thead>
                 
@@ -44,9 +45,68 @@
                         {% endif %}
                         <td>{{ departamento.id }}</td>
                         <td>{{ departamento.direccion }}</td>
-                        <td>{{ departamento.dormitorios }}</td>
-                        <td>{{ departamento.banos }}</td>
-                        <td>{{ departamento.metros_cuadrados }}</td>
+                        <td>
+                                 <!-- Modal ver detalles -->
+                                 <button type="button" class="btn btn-primary"  data-toggle="modal" data-target="#ver-detalle-{{ departamento.id }}">
+                                    Ver
+                                </button>
+                                
+                               
+                                <div class="modal fade" id="ver-detalle-{{ departamento.id }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog  modal-dialog-centered modal-dialog-scrollable ">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                        <h5 class="modal-title" id="exampleModalLabel">Detalle departamento {{ departamento.id }}</h5>
+                                        <button type="button" name="btn-imagenes"  class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <div class="card mb-4">
+                                                    <div class="card-header text-center ">
+                                                      
+                                                    </div>
+                                                    <div class="card-body">
+                                                        <div class="table-responsive">
+                                                            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                                                <thead>
+                                                                    <tr>
+                                                                        <th>Baños</th>
+                                                                        <th>Dormitorios</th>
+                                                                        <th>M²</th>
+                                                                    
+                                                                    </tr>
+                                                                </thead>
+                                                            
+                                                                <tbody>
+                                                                   
+                                                                
+                                                                    <tr> 
+                                                                        <td>{{ departamento.banos }}</td>
+                                                                        <td>{{departamento.dormitorios  }}</td>
+                                                                        <td>{{ departamento.metros_cuadrados  }}</td>
+                                                                    </tr>
+                                                                
+                                                                
+                                                                
+                                                                </tr>
+                                                            
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
+                                                    </div>
+
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                                        
+                                        </div>
+                                    </div>
+                                    </div>
+                                </div>
+                                <!-- Fin modal ver detalles -->
+                        </td>
                         <td>${{ departamento.precio }}</td>
                         <td  align="center">
                                  <!-- Modal ver imagenes -->
@@ -125,12 +185,12 @@
                                     </div>
                                 </div>
                                 <!-- Fin modal ver imagenes -->
-                    </td>
-                             <td>
+                        </td>
+                             <td align="center">
                                 <!-- Modal ver inventario -->
                                 <button type="button" class="btn " id="cambio-color" data-toggle="modal" data-target="#ver-inventario-{{ departamento.id }}">
                                 Ver
-                            </button>
+                                </button>
                             
                             
                             <div class="modal fade" id="ver-inventario-{{ departamento.id }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -237,6 +297,37 @@
                             </div>
                             <!-- Fin modal ver inventario -->
                         </td>
+                        <td align="center">
+                            <button onclick="eliminarDepto()" class="btn btn-danger"><i class="fas fa-trash-alt"></i>
+                            </button>
+                            <!-- Script para eliminar un departamento -->
+                            <script>
+                                const  eliminarDepto = async () =>{
+                                    const { value: accept } = await Swal.fire({
+                                        title: 'Desea eliminar el Depto {{ departamento.id }}',
+                                        input: 'checkbox',
+                                        icon: 'question',
+                                        confirmButtonColor: '#CD2737',
+                                        inputValue: 0,
+                                        inputPlaceholder:
+                                        `Me hago responsbale de eliminar el Depto ID {{ departamento.id }}`,
+                                        confirmButtonText:
+                                        'Eliminar <i class="fas fa-trash-alt"></i>',
+                                        cancelButtonText: 'Cancelar',
+                                        inputValidator: (result) => {
+                                        return !result && 'Por favor marque la casilla'
+                                        }
+                                    })
+                                    
+                                    if (accept) {
+        
+                                        var url =  `{% url "Eliminar departamento" departamento.id  %}`;
+                                        window.location.pathname =url;
+                                    }
+                                    
+                                }
+                            </script>
+                        </td>
                     </tr>
                 
                 </tbody>
@@ -261,9 +352,25 @@
     icon: 'error',
     confirmButtonText: 'Ok'
   })
+  {% elif message.tags == 'info' %}
+  const Toast = Swal.mixin({
+    toast: true,
+    position: 'top-end',
+    showConfirmButton: false,
+    timer: 3000,
+    onOpen: (toast) => {
+      toast.addEventListener('mouseenter', Swal.stopTimer)
+      toast.addEventListener('mouseleave', Swal.resumeTimer)
+    }
+  })
+  
+  Toast.fire({
+    icon: 'success',
+    title: '{{ message }}'
+  })
   {% else  %}
   Swal.fire({
-    title: 'Exito!',
+    title: 'Éxito!',
     text: '{{ message }}',
     icon: 'success',
     confirmButtonText: 'Ok'

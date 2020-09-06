@@ -24,7 +24,6 @@ def login_view(request):
     
         if user:
             login(request,user)
-            
             return HttpResponseRedirect(reverse('Departamentos'))
 
         

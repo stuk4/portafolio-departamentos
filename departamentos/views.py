@@ -40,10 +40,10 @@ def ver_departamento(request,id):
         reserva.usuario = usuario
         reserva.departamento = departamento
         reserva.dia_llegada = request.POST.get('diallegada')
-        if request.POST.GET('acompanantes') is None:
+        if request.POST.get('acompanantes') is None:
             reserva.acompanantes = 0
         else:
-            reserva.acompanantes = request.POST.GET('acompanantes')
+            reserva.acompanantes = request.POST.get('acompanantes')
         
         reserva.dias_estadia = request.POST.get('diasestadia',True)
         abono = round((departamento.precio *float(request.POST.get('diasestadia'))) * 0.1)

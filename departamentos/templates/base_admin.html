@@ -60,7 +60,7 @@
                                     <a class="nav-link {% if request.resolver_match.url_name == "Administracion departamentos" %}active{% endif %}" href="{% url 'Administracion departamentos' %}">Disponibles</a>
                                     <a class="nav-link" href="layout-sidenav-light.html">Reservados</a>
                                     <a class="nav-link" href="layout-sidenav-light.html">Arrendados</a>
-                                    <a class="nav-link" href="layout-sidenav-light.html">Mantención</a>
+                                    <a class="nav-link" href="{% url 'Administracion departamentos en mantención' %}">Mantención</a>
                                 </nav>
                             </div>
                             <div class="sb-sidenav-menu-heading">Usuarios</div>

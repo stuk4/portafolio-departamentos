@@ -17,18 +17,20 @@
             <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                 <thead>
                     <tr>
-                        {% if user.is_superuser %}
-                        <th> Editar </th>
-                        {% endif %}
                         <th>ID</th>
                         <th>Dirección</th>
-                        <th>Detalles</th>
                         <th>Precio/Dia</th>
+                        <th>Detalles</th>
                         <th>Imagenes</th>
                         <th>Inventario</th>
                         {% if user.is_superuser %}
+                        <th> Editar </th>
+                        {% endif %}
+                      <!-- Solo si es superuser y esta en la interfaz de administracion departamentos mostrar el boton -->
+                        {% if user.is_superuser and request.resolver_match.url_name == 'Administracion departamentos' %}
                         <th>Eliminar</th>
                         {% endif %}
+                        
                     </tr>
                 </thead>
                 
@@ -36,78 +38,72 @@
 
                 <tbody>
                     <tr>
-                        {% if user.is_superuser %}
-                        <td> 
-                            <div class="action">
-                                <a class="btn btn-info" href="/admin/departamentos/departamento/{{ departamento.id }}/change/?_to_field=id&_popup=1" role="button">Editar </a>
-                            </div>
-                        </td>
-                        {% endif %}
+
                         <td>{{ departamento.id }}</td>
                         <td>{{ departamento.direccion }}</td>
-                        <td>
-                                 <!-- Modal ver detalles -->
-                                 <button type="button" class="btn btn-primary"  data-toggle="modal" data-target="#ver-detalle-{{ departamento.id }}">
-                                    Ver
-                                </button>
-                                
-                               
-                                <div class="modal fade" id="ver-detalle-{{ departamento.id }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                    <div class="modal-dialog  modal-dialog-centered modal-dialog-scrollable ">
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                        <h5 class="modal-title" id="exampleModalLabel">Detalle departamento {{ departamento.id }}</h5>
-                                        <button type="button" name="btn-imagenes"  class="close" data-dismiss="modal" aria-label="Close">
-                                            <span aria-hidden="true">&times;</span>
-                                        </button>
-                                        </div>
-                                        <div class="modal-body">
-                                            <div class="card mb-4">
-                                                    <div class="card-header text-center ">
-                                                      
-                                                    </div>
-                                                    <div class="card-body">
-                                                        <div class="table-responsive">
-                                                            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-                                                                <thead>
-                                                                    <tr>
-                                                                        <th>Baños</th>
-                                                                        <th>Dormitorios</th>
-                                                                        <th>M²</th>
-                                                                    
-                                                                    </tr>
-                                                                </thead>
-                                                            
-                                                                <tbody>
-                                                                   
-                                                                
-                                                                    <tr> 
-                                                                        <td>{{ departamento.banos }}</td>
-                                                                        <td>{{departamento.dormitorios  }}</td>
-                                                                        <td>{{ departamento.metros_cuadrados  }}</td>
-                                                                    </tr>
-                                                                
-                                                                
-                                                                
-                                                                </tr>
-                                                            
-                                                                </tbody>
-                                                            </table>
-                                                        </div>
-                                                    </div>
-
-                                            </div>
-                                        </div>
-                                        <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                                        
-                                        </div>
-                                    </div>
-                                    </div>
-                                </div>
-                                <!-- Fin modal ver detalles -->
-                        </td>
                         <td>${{ departamento.precio }}</td>
+                        <td align="center">
+                            <!-- Modal ver detalles -->
+                            <button type="button" class="btn btn-primary"  data-toggle="modal" data-target="#ver-detalle-{{ departamento.id }}">
+                               Ver
+                           </button>
+                           
+                          
+                           <div class="modal fade" id="ver-detalle-{{ departamento.id }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                               <div class="modal-dialog  modal-dialog-centered modal-dialog-scrollable ">
+                               <div class="modal-content">
+                                   <div class="modal-header">
+                                   <h5 class="modal-title" id="exampleModalLabel">Detalle departamento {{ departamento.id }}</h5>
+                                   <button type="button" name="btn-imagenes"  class="close" data-dismiss="modal" aria-label="Close">
+                                       <span aria-hidden="true">&times;</span>
+                                   </button>
+                                   </div>
+                                   <div class="modal-body">
+                                       <div class="card mb-4">
+                                               <div class="card-header text-center ">
+                                                 
+                                               </div>
+                                               <div class="card-body">
+                                                   <div class="table-responsive">
+                                                       <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                                           <thead>
+                                                               <tr>
+                                                                   <th>Baños</th>
+                                                                   <th>Dormitorios</th>
+                                                                   <th>M²</th>
+                                                               
+                                                               </tr>
+                                                           </thead>
+                                                       
+                                                           <tbody>
+                                                              
+                                                           
+                                                               <tr> 
+                                                                   <td>{{ departamento.banos }}</td>
+                                                                   <td>{{departamento.dormitorios  }}</td>
+                                                                   <td>{{ departamento.metros_cuadrados  }}</td>
+                                                               </tr>
+                                                           
+                                                           
+                                                           
+                                                           </tr>
+                                                       
+                                                           </tbody>
+                                                       </table>
+                                                   </div>
+                                               </div>
+
+                                       </div>
+                                   </div>
+                                   <div class="modal-footer">
+                                   <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                                   
+                                   </div>
+                               </div>
+                               </div>
+                           </div>
+                           <!-- Fin modal ver detalles -->
+                       </td>
                         <td  align="center">
                                  <!-- Modal ver imagenes -->
                                  <button type="button" class="btn btn-primary"  data-toggle="modal" data-target="#ver-imagen-{{ departamento.id }}">
@@ -297,6 +293,16 @@
                             </div>
                             <!-- Fin modal ver inventario -->
                         </td>
+
+                        {% if user.is_superuser %}
+                        <td> 
+                            <div class="action">
+                                <a class="btn btn-info" href="/admin/departamentos/departamento/{{ departamento.id }}/change/?_to_field=id&_popup=1" role="button">Editar </a>
+                            </div>
+                        </td>
+                        {% endif %}
+                        <!-- Solo si se encuentra departamentos disponibles muestra el boton eliminar -->
+                        {% if  request.resolver_match.url_name == 'Administracion departamentos' %}
                         <td align="center">
                             <button onclick="eliminarDepto()" class="btn btn-danger"><i class="fas fa-trash-alt"></i>
                             </button>
@@ -328,6 +334,7 @@
                                 }
                             </script>
                         </td>
+                        {% endif %}
                     </tr>
                 
                 </tbody>

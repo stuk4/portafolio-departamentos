@@ -78,19 +78,19 @@ def ver_departamento(request,id):
 def listar_departamentos_admin(request):
 
     # Variables de para listar en mi template 
-    # Solo los departamentos que no contengan reserva y no esten en mantencion seran mostrados
-    departamentos = Departamento.objects.exclude(reserva__isnull=False).filter(estado_mantencion=False)
-    imagenes = Imagen.objects.all()
+    # If para diferenciar lo departamentos disponibles
+    if request.resolver_match.url_name == 'Administracion departamentos':
+        # Solo los departamentos que no contengan reserva y no esten en mantencion seran mostrados
+        departamentos = Departamento.objects.exclude(reserva__isnull=False).filter(estado_mantencion=False)
+    elif request.resolver_match.url_name == 'Administracion departamentos en mantención':
+        departamentos = Departamento.objects.exclude(reserva__isnull=False).filter(estado_mantencion=True)
     inventarios = Inventario.objects.all()
-    
+    imagenes = Imagen.objects.all()
 
     context = {'departamentos':departamentos,
                'imagenes':imagenes,
                'inventarios':inventarios}
-
-    
-
-
+               
     # Metodo post para agregar imagenes
     if request.method == 'POST' and 'btn-imagenes' in request.POST:
         imagen = Imagen()
@@ -103,17 +103,18 @@ def listar_departamentos_admin(request):
         
         if request.FILES.get('imagenDep') == None:
             messages.error(request,'Verifique los campos porfavor')
-            return render(request,'lista_departamentos_admin.html',context)
+           
+            return redirect(request.resolver_match.url_name)
        
 
         try:
             imagen.save()
             messages.success(request,'Imagen añadida con exito')
-            return render(request,'lista_departamentos_admin.html',context)
+            return redirect(request.resolver_match.url_name)
         except Exception as err:
             print(err)
             messages.error(request,'Lo sentimos hubo un error')
-            return render(request,'lista_departamentos_admin.html',context)
+            return redirect(request.resolver_match.url_name)
 
     # Metodo post para agregar inventario
     if request.method == 'POST' and 'btn-inventario' in request.POST:
@@ -126,15 +127,17 @@ def listar_departamentos_admin(request):
         try:
             inventario.save()
             messages.success(request,'Inventario {} añadido con exito'.format(request.POST.get('nombreInv')))
-            return render(request,'lista_departamentos_admin.html',context)
+            return redirect(request.resolver_match.url_name)
 
         except Exception as err:
             print(err)
             messages.error(request,'Verifique los campos porfavor')
-            return render(request,'lista_departamentos_admin.html',context)
+            return redirect(request.resolver_match.url_name)
 
 
     return render(request,'lista_departamentos_admin.html',context)
+# Regla de seguridad: Solo si esadmin puede eliminar
+@user_passes_test(lambda u:u.is_superuser,login_url=('login')) 
 def eliminar_departamento(request,id):
     
     departamento = Departamento.objects.exclude(reserva__isnull=False).filter(estado_mantencion=False)
@@ -151,15 +154,17 @@ def eliminar_departamento(request,id):
 @user_passes_test(lambda u:u.is_superuser,login_url=('login'))  
 def eliminar_inventario_departamento(request,id):
     inventario = Inventario.objects.filter(id=id)
+    print(request.META.get('HTTP_REFERER'))
+
     try:
         messages.success(request,'Inventario eliminado ')
         inventario.delete()
-        return redirect('Administracion departamentos')
+        return redirect(request.META.get('HTTP_REFERER'))
     except Exception as err:
         print(err)
         messages.error(request,'No se pudo eliminar el inventario')
-        return redirect('Administracion departamentos')
-    return redirect('Administracion departamentos')
+        return redirect(request.META.get('HTTP_REFERER'))
+    return redirect(request.META.get('HTTP_REFERER'))
 
 # Regla de seguridad: Solo si es admin puede eliminar
 @user_passes_test(lambda u:u.is_superuser,login_url=('login'))  
@@ -169,13 +174,13 @@ def eliminar_imagen_departamento(request,id):
         imagen.delete()
         # messages.success(request,'Imagen {} eliminada'.format(imagen.imagen.url))
         messages.success(request,'Imagen eliminada')
-        return redirect('Administracion departamentos')
+        return redirect(request.META.get('HTTP_REFERER'))
     except Exception as err:
         print(err)
         # messages.error(request,'No se pudo eliminar la imagen {} '.format(imagen.imagen.url))
         messages.error(request,'No se pudo eliminar la imagen ')
-        return redirect('Administracion departamentos')
-    return redirect('Administracion departamentos')
+        return redirect(request.META.get('HTTP_REFERER'))
+    return redirect(request.META.get('HTTP_REFERER'))
 
 
 # Regla de seguridad: Solo si es admin puede actualizar estado
@@ -191,25 +196,25 @@ def actualizar_estado_inventario(request,id):
 
             inventario.update(estado='Mal estado')
             messages.success(request,'Estado de  {} actualizado'.format(check_estado.nombre))
-            return redirect('Administracion departamentos')
+            return redirect(request.META.get('HTTP_REFERER'))
             
         except Exception as err:
 
             messages.error(request,'No se pudo actualizar el estado')
-            return redirect('Administracion departamentos')
+            return redirect(request.META.get('HTTP_REFERER'))
             
     else:
         try:
 
             inventario.update(estado='Buen estado')
             messages.success(request,'Estado de  {} actualizado'.format(check_estado.nombre))
-            return redirect('Administracion departamentos')
+            return redirect(request.META.get('HTTP_REFERER'))
 
         except Exception as err:
 
             print(err)
             messages.error(request,'No se pudo actualizar el estado')
-            return redirect('Administracion departamentos')
+            return redirect(request.META.get('HTTP_REFERER'))
 
     return redirect('Administracion departamentos')
     # Regla de seguridad: Solo si es admin puede ver usuarios

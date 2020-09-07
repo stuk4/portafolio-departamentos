@@ -102,8 +102,10 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
+
+USE_THOUSAND_SEPARATOR = True
+
 # Internationalization
-# https://docs.djangoproject.com/en/3.1/topics/i18n/
 
 LANGUAGE_CODE = 'es-es'
 

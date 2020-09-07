@@ -13,7 +13,8 @@ def listar_departamentos(request):
         return redirect('Administracion departamentos')
     # De lo contrario al sitio normal
     else:
-        departamentos = Departamento.objects.filter(estado_mantencion=False)
+        # Solo los departamentos que no contengan reserva y no esten en mantencion seran mostrados
+        departamentos = Departamento.objects.exclude(reserva__isnull=False).filter(estado_mantencion=False)
         context = {'departamentos':departamentos}
 
         return render(request,'lista_departamentos.html',context)
@@ -39,7 +40,11 @@ def ver_departamento(request,id):
         reserva.usuario = usuario
         reserva.departamento = departamento
         reserva.dia_llegada = request.POST.get('diallegada')
-
+        if request.POST.GET('acompanantes') is None:
+            reserva.acompanantes = 0
+        else:
+            reserva.acompanantes = request.POST.GET('acompanantes')
+        
         reserva.dias_estadia = request.POST.get('diasestadia',True)
         abono = round((departamento.precio *float(request.POST.get('diasestadia'))) * 0.1)
         reserva.abono = abono
@@ -73,7 +78,6 @@ def ver_departamento(request,id):
 def listar_departamentos_admin(request):
 
     # Variables de para listar en mi template 
-    print()
     # Solo los departamentos que no contengan reserva y no esten en mantencion seran mostrados
     departamentos = Departamento.objects.exclude(reserva__isnull=False).filter(estado_mantencion=False)
     imagenes = Imagen.objects.all()

@@ -55,6 +55,7 @@ class Inventario(models.Model):
 class Reserva(models.Model):
     usuario = models.ForeignKey("usuarios.User", related_name="reserva", on_delete=models.CASCADE)
     departamento = models.ForeignKey(Departamento, related_name="reserva", on_delete=models.CASCADE)
+    acompanantes = models.PositiveIntegerField(null=True,blank=True,verbose_name="acompañantes" )
     dia_llegada = models.DateField(
         null=True, blank=True, auto_now=False, auto_now_add=False)
     abono = models.PositiveIntegerField(null=False,blank=False )

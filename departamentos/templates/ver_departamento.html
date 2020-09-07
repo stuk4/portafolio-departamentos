@@ -61,7 +61,7 @@
 					
 					<!-- Modal -->
 					<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-						<div class="modal-dialog">
+						<div class="modal-dialog ">
 						<div class="modal-content">
 							<div class="modal-header">
 							<h5 class="modal-title" id="exampleModalLabel">Reservar Dep. {{ departamento.direccion }}</h5>
@@ -73,13 +73,17 @@
 							<form method="POST">{% csrf_token %}
 								
 									<div class="form-group">
+										<div class="form-group">
+											<label  for="llegada">Fecha de llegada *:</label>
+												<input required class="form-control" id="llegada" type="date" name="diallegada" />
+										</div>
 										<div class="row">
 											<div class="col">
-												<label  for="llegada">Fecha de llegada:</label>
-												<input required class="form-control" id="llegada" type="date" name="diallegada" />
+												<label  for="acompanantes">N de acompañantes:</label>
+												<input type="number" class="form-control" name="acompanantes" id="acompanantes">
 											</div>
 											<div class="col">
-												<label for="diasestadia">Dias de estadia:</label>
+												<label for="diasestadia">Dias de estadia *:</label>
 												<input required type="number" max="100" min="2" class="form-control" name="diasestadia" id="diasestadia">
 											</div>
 										</div>
@@ -98,8 +102,8 @@
 							</form>
 							</div>
 							<div class="modal-footer">
-							<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-							<button type="button" class="btn btn-primary">Save changes</button>
+							<button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+					
 							</div>
 						</div>
 						</div>
@@ -123,10 +127,15 @@
 	const dias =document.getElementById("diasestadia")
 	const total = document.getElementById("eltotal")
 	const abono = document.getElementById("elabono")
+	const addPunto = (numero) =>{
+		
+		return new Intl.NumberFormat('es-es', { style: 'currency', currency: 'CLP' }).format(numero)
+	}
 	const inner = (e) =>{
 		total.innerHTML = ""
-		total.innerHTML = e.target.value * {{ departamento.precio }};
-		abono.innerHTML = Math.round( (e.target.value * {{ departamento.precio }}) * 0.1);
+		var precio =Number('{{ departamento.precio }}'.replace('.',''));
+		total.innerHTML = addPunto(e.target.value * precio);
+		abono.innerHTML = addPunto( Math.round( (e.target.value * precio) * 0.1));
 	}
 	dias.addEventListener('input',inner)
 	dias.addEventListener('propertychange', inner);

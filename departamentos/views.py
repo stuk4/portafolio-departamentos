@@ -7,6 +7,7 @@ from django.contrib import messages
 
 #  Views correspondientes a vistas del cliente
 def listar_departamentos(request):
+    
     # Se es administrador o funcionario redirecciona al sitio administracion
     if request.user.is_staff:
 
@@ -84,6 +85,8 @@ def listar_departamentos_admin(request):
         departamentos = Departamento.objects.exclude(reserva__isnull=False).filter(estado_mantencion=False)
     elif request.resolver_match.url_name == 'Administracion departamentos en mantención':
         departamentos = Departamento.objects.exclude(reserva__isnull=False).filter(estado_mantencion=True)
+    elif request.resolver_match.url_name == 'Administracion departamentos reservados':
+        departamentos = Departamento.objects.exclude(reserva__isnull=True).filter(estado_mantencion=False)
     inventarios = Inventario.objects.all()
     imagenes = Imagen.objects.all()
 
@@ -149,6 +152,39 @@ def eliminar_departamento(request,id):
         print('Error VELIMINARDEPTO ==',err)
         messages.error(request,'No se pudo eliminar el departamento')
         return redirect('Administracion departamentos')
+
+def actualizar_estado_mantencion(request,id):
+    
+    departamento = Departamento.objects.filter(id=id)
+    # Esto lo hago para obtener los fields del model 
+    check_estado =  Departamento.objects.get(id=id)
+
+    if check_estado.estado_mantencion == True:
+        try:
+
+            departamento.update(estado_mantencion=False)
+            messages.success(request,'Estado de  {} actualizado'.format(check_estado.direccion))
+            return redirect(request.META.get('HTTP_REFERER'))
+            
+        except Exception as err:
+
+            messages.error(request,'No se pudo actualizar el estado')
+            return redirect(request.META.get('HTTP_REFERER'))
+            
+    else:
+        try:
+
+            departamento.update(estado_mantencion=True)
+            messages.success(request,'Estado de  {} actualizado'.format(check_estado.direccion))
+            return redirect(request.META.get('HTTP_REFERER'))
+
+        except Exception as err:
+
+            print(err)
+            messages.error(request,'No se pudo actualizar el estado')
+            return redirect(request.META.get('HTTP_REFERER'))
+
+    return redirect('Administracion departamentos') 
 
 # Regla de seguridad: Solo si esadmin puede eliminar
 @user_passes_test(lambda u:u.is_superuser,login_url=('login'))  

@@ -1,6 +1,6 @@
 from django.db import models
 from django.utils.html import mark_safe
-
+from datetime import date
 
 class Departamento(models.Model):
 
@@ -15,6 +15,9 @@ class Departamento(models.Model):
         null=True, blank=True, auto_now=False, auto_now_add=False)
     precio = models.PositiveIntegerField(null=True, blank=False)
     metros_cuadrados = models.PositiveIntegerField(null=True, blank=False)
+    @property
+    def dia_mantencion(self):
+        return date.today() == self.mantencion
     def __str__(self):
         return "ID {} Dep. {} Direc. {}".format(self.id,self.titulo,self.direccion)
     def mostrar_imagen(self):
@@ -61,7 +64,7 @@ class Reserva(models.Model):
     abono = models.PositiveIntegerField(null=False,blank=False )
     dias_estadia =  models.PositiveIntegerField(null=False,blank=False,verbose_name="días estadia" )
     def __str__(self):
-        return 'Usuario: {} Depto: {}'.format(self.usuario,self.departamento)
+        return '{} '.format(self.usuario)
     
 class Arriendo(models.Model):
      reserva = models.ForeignKey(Reserva, related_name="arriendo", on_delete=models.CASCADE)

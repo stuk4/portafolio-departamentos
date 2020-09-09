@@ -19,11 +19,12 @@
                     <tr>
                         <th>ID</th>
                         <th>Dirección</th>
-                        <th>Precio/Dia</th>
                         <th>Detalles</th>
                         <th>Imagenes</th>
                         <th>Inventario</th>
-                        {% if user.is_superuser %}
+                        <th>Mantención</th>
+                        {% if user.is_superuser and request.resolver_match.url_name == 'Administracion departamentos' or request.resolver_match.url_name == 'Administracion departamentos en mantención' %}
+                  
                         <th> Editar </th>
                         {% endif %}
                       <!-- Solo si es superuser y esta en la interfaz de administracion departamentos mostrar el boton -->
@@ -41,11 +42,11 @@
 
                         <td>{{ departamento.id }}</td>
                         <td>{{ departamento.direccion }}</td>
-                        <td>${{ departamento.precio }}</td>
+                     
                         <td align="center">
                             <!-- Modal ver detalles -->
                             <button type="button" class="btn btn-primary"  data-toggle="modal" data-target="#ver-detalle-{{ departamento.id }}">
-                               Ver
+                                <i class="fas fa-eye"></i>
                            </button>
                            
                           
@@ -71,6 +72,7 @@
                                                                    <th>Baños</th>
                                                                    <th>Dormitorios</th>
                                                                    <th>M²</th>
+                                                                   <th>Precio</th>
                                                                
                                                                </tr>
                                                            </thead>
@@ -82,6 +84,7 @@
                                                                    <td>{{ departamento.banos }}</td>
                                                                    <td>{{departamento.dormitorios  }}</td>
                                                                    <td>{{ departamento.metros_cuadrados  }}</td>
+                                                                   <td>$ {{ departamento.precio }}</td>
                                                                </tr>
                                                            
                                                            
@@ -107,7 +110,7 @@
                         <td  align="center">
                                  <!-- Modal ver imagenes -->
                                  <button type="button" class="btn btn-primary"  data-toggle="modal" data-target="#ver-imagen-{{ departamento.id }}">
-                                    Ver
+                                    <i class="fas fa-eye"></i>
                                 </button>
                                 
                                
@@ -123,7 +126,7 @@
                                         <div class="modal-body">
                                             <div class="card mb-4">
                                                     <div class="card-header text-center ">
-                                                        {% if user.is_superuser %}
+                                                        {% if user.is_superuser and request.resolver_match.url_name == 'Administracion departamentos' or request.resolver_match.url_name == 'Administracion departamentos mantención' %}
                                                         <form enctype="multipart/form-data" method="POST"   >{% csrf_token %}
                                                             
                                                             <div class="form-group">
@@ -143,8 +146,9 @@
                                                                 <thead>
                                                                     <tr>
                                                                         <th>Foto</th>
+                                                                        {% if user.is_superuser and request.resolver_match.url_name == 'Administracion departamentos' or request.resolver_match.url_name == 'Administracion departamentos mantención' %}
                                                                         <th>Eliminar</th>
-                                                                    
+                                                                        {% endif %}
                                                                     </tr>
                                                                 </thead>
                                                             
@@ -155,8 +159,9 @@
                                                                 
                                                                     <tr> 
                                                                         <td><img class="mx-auto img-fluid w-50  mx-auto d-block img-thumbnail" src="{{ imagen.imagen.url }}" alt=""></td>
+                                                                        {% if user.is_superuser and request.resolver_match.url_name == 'Administracion departamentos' or request.resolver_match.url_name == 'Administracion departamentos mantención' %}
                                                                         <td class="align-middle" > <a class="btn btn-danger"  href="{% url 'Eliminar imagen departamento' imagen.id  %}" role="button"> Eliminar</a></td>
-                                                                    
+                                                                        {% endif %}
                                                                     </tr>
                                                                     {% endif %}
                                                                     {% endif %}
@@ -184,8 +189,8 @@
                         </td>
                              <td align="center">
                                 <!-- Modal ver inventario -->
-                                <button type="button" class="btn " id="cambio-color" data-toggle="modal" data-target="#ver-inventario-{{ departamento.id }}">
-                                Ver
+                                <button type="button" class="btn " id="cambio-color-{{ departamento.id }}" data-toggle="modal" data-target="#ver-inventario-{{ departamento.id }}">
+                                    <i class="fas fa-eye"></i>
                                 </button>
                             
                             
@@ -201,7 +206,7 @@
                                     <div class="modal-body">
                                         <div class="card mb-4">
                                                 <div class=" card-header">
-                                                    {% if user.is_superuser %}
+                                                    {% if user.is_superuser and request.resolver_match.url_name == 'Administracion departamentos en mantención' %}
                                                     <form enctype="multipart/form-data" method="POST"   >{% csrf_token %}
                                                         
                                                         <div class="form-group">
@@ -230,7 +235,7 @@
                                                                     <th>Nombre</th>
                                                                     <th>Estado</th>
                                                                     <th>Precio</th>
-                                                                    {% if user.is_superuser %}
+                                                                    {% if user.is_superuser and request.resolver_match.url_name == 'Administracion departamentos en mantención' %}
                                                                     <th>Eliminar</th>
                                                                     {% endif %}
                                                                 
@@ -247,10 +252,10 @@
                                                                     function ColorBotonVer(){
                                                                         const estado = '{{ departamento.inventario.all }}';
                                                                         if(estado.includes('Mal estado')){
-                                                                            document.getElementById("cambio-color").classList.add("btn-warning");
+                                                                            document.getElementById("cambio-color-{{ departamento.id }}").classList.add("btn-warning");
                                                                         }
                                                                         else{
-                                                                            document.getElementById("cambio-color").classList.add("btn-success");
+                                                                            document.getElementById("cambio-color-{{ departamento.id }}").classList.add("btn-success");
                                                                         } 
                                                                        
                                                                         
@@ -260,12 +265,12 @@
                                                                 <tr> 
                                                                     <td>{{ inventario.nombre}}</td>
                                                                     <td>{{ inventario.estado }}
-                                                                        {% if user.is_superuser %}
+                                                                        {% if user.is_superuser and request.resolver_match.url_name == 'Administracion departamentos en mantención' %}
                                                                          <a class="btn btn-info"  href="{% url 'Actualizar inventario departamento' inventario.id  %}"  role="button"> <i class="fas fa-exchange-alt"></i></a> 
                                                                          {% endif %}
                                                                     </td>
                                                                     <td>${{ inventario.precio }}</td>
-                                                                    {% if user.is_superuser %}
+                                                                    {% if user.is_superuser and request.resolver_match.url_name == 'Administracion departamentos en mantención' %}
                                                                     <td class="align-middle" > <a class="btn btn-danger "  href="{% url 'Eliminar inventario departamento' inventario.id  %}"  role="button"> Eliminar</a></td>
                                                                     {% endif %}
                                                                 </tr>
@@ -293,11 +298,86 @@
                             </div>
                             <!-- Fin modal ver inventario -->
                         </td>
+                        <td align="center">  
+                               <!-- Modal ver mantencion -->
+                               <button type="button" class="btn btn-primary"  data-toggle="modal" data-target="#ver-mantencion-{{ departamento.id }}">
+                                <i class="fas fa-tools"></i>
+                           </button>
+                           
+                          
+                           <div class="modal fade" id="ver-mantencion-{{ departamento.id }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                               <div class="modal-dialog  modal-dialog-centered modal-dialog-scrollable ">
+                               <div class="modal-content">
+                                   <div class="modal-header">
+                                   <h5 class="modal-title" id="exampleModalLabel">Dia mantención Depto. {{ departamento.id }}</h5>
+                                   <button type="button" name="btn-imagenes"  class="close" data-dismiss="modal" aria-label="Close">
+                                       <span aria-hidden="true">&times;</span>
+                                   </button>
+                                   </div>
+                                   <div class="modal-body">
+                                       <div class="card mb-4">
+                                               <div class="card-header text-center d-flex flex-column">
+                                                {% if user.is_superuser  and request.resolver_match.url_name == 'Administracion departamentos en mantención' or request.resolver_match.url_name == 'Administracion departamentos'  %}
+                                                {% if  departamento.dia_mantencion %}
+                                                Cambiar estado
+                                                <a class="btn btn-info"  href="{% url 'Actualizar estado mantencion' departamento.id  %}"  role="button"> <i class="fas fa-exchange-alt"></i></a> 
+                                                {% endif %}
+                                                {% endif %}
+                                               </div>
+                                               <div class="card-body">
+                                                   <div class="table-responsive">
+                                                       <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                                           <thead>
+                                                               <tr>
+                                                                   <th>Dia de mantención</th>
+                                                                 
+                                                               
+                                                               </tr>
+                                                           </thead>
+                                                       
+                                                           <tbody>
+                                                              
+                                                           
+                                                               <tr> 
+                                                                   <td>
+                                                                       {% if departamento.mantencion == None %}
+                                                                        No programada
+                                                                        {% elif departamento.dia_mantencion %}
+                                                                        La mantención es hoy!
+                                                                       {% else%}
+                                                                       {{ departamento.mantencion|date:"SHORT_DATE_FORMAT" }}
+                                                                    
+                                                                           
+                                                                       {% endif %}
+                                                                    </td>
+                                                            
+                                                               </tr>
+                                                           
+                                                           
+                                                           
+                                                           </tr>
+                                                       
+                                                           </tbody>
+                                                       </table>
+                                                   </div>
+                                               </div>
 
-                        {% if user.is_superuser %}
-                        <td> 
+                                       </div>
+                                   </div>
+                                   <div class="modal-footer">
+                                   <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                                   
+                                   </div>
+                               </div>
+                               </div>
+                           </div>
+                           <!-- Fin modal ver mantencion -->
+
+                        </td>
+                        {% if user.is_superuser and request.resolver_match.url_name == 'Administracion departamentos' or request.resolver_match.url_name == 'Administracion departamentos en mantención' %}
+                        <td align="center"> 
                             <div class="action">
-                                <a class="btn btn-info" href="/admin/departamentos/departamento/{{ departamento.id }}/change/?_to_field=id&_popup=1" role="button">Editar </a>
+                                <a class="btn btn-info" href="/admin/departamentos/departamento/{{ departamento.id }}/change/?_to_field=id&_popup=1" role="button"><i class="fas fa-edit"></i> </a>
                             </div>
                         </td>
                         {% endif %}

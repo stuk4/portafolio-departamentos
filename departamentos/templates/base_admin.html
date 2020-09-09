@@ -55,10 +55,14 @@
                                 Departamentos
                                 <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
                             </a>
-                            <div class="collapse" id="collapseLayouts" aria-labelledby="headingOne" data-parent="#sidenavAccordion">
+                            <div class="collapse 
+                                        {% if request.resolver_match.url_name == 'Administracion departamentos' or request.resolver_match.url_name == 'Administracion departamentos en mantención' or request.resolver_match.url_name == 'Administracion departamentos reservados' %}
+                                        show
+                                        {% endif %}
+                                        " id="collapseLayouts" aria-labelledby="headingOne" data-parent="#sidenavAccordion">
                                 <nav class="sb-sidenav-menu-nested nav">
                                     <a class="nav-link {% if request.resolver_match.url_name == "Administracion departamentos" %}active{% endif %}" href="{% url 'Administracion departamentos' %}">Disponibles</a>
-                                    <a class="nav-link" href="layout-sidenav-light.html">Reservados</a>
+                                    <a class="nav-link" href="{% url 'Administracion departamentos reservados' %}">Reservados</a>
                                     <a class="nav-link" href="layout-sidenav-light.html">Arrendados</a>
                                     <a class="nav-link" href="{% url 'Administracion departamentos en mantención' %}">Mantención</a>
                                 </nav>
@@ -71,7 +75,7 @@
                         
                             <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePages" aria-expanded="false" aria-controls="collapsePages">
                                 <div class="sb-nav-link-icon"><i class="fas fa-book-open"></i></div>
-                                Pages
+                               
                                 <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
                             </a>
                             <div class="collapse" id="collapsePages" aria-labelledby="headingTwo" data-parent="#sidenavAccordion">

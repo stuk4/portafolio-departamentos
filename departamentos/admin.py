@@ -20,7 +20,7 @@ class CustomUserAdmin(admin.ModelAdmin):
     model = Departamento
     
 
-
+    exclude = ('estado_mantencion',)
     # Customizacion de interfaz
     list_display = ["mostrar_imagen","id","titulo","direccion",'mantencion','estado_mantencion']
     list_filter = ('titulo','direccion',)

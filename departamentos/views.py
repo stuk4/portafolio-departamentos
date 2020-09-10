@@ -140,7 +140,7 @@ def listar_departamentos_admin(request):
     #Metodo POST para asginar dia de mantencion
     if request.method == 'POST' and 'btn-mantencion' in request.POST:
         # Condicion de fecha
-        if parse_date(request.POST.get('fechamantencion')) <= date.today():
+        if parse_date(request.POST.get('fechamantencion')) < date.today():
             messages.error(request,'El dia mantencion debe ser superior a hoy')
             return redirect('Administracion departamentos')
         print('ESTEEEEE  ===> ',parse_date(request.POST.get('fechamantencion')))
@@ -179,9 +179,10 @@ def actualizar_estado_mantencion(request,id):
         match = resolve('/'+referer)
     else:
         match="/"
-    # If para saber si la mantencion no esta progarmada
-    if check_estado.mantencion is None:
+    # If para saber si la mantencion no esta progarmada solo en url_name deptos disponibles
+    if check_estado.mantencion is None and match.url_name == 'Administracion departamentos':
         messages.error(request,'Mantencion de Depto {} no programada para hoy'.format(check_estado.id))
+        print('ERRROOR')
         return redirect(request.META.get('HTTP_REFERER'))
 
 

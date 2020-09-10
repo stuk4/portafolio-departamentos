@@ -20,7 +20,7 @@ class CustomUserAdmin(admin.ModelAdmin):
     model = Departamento
     
 
-    exclude = ('estado_mantencion',)
+    exclude = ('estado_mantencion','mantencion',)
     # Customizacion de interfaz
     list_display = ["mostrar_imagen","id","titulo","direccion",'mantencion','estado_mantencion']
     list_filter = ('titulo','direccion',)
@@ -28,9 +28,9 @@ class CustomUserAdmin(admin.ModelAdmin):
 
     # Metodo para asignar redireccion cuando se edita una imagen
     def response_change(self,request, obj):
-        return redirect('Administracion departamentos')
+        return redirect('Administracion departamentos en mantención')
     def response_add(self,request,obj):
-        return redirect('Administracion departamentos')
+        return redirect('Administracion departamentos en mantención')
 
 # Customizacion de modelo ImagenesDepartamentos en admin
 @admin.register(Imagen)

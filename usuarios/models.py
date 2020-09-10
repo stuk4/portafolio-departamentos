@@ -5,7 +5,7 @@ from datetime import date
 
 class User(AbstractUser):
     telefono = models.IntegerField(null=True,blank=False)
-    fecha_nacimiento = models.DateField( null=True,blank=False,auto_now=False,default=date.today(), auto_now_add=False)
+    fecha_nacimiento = models.DateField( null=True,blank=False,auto_now=False, auto_now_add=False)
     N_tarjeta = models.IntegerField(null=True,blank=False)
     imagen = models.ImageField(upload_to='usuarios/%Y/%m',blank=True)
     

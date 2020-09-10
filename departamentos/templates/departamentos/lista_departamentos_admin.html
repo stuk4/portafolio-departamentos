@@ -1,4 +1,4 @@
-{% extends 'base_admin.html' %}
+{% extends 'departamentos/base_admin.html' %}
 {% load static %}
 {% block extra_css %}
 
@@ -20,6 +20,9 @@
                     <tr>
                         <th>ID</th>
                         <th>Dirección</th>
+                        {% if request.resolver_match.url_name == 'Administracion departamentos reservados' %}
+                        <th>Cliente</th>
+                        {% endif %}
                         <th>Detalles</th>
                         <th>Imagenes</th>
                         <th>Inventario</th>
@@ -45,6 +48,9 @@
 
                             <td>{{ departamento.id }}</td>
                             <td>{{ departamento.direccion }}</td>
+                            {% if request.resolver_match.url_name == 'Administracion departamentos reservados' %}
+                            <td>{% for reserva in departamento.reserva.all %} {{reserva.usuario}} {% endfor %}  </td>
+                            {% endif %}
 
                             <td align="center">
                                 <!-- Modal ver detalles -->

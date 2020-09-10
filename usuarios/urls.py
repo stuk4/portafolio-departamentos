@@ -6,7 +6,8 @@ from . import views
 urlpatterns = [
    path('login/',views.login_view,name="login"),
    path('logout/',views.logout_view,name="logout"),
-   path('registro/',views.registro,name="registro")
+   path('registro/',views.registro,name="registro"),
+   path('perfil/',views.perfil,name="Perfil")
 ]
 #Configuracion de imagenes
 if settings.DEBUG:

@@ -19,7 +19,7 @@ def login_view(request):
             
         except Exception as err:
             messages.error(request,'Lo sentimos hubo un problema')
-            return render(request,'login.html')
+            return render(request,'usuarios/login.html')
         
     
         if user:
@@ -31,12 +31,12 @@ def login_view(request):
         else:
          
             messages.error(request,'Credenciales incorrectas')
-            return render(request,'login.html')
+            return render(request,'usuarios/login.html')
     else:
         if request.user.is_active:
 
             messages.info(request,'Bienvenido {}'.format(request.user.first_name))
-        return render(request,'login.html')
+        return render(request,'usuarios/login.html')
 
 
         
@@ -61,7 +61,7 @@ def registro(request):
 
         except:
             messages.error(request,'Usuario ya registrado')
-            return render(request,'Registro.html')
+            return render(request,'usuarios/Registro.html')
        
         user.email = request.POST.get('email')
         user.first_name = request.POST.get('name')
@@ -73,11 +73,14 @@ def registro(request):
            
             user.save()
             messages.success(request,'Registrado con exito')
-            return render(request,'Registro.html')
+            return render(request,'usuarios/Registro.html')
         except Exception as err:
             context = {'alerta':'ok-alerta'}
             messages.error(request,'Verifique los campos porfavor')
             print(err)
-            return render(request,'Registro.html')
+            return render(request,'usuarios/Registro.html')
     
-    return render(request,'Registro.html')
+    return render(request,'usuarios/Registro.html')
+
+def perfil(request):
+    return render(request,'usuarios/perfil.html')

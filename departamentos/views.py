@@ -16,10 +16,10 @@ def listar_departamentos(request):
     # De lo contrario al sitio normal
     else:
         # Solo los departamentos que no contengan reserva y no esten en mantencion seran mostrados
-        departamentos = Departamento.objects.exclude(reserva__isnull=False).filter(estado_mantencion=False)
+        departamentos = Departamento.objects.exclude(reserva__usuario__isnull=False).filter(estado_mantencion=False)
         context = {'departamentos':departamentos}
 
-        return render(request,'lista_departamentos.html',context)
+        return render(request,'departamentos/lista_departamentos.html',context)
 
 def ver_departamento(request,id):
 
@@ -56,19 +56,19 @@ def ver_departamento(request,id):
             # Condicion si tiene una reserva no deja reservar
             if tiene_reserva:
                 messages.error(request,'Lo sentimos usted ya tiene una reseva')
-                return render(request,'ver_departamento.html',context)
+                return render(request,'departamentos/ver_departamento.html',context)
 
             reserva.save()
          
 
             #Return si sale todo bien con reserva
             messages.success(request,'Depto {} reservado!!'.format(departamento.direccion))
-            return render(request,'ver_departamento.html',context)
+            return render(request,'departamentos/ver_departamento.html',context)
         except Exception as err:
             print('Error al guardar Reserva ===',err)
             messages.error(request,'Lo sentimos no se realizo la reserva')
             return render(request,'ver_departamento.html',context)
-    return render(request,'ver_departamento.html',context)
+    return render(request,'departamentos/ver_departamento.html',context)
 
 
 # Fin de vistas corrrespondientes a parte del cliente
@@ -82,12 +82,12 @@ def listar_departamentos_admin(request):
     # Variables de para listar en mi template 
     # If para diferenciar lo departamentos disponibles
     if request.resolver_match.url_name == 'Administracion departamentos':
-        # Solo los departamentos que no contengan reserva y no esten en mantencion seran mostrados
-        departamentos = Departamento.objects.exclude(reserva__isnull=False).filter(estado_mantencion=False)
+        # Solo los departamentos que no contengan usuario con reserva activa y no esten en mantencion seran mostrados
+        departamentos = Departamento.objects.exclude(reserva__usuario__isnull=False).filter(estado_mantencion=False)
     elif request.resolver_match.url_name == 'Administracion departamentos en mantención':
-        departamentos = Departamento.objects.exclude(reserva__isnull=False).filter(estado_mantencion=True)
+        departamentos = Departamento.objects.exclude(reserva__usuario__isnull=False).filter(estado_mantencion=True)
     elif request.resolver_match.url_name == 'Administracion departamentos reservados':
-        departamentos = Departamento.objects.exclude(reserva__isnull=True).filter(estado_mantencion=False)
+        departamentos = Departamento.objects.exclude(reserva__usuario__isnull=True).filter(estado_mantencion=False)
     inventarios = Inventario.objects.all()
     imagenes = Imagen.objects.all()
 
@@ -154,7 +154,7 @@ def listar_departamentos_admin(request):
             print(err)
             messages.error(request,'No se pudo programar la mantencion')
             return redirect('Administracion departamentos')
-    return render(request,'lista_departamentos_admin.html',context)
+    return render(request,'departamentos/lista_departamentos_admin.html',context)
 # Regla de seguridad: Solo si esadmin puede eliminar
 @user_passes_test(lambda u:u.is_superuser,login_url=('login')) 
 def eliminar_departamento(request,id):
@@ -294,7 +294,7 @@ def actualizar_estado_inventario(request,id):
 def listar_usuarios(request):
     usuarios = User.objects.all()
     context = {'usuarios':usuarios}
-    return render(request,'listar_usuarios_admin.html',context)
+    return render(request,'departamentos/listar_usuarios_admin.html',context)
     # Regla de seguridad: Solo si es admin puede actualizar usuarios
 @user_passes_test(lambda u:u.is_superuser,login_url=('login'))  
 def actualizar_estado_usuario(request,id):

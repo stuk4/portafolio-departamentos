@@ -56,7 +56,7 @@ class Inventario(models.Model):
         return 'Nombre: {} Estado:{}'.format(self.nombre,self.estado)
 
 class Reserva(models.Model):
-    usuario = models.ForeignKey("usuarios.User", related_name="reserva", on_delete=models.CASCADE)
+    usuario = models.ForeignKey("usuarios.User",null=True,blank=True ,related_name="reserva", on_delete=models.CASCADE)
     departamento = models.ForeignKey(Departamento, related_name="reserva", on_delete=models.CASCADE)
     acompanantes = models.PositiveIntegerField(null=True,blank=True,verbose_name="acompañantes" )
     dia_llegada = models.DateField(
@@ -64,7 +64,7 @@ class Reserva(models.Model):
     abono = models.PositiveIntegerField(null=False,blank=False )
     dias_estadia =  models.PositiveIntegerField(null=False,blank=False,verbose_name="días estadia" )
     def __str__(self):
-        return '{} '.format(self.usuario)
+        return 'ID reserva:{} {}'.format(self.id,self.usuario)
     
 class Arriendo(models.Model):
      reserva = models.ForeignKey(Reserva, related_name="arriendo", on_delete=models.CASCADE)

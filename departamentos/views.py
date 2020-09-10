@@ -159,7 +159,7 @@ def listar_departamentos_admin(request):
 @user_passes_test(lambda u:u.is_superuser,login_url=('login')) 
 def eliminar_departamento(request,id):
     
-    departamento = Departamento.objects.exclude(reserva__isnull=False).filter(estado_mantencion=False)
+    departamento = Departamento.objects.exclude(reserva__isnull=False).filter(id=id,estado_mantencion=False)
     try:
         messages.success(request,'Departamento eliminado')
         departamento.delete()

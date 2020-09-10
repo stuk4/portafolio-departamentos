@@ -434,11 +434,11 @@
 <!-- Solo si se encuentra departamentos disponibles muestra el boton eliminar -->
 {% if  request.resolver_match.url_name == 'Administracion departamentos' %}
 <td align="center">
-    <button onclick="eliminarDepto()" class="btn btn-danger"><i class="fas fa-trash-alt"></i>
+    <button onclick="eliminarDepto_{{ departamento.id }}()" class="btn btn-danger"><i class="fas fa-trash-alt"></i>
     </button>
     <!-- Script para eliminar un departamento -->
     <script>
-        const eliminarDepto = async () => {
+        const eliminarDepto_{{ departamento.id }} = async () => {
             const {
                 value: accept
             } = await Swal.fire({

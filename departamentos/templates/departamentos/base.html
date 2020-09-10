@@ -55,7 +55,7 @@
                 Bienvenid@ {{ request.user.first_name }}
               </a>
               <div class="dropdown-menu" role="menu">
-                <a class="dropdown-item" role="presentation" href="#"
+                <a class="dropdown-item" role="presentation" href="{% url 'Perfil' %}"
                   >Perfil</a>     
               <form id="form-logout" method="POST"  action="{% url 'logout' %}">{% csrf_token %}
                 <a

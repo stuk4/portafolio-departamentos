@@ -1,0 +1,82 @@
+{% extends 'departamentos/base.html'%}
+{% block contenido %}
+<!-- TODO TERMINAR CON ESTA INTERFAZ HACER SU VIEW CORRESPONDIENTE Y LUEGO LA DE ARRIENDO -->
+<div class="container">
+	<div class="row">
+		<div class="col-md-3 ">
+		     <div class="list-group ">
+              <a href="#" class="list-group-item list-group-item-action active">Perfil</a>
+              <a href="#" class="list-group-item list-group-item-action">Reservas</a>
+              <a href="#" class="list-group-item list-group-item-action">Arriendos</a>
+     
+              
+              
+            </div> 
+		</div>
+		<div class="col-md-9">
+		    <div class="card">
+		        <div class="card-body">
+		            <div class="row">
+		                <div class="col-md-12">
+		                    <h4>Mi Perfil</h4>
+		                    <hr>
+		                </div>
+		            </div>
+		            <div class="row">
+		                <div class="col-md-12">
+		                    <form>
+
+                              <div class="form-group row">
+                                <label for="name" class="col-4 col-form-label">Nombres</label> 
+                                <div class="col-8">
+                                  <input id="name" name="nombres" placeholder="Nombres" class="form-control " type="text">
+                                </div>
+                              </div>
+                              <div class="form-group row">
+                                <label for="lastname" class="col-4 col-form-label">Apellidos</label> 
+                                <div class="col-8">
+                                  <input id="lastname" name="apellidos" placeholder="Apellidos" class="form-control here" type="text">
+                                </div>
+                              </div>
+                              <div class="form-group row">
+                                <label for="text" class="col-4 col-form-label">Edad</label> 
+                                <div class="col-8">
+                                  <input id="text" name="number" placeholder="Edad" class="form-control here" required="required" type="text">
+                                </div>
+                              </div>
+                              <div class="form-group row">
+                                <label for="select" class="col-4 col-form-label">Display Name public as</label> 
+                                <div class="col-8">
+                                  <select id="select" name="select" class="custom-select">
+                                    <option value="admin">Admin</option>
+                                  </select>
+                                </div>
+                              </div>
+                              <div class="form-group row">
+                                <label for="email" class="col-4 col-form-label">Email*</label> 
+                                <div class="col-8">
+                                  <input id="email" name="email" placeholder="Email" class="form-control here" required="required" type="text">
+                                </div>
+                              </div>
+                              
+                              <div class="form-group row">
+                                <label for="newpass" class="col-4 col-form-label">New Password</label> 
+                                <div class="col-8">
+                                  <input id="newpass" name="newpass" placeholder="New Password" class="form-control here" type="text">
+                                </div>
+                              </div> 
+                              <div class="form-group row">
+                                <div class="offset-4 col-8">
+                                  <button name="submit" type="submit" class="btn btn-primary">Actualizar Mi Perfil</button>
+                                </div>
+                              </div>
+                            </form>
+		                </div>
+		            </div>
+		            
+		        </div>
+		    </div>
+		</div>
+	</div>
+</div>
+{% endblock contenido %}

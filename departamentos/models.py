@@ -4,6 +4,8 @@ from datetime import date
 
 class Departamento(models.Model):
 
+    mantencion = models.DateField(
+        null=True, blank=True, auto_now=False, auto_now_add=False)
     titulo = models.CharField(null=True, blank=False, max_length=50)
     banos = models.PositiveIntegerField(null=True, blank=False,verbose_name="baños")
     dormitorios = models.PositiveIntegerField(null=True, blank=False)
@@ -11,8 +13,6 @@ class Departamento(models.Model):
     direccion = models.CharField(max_length=60)
     estado_mantencion = models.BooleanField(default=True,null=True, blank=True)
     imagen = models.ImageField(upload_to='departamentos_principal/%Y/%m',blank=True)
-    mantencion = models.DateField(
-        null=True, blank=True, auto_now=False, auto_now_add=False)
     precio = models.PositiveIntegerField(null=True, blank=False)
     metros_cuadrados = models.PositiveIntegerField(null=True, blank=False)
     @property

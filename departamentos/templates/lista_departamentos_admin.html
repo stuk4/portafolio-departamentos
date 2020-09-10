@@ -8,7 +8,7 @@
     <div class="card-header">
         <i class="fas fa-table mr-1"></i>
         Departamentos 
-        {% if user.is_superuser %}
+        {% if user.is_superuser and request.resolver_match.url_name == 'Administracion departamentos en mantención' %}
          <a class="btn btn-info " href="/admin/departamentos/departamento/add/?_to_field=id&_popup=1" role="button"><i class="fas fa-plus"></i> </a>
          {% endif %}
     </div>
@@ -22,8 +22,10 @@
                         <th>Detalles</th>
                         <th>Imagenes</th>
                         <th>Inventario</th>
+                        {% if user.is_superuser and request.resolver_match.url_name == 'Administracion departamentos en mantención' or  request.resolver_match.url_name == 'Administracion departamentos' %}
                         <th>Mantención</th>
-                        {% if user.is_superuser and request.resolver_match.url_name == 'Administracion departamentos' or request.resolver_match.url_name == 'Administracion departamentos en mantención' %}
+                        {% endif %}
+                        {% if user.is_superuser and request.resolver_match.url_name == 'Administracion departamentos en mantención' %}
                   
                         <th> Editar </th>
                         {% endif %}
@@ -246,7 +248,7 @@
                                                                 {% for inventario in inventarios %}
                                                                 
                                                                 {% if inventario.departamento.id == departamento.id  %}
-                                                                <!-- Script para cambiar de color el boton segun el estado del inventario -->
+                                                                <!-- Script para cambiar de color el boton segun el estado del inventario y mantencion -->
                                                                 <script>
     
                                                                     function ColorBotonVer(){
@@ -257,7 +259,7 @@
                                                                         else{
                                                                             document.getElementById("cambio-color-{{ departamento.id }}").classList.add("btn-success");
                                                                         } 
-                                                                       
+                                                                   
                                                                         
                                                                     }
                                                                     ColorBotonVer()
@@ -298,10 +300,18 @@
                             </div>
                             <!-- Fin modal ver inventario -->
                         </td>
+                        {% if user.is_superuser and request.resolver_match.url_name == 'Administracion departamentos en mantención' or  request.resolver_match.url_name == 'Administracion departamentos' %}
                         <td align="center">  
                                <!-- Modal ver mantencion -->
-                               <button type="button" class="btn btn-primary"  data-toggle="modal" data-target="#ver-mantencion-{{ departamento.id }}">
+                               <button type="button" id="color-mantencion-{{ departamento.id }}" class="btn  "  data-toggle="modal" data-target="#ver-mantencion-{{ departamento.id }}">
                                 <i class="fas fa-tools"></i>
+                                <script>
+                                {% if  departamento.dia_mantencion %}
+                                document.getElementById("color-mantencion-{{ departamento.id }}").classList.add("btn-danger");
+                                {% else %}
+                                document.getElementById("color-mantencion-{{ departamento.id }}").classList.add("btn-primary");
+                                {% endif %}
+                                </script>
                            </button>
                            
                           
@@ -317,11 +327,17 @@
                                    <div class="modal-body">
                                        <div class="card mb-4">
                                                <div class="card-header text-center d-flex flex-column">
-                                                {% if user.is_superuser  and request.resolver_match.url_name == 'Administracion departamentos en mantención' or request.resolver_match.url_name == 'Administracion departamentos'  %}
-                                                {% if  departamento.dia_mantencion %}
-                                                Cambiar estado
-                                                <a class="btn btn-info"  href="{% url 'Actualizar estado mantencion' departamento.id  %}"  role="button"> <i class="fas fa-exchange-alt"></i></a> 
-                                                {% endif %}
+                                                {% if user.is_superuser  and  request.resolver_match.url_name == 'Administracion departamentos'  %}
+                                                <form class="text-center" method="POST">{% csrf_token %}
+                                                    Asignar Mantencion
+                                                    <div class="form-group">
+                                                        <input type="hidden"  value="{{ departamento.id }}" name="idDepMantencion">
+                                                        <input type="date" required class="form-control" name="fechamantencion" id="fechamantencion">
+                                                    </div>
+                                                    <div class="form-group  d-flex justify-content-center align-items-center">
+                                                        <button type="submit" name="btn-mantencion" class="btn btn-info" >Asignar</button>
+                                                    </div>
+                                                </form>
                                                 {% endif %}
                                                </div>
                                                <div class="card-body">
@@ -330,7 +346,7 @@
                                                            <thead>
                                                                <tr>
                                                                    <th>Dia de mantención</th>
-                                                                 
+                                                                    <th>Estado mantención</th>
                                                                
                                                                </tr>
                                                            </thead>
@@ -341,7 +357,7 @@
                                                                <tr> 
                                                                    <td>
                                                                        {% if departamento.mantencion == None %}
-                                                                        No programada
+                                                                        No programada 
                                                                         {% elif departamento.dia_mantencion %}
                                                                         La mantención es hoy!
                                                                        {% else%}
@@ -350,7 +366,11 @@
                                                                            
                                                                        {% endif %}
                                                                     </td>
-                                                            
+                                                                    <td>{{ departamento.estado_mantencion|yesno:"En Mantención,Buen estado" }} 
+                                                                        {% if user.is_superuser  and request.resolver_match.url_name == 'Administracion departamentos en mantención' or request.resolver_match.url_name == 'Administracion departamentos'  %}
+                                                                        <a class="btn btn-info"  href="{% url 'Actualizar estado mantencion' departamento.id  %}"  role="button"> <i class="fas fa-exchange-alt"></i></a>     
+                                                                        {% endif %}
+                                                                    </td>
                                                                </tr>
                                                            
                                                            
@@ -374,7 +394,8 @@
                            <!-- Fin modal ver mantencion -->
 
                         </td>
-                        {% if user.is_superuser and request.resolver_match.url_name == 'Administracion departamentos' or request.resolver_match.url_name == 'Administracion departamentos en mantención' %}
+                        {% endif %}
+                        {% if user.is_superuser and  request.resolver_match.url_name == 'Administracion departamentos en mantención' %}
                         <td align="center"> 
                             <div class="action">
                                 <a class="btn btn-info" href="/admin/departamentos/departamento/{{ departamento.id }}/change/?_to_field=id&_popup=1" role="button"><i class="fas fa-edit"></i> </a>

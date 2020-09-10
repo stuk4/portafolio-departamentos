@@ -3,8 +3,9 @@ from departamentos.models import Departamento,Imagen,Inventario,Reserva,Arriendo
 from usuarios.models import User
 from django.contrib.auth.decorators import user_passes_test
 from django.contrib import messages
-
-
+from django.urls import resolve
+from datetime import date
+from django.utils.dateparse import parse_date
 #  Views correspondientes a vistas del cliente
 def listar_departamentos(request):
     
@@ -136,8 +137,23 @@ def listar_departamentos_admin(request):
             print(err)
             messages.error(request,'Verifique los campos porfavor')
             return redirect(request.resolver_match.url_name)
-
-
+    #Metodo POST para asginar dia de mantencion
+    if request.method == 'POST' and 'btn-mantencion' in request.POST:
+        # Condicion de fecha
+        if parse_date(request.POST.get('fechamantencion')) <= date.today():
+            messages.error(request,'El dia mantencion debe ser superior a hoy')
+            return redirect('Administracion departamentos')
+        print('ESTEEEEE  ===> ',parse_date(request.POST.get('fechamantencion')))
+        departamento = Departamento.objects.filter(id=request.POST.get('idDepMantencion'))
+        try:
+            
+            departamento.update(mantencion=request.POST.get('fechamantencion'))
+            messages.success(request,'Mantención programada')
+            return redirect('Administracion departamentos')
+        except Exception as err:
+            print(err)
+            messages.error(request,'No se pudo programar la mantencion')
+            return redirect('Administracion departamentos')
     return render(request,'lista_departamentos_admin.html',context)
 # Regla de seguridad: Solo si esadmin puede eliminar
 @user_passes_test(lambda u:u.is_superuser,login_url=('login')) 
@@ -158,12 +174,27 @@ def actualizar_estado_mantencion(request,id):
     departamento = Departamento.objects.filter(id=id)
     # Esto lo hago para obtener los fields del model 
     check_estado =  Departamento.objects.get(id=id)
+    if request.META.get('HTTP_REFERER') is not None:
+        referer = request.META.get('HTTP_REFERER').split("/",3)[3]
+        match = resolve('/'+referer)
+    else:
+        match="/"
+    # If para saber si la mantencion no esta progarmada
+    if check_estado.mantencion is None:
+        messages.error(request,'Mantencion de Depto {} no programada para hoy'.format(check_estado.id))
+        return redirect(request.META.get('HTTP_REFERER'))
+
 
     if check_estado.estado_mantencion == True:
         try:
-
-            departamento.update(estado_mantencion=False)
+            if match.url_name == 'Administracion departamentos en mantención':
+                departamento.update(estado_mantencion=False)
+                departamento.update(mantencion=None)
+            else:
+                
+                departamento.update(estado_mantencion=False)
             messages.success(request,'Estado de  {} actualizado'.format(check_estado.direccion))
+            
             return redirect(request.META.get('HTTP_REFERER'))
             
         except Exception as err:
@@ -173,8 +204,12 @@ def actualizar_estado_mantencion(request,id):
             
     else:
         try:
-
-            departamento.update(estado_mantencion=True)
+          
+            if match.url_name == 'Administracion departamentos en mantención':
+                departamento.update(estado_mantencion=True)
+                departamento.update(mantencion=None)
+            else:
+                departamento.update(estado_mantencion=True)
             messages.success(request,'Estado de  {} actualizado'.format(check_estado.direccion))
             return redirect(request.META.get('HTTP_REFERER'))
 

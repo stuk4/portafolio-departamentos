@@ -1,6 +1,11 @@
 {% extends 'departamentos/base.html'%}
+{% load static %}
+
+{% block extra_css %} 
+<link rel="stylesheet" href="{% static 'css/perfil.css' %}">
+{% endblock extra_css %}
 {% block contenido %}
-<!-- TODO TERMINAR CON ESTA INTERFAZ HACER SU VIEW CORRESPONDIENTE Y LUEGO LA DE ARRIENDO -->
+
 <div class="container">
 	<div class="row">
 		<div class="col-md-3 ">
@@ -14,7 +19,7 @@
             </div> 
 		</div>
 		<div class="col-md-9">
-		    <div class="card">
+		    <div class="card custom-card">
 		        <div class="card-body">
 		            <div class="row">
 		                <div class="col-md-12">
@@ -24,45 +29,60 @@
 		            </div>
 		            <div class="row">
 		                <div class="col-md-12">
-		                    <form>
+		                    <form enctype="multipart/form-data" method="POST">{% csrf_token %}
+                          <div class="form-group  ">
+                            <div class="form-group img-contenedor">
+                               {% if request.user.imagen %}
+                               
+                               <img src="{{ request.user.imagen.url }}" alt="..." class="img-fluid rounded-circle">
+                           
+                               {%  endif  %}
+                            </div>
+                            <div class="col d-flex justify-content-center align-items-center">
+                              <input type="file" class="form-control-file" accept="image/*" name="imagenperfil" id="">
+                            </div>
+                          </div>
 
                               <div class="form-group row">
-                                <label for="name" class="col-4 col-form-label">Nombres</label> 
+                                <label for="name"  class="col-4 col-form-label">Nombres*</label> 
                                 <div class="col-8">
-                                  <input id="name" name="nombres" placeholder="Nombres" class="form-control " type="text">
+                                  <input id="name" value="{{ request.user.first_name }}" required name="nombres" placeholder="Nombres" class="form-control " type="text">
                                 </div>
                               </div>
                               <div class="form-group row">
-                                <label for="lastname" class="col-4 col-form-label">Apellidos</label> 
+                                <label for="lastname" class="col-4 col-form-label">Apellidos*</label> 
                                 <div class="col-8">
-                                  <input id="lastname" name="apellidos" placeholder="Apellidos" class="form-control here" type="text">
+                                  <input id="lastname"  value="{{ request.user.last_name }}"  name="apellidos" placeholder="Apellidos" class="form-control here" type="text">
                                 </div>
                               </div>
                               <div class="form-group row">
-                                <label for="text" class="col-4 col-form-label">Edad</label> 
+                                <label for="Edad" class="col-4 col-form-label">Edad*</label> 
                                 <div class="col-8">
-                                  <input id="text" name="number" placeholder="Edad" class="form-control here" required="required" type="text">
+                                  <input id="Edad" name="number" value="" placeholder="Edad" class="form-control here" required="required" type="text">
                                 </div>
                               </div>
                               <div class="form-group row">
-                                <label for="select" class="col-4 col-form-label">Display Name public as</label> 
+                                <label for="telefono" class="col-4 col-form-label">Telefono*</label> 
                                 <div class="col-8">
-                                  <select id="select" name="select" class="custom-select">
-                                    <option value="admin">Admin</option>
-                                  </select>
+                                  <input id="telefono" name="telefono" required placeholder="Telefono" value="{{ request.user.telefono|stringformat:"d" }}" class="form-control here" required="required" type="number">
                                 </div>
                               </div>
                               <div class="form-group row">
                                 <label for="email" class="col-4 col-form-label">Email*</label> 
                                 <div class="col-8">
-                                  <input id="email" name="email" placeholder="Email" class="form-control here" required="required" type="text">
+                                  <input id="email" name="email" readonly placeholder="Email" value="{{ request.user.email }}"  class="form-control here"  type="text">
                                 </div>
                               </div>
-                              
                               <div class="form-group row">
-                                <label for="newpass" class="col-4 col-form-label">New Password</label> 
+                                <label for="oldpass" class="col-4 col-form-label">Antigua contraseña*</label> 
                                 <div class="col-8">
-                                  <input id="newpass" name="newpass" placeholder="New Password" class="form-control here" type="text">
+                                  <input id="oldpass" name="oldpass" value="" required placeholder="" class="form-control here" type="password">
+                                </div>
+                              </div>
+                              <div class="form-group row">
+                                <label for="newpass" class="col-4 col-form-label">Nueva contraseña</label> 
+                                <div class="col-8">
+                                  <input id="newpass" name="newpass" value=""  placeholder="" class="form-control here" type="password">
                                 </div>
                               </div> 
                               <div class="form-group row">
@@ -80,3 +100,29 @@
 	</div>
 </div>
 {% endblock contenido %}
+{% block extra_js %} 
+
+{% if messages %}
+{% for message in messages  %}
+  <script>   
+  console.log('{{ message }}');
+  {% if message.tags == 'error' %}
+  Swal.fire({
+    title: 'Error!',
+    text: '{{ message }}',
+    icon: 'error',
+    confirmButtonText: 'Ok'
+  })
+  {% else  %}
+  Swal.fire({
+    title: 'Éxito!',
+    text: '{{ message }}',
+    icon: 'success',
+    confirmButtonText: 'Ok'
+
+  })
+{% endif %}
+  </script>
+  {% endfor %}
+{% endif %}
+{% endblock extra_js %}

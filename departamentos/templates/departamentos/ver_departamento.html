@@ -133,7 +133,8 @@
 	}
 	const inner = (e) =>{
 		total.innerHTML = ""
-		var precio =Number('{{ departamento.precio }}'.replace('.',''));
+		var precio ={{ departamento.precio|stringformat:"d" }};
+		console.log(precio)
 		total.innerHTML = addPunto(e.target.value * precio);
 		abono.innerHTML = addPunto( Math.round( (e.target.value * precio) * 0.1));
 	}

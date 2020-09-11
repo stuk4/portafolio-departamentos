@@ -39,7 +39,7 @@
                         <td>{{  usuario.id }}</td>
                         <td>{{ usuario.first_name }}</td>
                         <td>{{ usuario.email }}</td>
-                        <td>{{ usuario.telefono  }}</td>
+                        <td>{{ usuario.telefono|stringformat:"d"  }}</td>
                         <td>
                             {% if usuario.is_staff %}
                                 Funcionario

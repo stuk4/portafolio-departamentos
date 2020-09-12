@@ -52,6 +52,7 @@ class Inventario(models.Model):
     nombre = models.CharField(null=False,blank=False,max_length=50)
     estado =models.CharField(max_length=20,choices=estados,default='Buen estado',null=True,blank=False)
     precio = models.PositiveIntegerField(null=False, blank=False)
+    
     def __str__(self):
         return 'Nombre: {} Estado:{}'.format(self.nombre,self.estado)
 
@@ -82,7 +83,6 @@ class Arriendo(models.Model):
      total = models.PositiveIntegerField(null=False,blank=False )
      def __str__(self):
          return '{}'.format(self.reserva)
-     
-    
+
 
 

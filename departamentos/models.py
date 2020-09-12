@@ -1,6 +1,6 @@
 from django.db import models
 from django.utils.html import mark_safe
-from datetime import date
+from datetime import date,timedelta
 
 class Departamento(models.Model):
 
@@ -63,6 +63,16 @@ class Reserva(models.Model):
         null=True, blank=True, auto_now=False, auto_now_add=False)
     abono = models.PositiveIntegerField(null=False,blank=False )
     dias_estadia =  models.PositiveIntegerField(null=False,blank=False,verbose_name="días estadia" )
+    @property
+    def dia_salida(self):
+        return self.dia_llegada + timedelta(days=self.dias_estadia)
+
+    @property
+    def diferencia(self):
+        return (self.departamento.precio * self.dias_estadia) - self.abono
+    @property
+    def total(self):
+        return self.departamento.precio * self.dias_estadia
     def __str__(self):
         return 'ID reserva:{} {}'.format(self.id,self.usuario)
     

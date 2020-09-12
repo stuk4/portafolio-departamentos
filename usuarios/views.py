@@ -133,8 +133,17 @@ def perfil(request):
 
 def perfil_reservas(request):
     reserva = Reserva.objects.get(usuario=request.user.id)
+    reserva_u  = Reserva.objects.filter(usuario=request.user.id)
     imagenes = Imagen.objects.filter(departamento=reserva.departamento.id)
- 
+    if request.method == 'POST' and 'btn-acompanantes' in request.POST:
+        try:
+            reserva_u.update(acompanantes=request.POST.get('acompanantes'))
+            messages.success(request,'Numero de acompañantes actualizado')
+            return redirect('Mis reservas')
+        except Exception as err:
+            messages.error(request,'No se pudo actualizar')
+            print('VPERFILRESERVA =====',err)
+            return redirect('Mis reservas')
     context = {'reserva':reserva,
               'imagenes':imagenes}
     return render(request,'usuarios/perfil_reservas.html',context)

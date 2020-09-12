@@ -13,7 +13,7 @@
 		     <div class="list-group ">
               <a href="{%  url 'Perfil' %}" class="list-group-item list-group-item-action {% if request.resolver_match.url_name == "Perfil" %}active{% endif %}">Perfil</a>
               <a href="{% url 'Mis reservas' %}" class="list-group-item list-group-item-action {% if request.resolver_match.url_name == "Mis reservas" %}active{% endif %}">Reservas</a>
-              <a href="#" class="list-group-item list-group-item-action">Arriendos</a>
+              <a href="#" class="list-group-item list-group-item-action">Mis Arriendos</a>
      
               
               
@@ -78,7 +78,12 @@
                   <div class="details col-md-5">
                     <h6 class="price">Pago: Débito/Crédito </h6>
                     <h6 class="price">estadía: {{ reserva.dias_estadia }} </h6>
-                    <h6  class="price">Acompañantes: {{ reserva.acompanantes }} </h6>
+                    <h6  class="price ">Acompañantes: 
+                      <form class="row ml-1" method="POST" >{% csrf_token %}
+                        <input type="number" value="{{ reserva.acompanantes }}" name="acompanantes" class="w-25 form-control-sm form-control" name="" id="">
+                        <button name="btn-acompanantes" class="btn btn-info btn-sm"><i class="fas fa-exchange-alt"></i></button>
+                      </form>
+                    </h6>
                     <h6  class="price">Día llegada: {{ reserva.dia_llegada|date:"SHORT_DATE_FORMAT" }} </h6>
                     <h6  class="price">Día salida: {{ reserva.dia_salida|date:"SHORT_DATE_FORMAT" }} </h6>
                   </div>

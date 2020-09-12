@@ -6,6 +6,7 @@ from django.http import HttpResponseRedirect
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from usuarios.models import User
+from departamentos.models import Reserva,Arriendo,Imagen
 from django.contrib.auth.decorators import user_passes_test
 from django.contrib.auth.password_validation import MinimumLengthValidator,NumericPasswordValidator,CommonPasswordValidator
 from django.core.exceptions import ValidationError
@@ -129,3 +130,11 @@ def perfil(request):
             return redirect('Perfil')
         
     return render(request,'usuarios/perfil.html')
+
+def perfil_reservas(request):
+    reserva = Reserva.objects.get(usuario=request.user.id)
+    imagenes = Imagen.objects.filter(departamento=reserva.departamento.id)
+ 
+    context = {'reserva':reserva,
+              'imagenes':imagenes}
+    return render(request,'usuarios/perfil_reservas.html',context)

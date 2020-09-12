@@ -1,0 +1,196 @@
+{% extends 'departamentos/base.html'%}
+{% load static %}
+
+{% block extra_css %} 
+<link rel="stylesheet" href="{% static 'css/perfil.css' %}">
+<link rel="stylesheet" href="{% static 'css/perfil_reserva.css' %}">
+{% endblock extra_css %}
+{% block contenido %}
+
+<div class="container">
+	<div class="row">
+		<div class="col-md-3 ">
+		     <div class="list-group ">
+              <a href="{%  url 'Perfil' %}" class="list-group-item list-group-item-action {% if request.resolver_match.url_name == "Perfil" %}active{% endif %}">Perfil</a>
+              <a href="{% url 'Mis reservas' %}" class="list-group-item list-group-item-action {% if request.resolver_match.url_name == "Mis reservas" %}active{% endif %}">Reservas</a>
+              <a href="#" class="list-group-item list-group-item-action">Arriendos</a>
+     
+              
+              
+            </div> 
+		</div>
+		<div class="col-md-9">
+		    <div class="card custom-card">
+		        <div class="card-body">
+		            <div class="row">
+		                <div class="col-md-12">
+		                    <h4>Mis reservas</h4>
+		                    <hr>
+		                </div>
+		            </div>
+		            <div class=" wrapper row  justify-content-center align-items-center">
+                  <div class="preview col-md-12">
+				
+                    <div id="preview-big" class="preview-pic tab-content">
+                      {% if reserva.departamento.imagen %}
+                      <div class="tab-pane active" id="pic-0"><img src="{{ reserva.departamento.imagen.url }}" /></div>
+                      {% else %}
+                      <div class="tab-pane active" id="pic-0"><img src="{% static 'img/default.jpg' %}" /></div>
+                      {% endif %}
+            
+                      {% for imagen in imagenes %}
+                
+                      {% if imagen.imagen %}
+                      
+                      <div class="tab-pane " id="pic-{{ forloop.counter }}"><img src="{{ imagen.imagen.url }}" /></div>
+                      {% endif %}
+                       {% endfor %}
+                     
+                    </div>
+                    <ul id="preview" class="preview-thumbnail nav nav-tabs">
+                      {% if reserva.departamento.imagen %}
+                      <li class="active"><a data-target="#pic-0" data-toggle="tab"><img src="{{ reserva.departamento.imagen.url }}" /></a></li>
+                      {% else %}
+                      <li class="active"><a data-target="#pic-0" data-toggle="tab"><img src="{% static 'img/default.jpg' %}" /></a></li>
+                      {% endif %}
+                      {% for imagen in imagenes %}
+                
+                      {% if imagen.imagen %}
+                      <li class=""><a data-target="#pic-{{ forloop.counter }}" data-toggle="tab"><img src="{{ imagen.imagen.url }}" /></a></li>
+                      
+                      {% endif %}
+                      {% endfor %}
+                    </ul>
+
+                  </div>
+           
+                  <div class=" col-md-12">
+                    
+              
+                    <h3 class="product-title">{{ reserva.departamento.direccion }}</h3>
+                    <h6 class="sizes">m²: {{ reserva.departamento.metros_cuadrados }}
+                    <span class="size" data-toggle="tooltip" title="small">Dorm- {{ reserva.departamento.dormitorios }}</span>
+                    <span class="size" data-toggle="tooltip" title="medium">baños- {{ reserva.departamento.banos }}</span>
+                  
+                  </h6>
+                  </div>
+               
+                  <div class="details col-md-5">
+                    <h6 class="price">Pago: Débito/Crédito </h6>
+                    <h6 class="price">estadía: {{ reserva.dias_estadia }} </h6>
+                    <h6  class="price">Acompañantes: {{ reserva.acompanantes }} </h6>
+                    <h6  class="price">Día llegada: {{ reserva.dia_llegada|date:"SHORT_DATE_FORMAT" }} </h6>
+                    <h6  class="price">Día salida: {{ reserva.dia_salida|date:"SHORT_DATE_FORMAT" }} </h6>
+                  </div>
+                
+                  <div class="details mt-2 col-md-7 text-right ">
+           
+              
+               
+                    <h5 class="price"><span>${{ reserva.departamento.precio }}</span>/Dia </h5>
+                    <h5 class="price"><span>${{ reserva.abono }}</span>/Abono </h5>
+                    <h5 class="price"><span>${{ reserva.diferencia  }}</span>/Dif.</h5>
+                    <h5 class="price"><span>${{ reserva.total }}</span>/Total </h5>
+                  
+                    <!-- <p class="vote"><strong>91%</strong> of buyers enjoyed this product! <strong>(87 votes)</strong></p> -->
+         
+                    {% if user.is_active %}
+                    <div class="">
+                      <!-- TODO cambiar este modal por el de check in para arrendar, crear view, url -->
+                      <!-- Button trigger modal -->
+                      <button type="button" class="btn btn-info " data-toggle="modal" data-target="#exampleModal">
+                        Arrendar
+                      </button>
+                      
+                      <!-- Modal -->
+                      <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog ">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                          <h5 class="modal-title" id="exampleModalLabel">Reservar Dep. {{ reserva.departamento.direccion }}</h5>
+                          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                          </button>
+                          </div>
+                          <div class="modal-body">
+                          <form method="POST">{% csrf_token %}
+                            
+                              <div class="form-group">
+                                <div class="form-group">
+                                  <label  for="llegada">Fecha de llegada *:</label>
+                                    <input required class="form-control" id="llegada" type="date" name="diallegada" />
+                                </div>
+                                <div class="row">
+                                  <div class="col">
+                                    <label  for="acompanantes">N de acompañantes:</label>
+                                    <input type="number" class="form-control" name="acompanantes" id="acompanantes">
+                                  </div>
+                                  <div class="col">
+                                    <label for="diasestadia">Dias de estadia *:</label>
+                                    <input required type="number" max="100" min="2" class="form-control" name="diasestadia" id="diasestadia">
+                                  </div>
+                                </div>
+                                
+                              </div>
+                              <div class="form-group d-flex justify-content-center align-items-end flex-column">
+                                <h4  class="price"><span>$</span> <span id="eltotal">0</span> /Total </h4>
+                                <h4  class="price"><span>$</span> <span id="elabono">0</span> /Abono </h4>
+                              </div>
+                              <div class="form-group d-flex justify-content-center">
+                                
+                                  <button type="submit" class="btn btn-info">Abonar</button>
+                                
+                              </div>
+                               
+                          </form>
+                          </div>
+                          <div class="modal-footer">
+                          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                      
+                          </div>
+                        </div>
+                        </div>
+                      </div>
+                    </div>
+                    {% endif %}
+                    <!-- <h5 class="colors">colors :
+                      <span class="color orange not-available" data-toggle="tooltip" title="Not In store"></span>
+                      <span class="color green"></span>
+                      <span class="color blue"></span>
+                    </h5> -->
+                
+                  </div>
+		            </div>
+		            
+		        </div>
+		    </div>
+		</div>
+	</div>
+</div>
+{% endblock contenido %}
+{% block extra_js %} 
+
+{% if messages %}
+{% for message in messages  %}
+  <script>   
+
+  {% if message.tags == 'error' %}
+  Swal.fire({
+    title: 'Error!',
+    text: '{{ message }}',
+    icon: 'error',
+    confirmButtonText: 'Ok'
+  })
+  {% else  %}
+  Swal.fire({
+    title: 'Éxito!',
+    text: '{{ message }}',
+    icon: 'success',
+    confirmButtonText: 'Ok'
+
+  })
+{% endif %}
+  </script>
+  {% endfor %}
+{% endif %}
+{% endblock extra_js %}

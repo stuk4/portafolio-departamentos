@@ -16,21 +16,22 @@ def listar_departamentos(request):
     # De lo contrario al sitio normal
     else:
         # Solo los departamentos que no contengan reserva y no esten en mantencion seran mostrados
-        departamentos = Departamento.objects.exclude(reserva__usuario__isnull=False).filter(estado_mantencion=False)
+        departamentos = Departamento.objects.exclude(usuario__isnull=False).filter(estado_mantencion=False)
         context = {'departamentos':departamentos}
 
         return render(request,'departamentos/lista_departamentos.html',context)
 
 def ver_departamento(request,id):
-
+    # Objecto para guardarloo 
     departamento = get_object_or_404(Departamento,id=id)
-   
+    # Query para actuaslizar
+    departamento_u = Departamento.objects.filter(id=id)
     imagenes = Imagen.objects.filter(departamento=id)
     context = {'departamento':departamento,
                 'imagenes':imagenes}
     # Condicion si el usuario esta logeado verifica si contiene una reserva
     if request.user.is_active:
-        tiene_reserva = Reserva.objects.filter(usuario=request.user.id).exists()
+        tiene_reserva = Departamento.objects.filter(usuario=request.user.id).exists()
        
 
     if request.method == 'POST':
@@ -57,9 +58,9 @@ def ver_departamento(request,id):
             if tiene_reserva:
                 messages.error(request,'Lo sentimos usted ya tiene una reseva')
                 return render(request,'departamentos/ver_departamento.html',context)
-
+            
             reserva.save()
-         
+            departamento_u.update(usuario=request.user)
 
             #Return si sale todo bien con reserva
             messages.success(request,'Depto {} reservado!!'.format(departamento.direccion))
@@ -83,11 +84,11 @@ def listar_departamentos_admin(request):
     # If para diferenciar lo departamentos disponibles
     if request.resolver_match.url_name == 'Administracion departamentos':
         # Solo los departamentos que no contengan usuario con reserva activa y no esten en mantencion seran mostrados
-        departamentos = Departamento.objects.exclude(reserva__usuario__isnull=False).filter(estado_mantencion=False)
+        departamentos = Departamento.objects.exclude(usuario__isnull=False).filter(estado_mantencion=False)
     elif request.resolver_match.url_name == 'Administracion departamentos en mantención':
-        departamentos = Departamento.objects.exclude(reserva__usuario__isnull=False).filter(estado_mantencion=True)
+        departamentos = Departamento.objects.exclude(usuario__isnull=False).filter(estado_mantencion=True)
     elif request.resolver_match.url_name == 'Administracion departamentos reservados':
-        departamentos = Departamento.objects.exclude(reserva__usuario__isnull=True).filter(estado_mantencion=False)
+        departamentos = Departamento.objects.exclude(usuario__isnull=True).filter(estado_mantencion=False)
     inventarios = Inventario.objects.all()
     imagenes = Imagen.objects.all()
 

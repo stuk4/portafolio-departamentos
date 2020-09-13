@@ -7,6 +7,7 @@ class Departamento(models.Model):
     mantencion = models.DateField(
         null=True, blank=True,default=date.today, auto_now=False, auto_now_add=False)
     titulo = models.CharField(null=True, blank=False, max_length=50)
+    usuario = models.OneToOneField("usuarios.User", related_name="usuario",blank=True,null=True, on_delete=models.CASCADE)
     banos = models.PositiveIntegerField(null=True, blank=False,verbose_name="baños")
     dormitorios = models.PositiveIntegerField(null=True, blank=False)
     descripcion = models.TextField(null=True)

@@ -132,18 +132,25 @@ def perfil(request):
     return render(request,'usuarios/perfil.html')
 
 def perfil_reservas(request):
-    reserva = Reserva.objects.get(usuario=request.user.id)
-    reserva_u  = Reserva.objects.filter(usuario=request.user.id)
-    imagenes = Imagen.objects.filter(departamento=reserva.departamento.id)
-    if request.method == 'POST' and 'btn-acompanantes' in request.POST:
-        try:
-            reserva_u.update(acompanantes=request.POST.get('acompanantes'))
-            messages.success(request,'Numero de acompañantes actualizado')
-            return redirect('Mis reservas')
-        except Exception as err:
-            messages.error(request,'No se pudo actualizar')
-            print('VPERFILRESERVA =====',err)
-            return redirect('Mis reservas')
-    context = {'reserva':reserva,
-              'imagenes':imagenes}
+    # TODO me falta agregar si esque ya esta arrenaddo tampoco tiene que mostrar la reserva
+    if Reserva.objects.filter(usuario=request.user.id).exists():
+        reserva = Reserva.objects.get(usuario=request.user.id)
+        reserva_u  = Reserva.objects.filter(usuario=request.user.id)
+        imagenes = Imagen.objects.filter(departamento=reserva.departamento.id)
+    
+        if request.method == 'POST' and 'btn-acompanantes' in request.POST:
+            try:
+                reserva_u.update(acompanantes=request.POST.get('acompanantes'))
+                messages.success(request,'Numero de acompañantes actualizado')
+                return redirect('Mis reservas')
+            except Exception as err:
+                messages.error(request,'No se pudo actualizar')
+                print('VPERFILRESERVA =====',err)
+                return redirect('Mis reservas')
+        context = {'reserva':reserva,
+                'imagenes':imagenes}
+    else:
+        reserva = False
+        context = {'reserva':reserva}
     return render(request,'usuarios/perfil_reservas.html',context)
+

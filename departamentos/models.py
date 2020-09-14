@@ -19,6 +19,7 @@ class Departamento(models.Model):
     @property
     def dia_mantencion(self):
         return date.today() == self.mantencion
+   
     def __str__(self):
         return "ID {} Dep. {} Direc. {}".format(self.id,self.titulo,self.direccion)
     def mostrar_imagen(self):
@@ -65,6 +66,7 @@ class Reserva(models.Model):
         null=True, blank=True, auto_now=False, auto_now_add=False)
     abono = models.PositiveIntegerField(null=False,blank=False )
     dias_estadia =  models.PositiveIntegerField(null=False,blank=False,verbose_name="días estadia" )
+
     @property
     def dia_salida(self):
         return self.dia_llegada + timedelta(days=self.dias_estadia)
@@ -77,13 +79,21 @@ class Reserva(models.Model):
         return self.departamento.precio * self.dias_estadia
     def __str__(self):
         return 'ID reserva:{} {}'.format(self.id,self.usuario)
-    
+class Transporte(models.Model):
+    reserva = models.ForeignKey(Reserva, related_name="transporte", on_delete=models.CASCADE)
+    estado_verificado = models.BooleanField(default=False)
+    desde = models.CharField(null=False,blank=False,max_length=50)
+    hacia =  models.CharField(null=False,blank=False,max_length=50)
+    hora = models.TimeField(blank=True,null=True,auto_now=False, auto_now_add=False)
+    vehiculo = models.CharField(null=True,blank=True,max_length=50)
+    conductor = models.CharField(null=True,blank=True,max_length=50)
+
 class Arriendo(models.Model):
-     reserva = models.ForeignKey(Reserva, related_name="arriendo", on_delete=models.CASCADE)
-     diferencia = models.PositiveIntegerField(null=True,blank=True )
-     total = models.PositiveIntegerField(null=False,blank=False )
-     def __str__(self):
-         return '{}'.format(self.reserva)
+    reserva = models.ForeignKey(Reserva, related_name="arriendo", on_delete=models.CASCADE)
+    diferencia = models.PositiveIntegerField(null=True,blank=True )
+    total = models.PositiveIntegerField(null=False,blank=False )
+    def __str__(self):
+        return '{}'.format(self.reserva)
 
 
 

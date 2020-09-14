@@ -49,7 +49,7 @@
                             <td>{{ departamento.id }}</td>
                             <td>{{ departamento.direccion }}</td>
                             {% if request.resolver_match.url_name == 'Administracion departamentos reservados' %}
-                            <td>{% for reserva in departamento.reserva.all %} {{reserva.usuario}} {% endfor %}  </td>
+                            <td> {{ departamento.usuario }}</td>
                             {% endif %}
 
                             <td align="center">

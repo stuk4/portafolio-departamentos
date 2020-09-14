@@ -1,9 +1,11 @@
 
 
-
-#contenedor{
+#btn-cancelar{
+  display: none;
+}
+/* #contenedor{
     padding-top: 70px;
-  }
+  } */
   body {
     
     overflow-x: hidden; }

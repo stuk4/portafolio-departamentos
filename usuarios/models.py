@@ -15,8 +15,8 @@ class User(AbstractUser):
             return mark_safe('<img src="/media/%s" width="50" height="50" />' % (self.imagen))
         else:
             return mark_safe('<img src="/media/default.jpg" width="50" height="50" />')
-
     mostrar_imagen.short_description = 'imagen'
+    
     def __str__(self):
         return "{} {} ".format(self.first_name,self.last_name)
 

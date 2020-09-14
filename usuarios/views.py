@@ -6,7 +6,7 @@ from django.http import HttpResponseRedirect
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from usuarios.models import User
-from departamentos.models import Reserva,Arriendo,Imagen
+from departamentos.models import Reserva,Arriendo,Imagen,Departamento
 from django.contrib.auth.decorators import user_passes_test
 from django.contrib.auth.password_validation import MinimumLengthValidator,NumericPasswordValidator,CommonPasswordValidator
 from django.core.exceptions import ValidationError
@@ -133,22 +133,32 @@ def perfil(request):
 
 def perfil_reservas(request):
     # TODO me falta agregar si esque ya esta arrenaddo tampoco tiene que mostrar la reserva
-    if Reserva.objects.filter(usuario=request.user.id).exists():
-        reserva = Reserva.objects.get(usuario=request.user.id)
-        reserva_u  = Reserva.objects.filter(usuario=request.user.id)
-        imagenes = Imagen.objects.filter(departamento=reserva.departamento.id)
     
+    # Verifico se existe un departamento relacionado con el usuario actual
+    if Departamento.objects.filter(usuario=request.user.id).exists():
+        # obtengo la ultima reserva hecha por el usuario actual
+        reserva = Reserva.objects.filter(usuario=request.user.id).last()
+        imagenes = Imagen.objects.filter(departamento=reserva.departamento.id)
+        context = {'reserva':reserva,
+                'imagenes':imagenes}
         if request.method == 'POST' and 'btn-acompanantes' in request.POST:
             try:
-                reserva_u.update(acompanantes=request.POST.get('acompanantes'))
+                reserva.update(acompanantes=request.POST.get('acompanantes'))
                 messages.success(request,'Numero de acompañantes actualizado')
                 return redirect('Mis reservas')
             except Exception as err:
                 messages.error(request,'No se pudo actualizar')
                 print('VPERFILRESERVA =====',err)
                 return redirect('Mis reservas')
-        context = {'reserva':reserva,
-                'imagenes':imagenes}
+      
+        if request.method == 'POST' and 'btn-cancelar' in request.POST:
+            departamento = Departamento.objects.filter(usuario=request.user.id)
+            try:
+                departamento.update(usuario=None)
+                messages.success(request,'Reserva cacnelada ')
+                return redirect('Mis reservas')
+            except Exception as err:
+                print(err)
     else:
         reserva = False
         context = {'reserva':reserva}

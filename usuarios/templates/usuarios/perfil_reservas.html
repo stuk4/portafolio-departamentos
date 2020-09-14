@@ -76,7 +76,7 @@
                   </h6>
                   </div>
                
-                  <div class="details col-md-5">
+                  <div class="details pl-0 col-md-5">
                     <h6 class="price">Pago: Débito/Crédito </h6>
                     <h6 class="price">estadía: {{ reserva.dias_estadia }} </h6>
                     <h6  class="price ">Acompañantes: 
@@ -87,84 +87,29 @@
                     </h6>
                     <h6  class="price">Día llegada: {{ reserva.dia_llegada|date:"SHORT_DATE_FORMAT" }} </h6>
                     <h6  class="price">Día salida: {{ reserva.dia_salida|date:"SHORT_DATE_FORMAT" }} </h6>
+      
                   </div>
                 
-                  <div class="details mt-2 col-md-7 text-right ">
+                  <div class="details pr-0  mt-2 col-md-7  text-right ">
            
               
                
-                    <h5 class="price"><span>${{ reserva.departamento.precio }}</span>/Dia </h5>
+                    <h5 class="price "><span>${{ reserva.departamento.precio }}</span>/Dia </h5>
                     <h5 class="price"><span>${{ reserva.abono }}</span>/Abono </h5>
                     <h5 class="price"><span>${{ reserva.diferencia  }}</span>/Dif.</h5>
-                    <h5 class="price"><span>${{ reserva.total }}</span>/Total </h5>
+                    <h5 class="price"><span>${{ reserva.total }}</span>/Total </h5>            
+                  </div>
+                  <div class="details w-50">
+                    <form name="form-cancelar "    id="form-cancelar" method="POST">{% csrf_token %}
+                      
+                      <button onclick="cancelarReserva()" type="button" class="btn btn-danger">Cancelar</button>
+                      <button  id="btn-cancelar"  name="btn-cancelar" type="submit"  class="btn btn-danger">Cancelar</button>
+                    </form>
+                  </div>
+                  <div class="details w-50   d-flex justify-content-end align-items-end ">
                   
-                    <!-- <p class="vote"><strong>91%</strong> of buyers enjoyed this product! <strong>(87 votes)</strong></p> -->
-         
-                    {% if user.is_active %}
-                    <div class="">
-                      <!-- TODO cambiar este modal por el de check in para arrendar, crear view, url -->
-                      <!-- Button trigger modal -->
-                      <button type="button" class="btn btn-info " data-toggle="modal" data-target="#exampleModal">
-                        Arrendar
-                      </button>
-                      
-                      <!-- Modal -->
-                      <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                        <div class="modal-dialog ">
-                        <div class="modal-content">
-                          <div class="modal-header">
-                          <h5 class="modal-title" id="exampleModalLabel">Reservar Dep. {{ reserva.departamento.direccion }}</h5>
-                          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                          </button>
-                          </div>
-                          <div class="modal-body">
-                          <form method="POST">{% csrf_token %}
-                            
-                              <div class="form-group">
-                                <div class="form-group">
-                                  <label  for="llegada">Fecha de llegada *:</label>
-                                    <input required class="form-control" id="llegada" type="date" name="diallegada" />
-                                </div>
-                                <div class="row">
-                                  <div class="col">
-                                    <label  for="acompanantes">N de acompañantes:</label>
-                                    <input type="number" class="form-control" name="acompanantes" id="acompanantes">
-                                  </div>
-                                  <div class="col">
-                                    <label for="diasestadia">Dias de estadia *:</label>
-                                    <input required type="number" max="100" min="2" class="form-control" name="diasestadia" id="diasestadia">
-                                  </div>
-                                </div>
-                                
-                              </div>
-                              <div class="form-group d-flex justify-content-center align-items-end flex-column">
-                                <h4  class="price"><span>$</span> <span id="eltotal">0</span> /Total </h4>
-                                <h4  class="price"><span>$</span> <span id="elabono">0</span> /Abono </h4>
-                              </div>
-                              <div class="form-group d-flex justify-content-center">
-                                
-                                  <button type="submit" class="btn btn-info">Abonar</button>
-                                
-                              </div>
-                               
-                          </form>
-                          </div>
-                          <div class="modal-footer">
-                          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                      
-                          </div>
-                        </div>
-                        </div>
-                      </div>
-                    </div>
-                    {% endif %}
-                    <!-- <h5 class="colors">colors :
-                      <span class="color orange not-available" data-toggle="tooltip" title="Not In store"></span>
-                      <span class="color green"></span>
-                      <span class="color blue"></span>
-                    </h5> -->
-                
+                      <button class="btn  btn-info">Arrendar</button>
+
                   </div>
 		            </div>
 		            
@@ -176,7 +121,33 @@
 </div>
 {% endblock contenido %}
 {% block extra_js %} 
+    <!-- Script para eliminar un departamento -->
+    <script>
+      const cancelarReserva = async () => {
+          const {
+              value: accept
+          } = await Swal.fire({
+              title: '¿Desea cancelar su reserva?',
+              input: 'checkbox',
+              icon: 'question',
+              confirmButtonColor: '#CD2737',
+              inputValue: 0,
+              inputPlaceholder: `Estoy de acuerdo en cancelar mi reserva`,
+              confirmButtonText: 'Eliminar <i class="fas fa-trash-alt"></i>',
+              cancelButtonText: 'Cancelar',
+              inputValidator: (result) => {
+                  return !result && 'Por favor marque la casilla'
+              }
+          })
 
+          if (accept) {
+
+            document.getElementById('btn-cancelar').click()
+         
+          }
+
+      }
+  </script>
 {% if messages %}
 {% for message in messages  %}
   <script>   

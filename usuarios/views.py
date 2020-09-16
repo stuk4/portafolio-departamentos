@@ -6,7 +6,7 @@ from django.http import HttpResponseRedirect
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from usuarios.models import User
-from departamentos.models import Reserva,Arriendo,Imagen,Departamento
+from departamentos.models import Reserva,Arriendo,Imagen,Departamento,Transporte
 from django.contrib.auth.decorators import user_passes_test
 from django.contrib.auth.password_validation import MinimumLengthValidator,NumericPasswordValidator,CommonPasswordValidator
 from django.core.exceptions import ValidationError
@@ -138,19 +138,44 @@ def perfil_reservas(request):
     if Departamento.objects.filter(usuario=request.user.id).exists():
         # obtengo la ultima reserva hecha por el usuario actual
         reserva = Reserva.objects.filter(usuario=request.user.id).last()
+
         imagenes = Imagen.objects.filter(departamento=reserva.departamento.id)
         context = {'reserva':reserva,
                 'imagenes':imagenes}
         if request.method == 'POST' and 'btn-acompanantes' in request.POST:
             try:
-                reserva.update(acompanantes=request.POST.get('acompanantes'))
+                # Aqui no uso el metodo update 
+                # ya que estoy llamando aun objeto con .last()
+                reserva.acompanantes = request.POST.get('acompanantes')
+                reserva.save()
                 messages.success(request,'Numero de acompañantes actualizado')
                 return redirect('Mis reservas')
             except Exception as err:
                 messages.error(request,'No se pudo actualizar')
                 print('VPERFILRESERVA =====',err)
                 return redirect('Mis reservas')
-      
+        
+        if request.method == 'POST' and 'btn-transporte' in request.POST:
+            transporte = Transporte()
+            reserva_obj = Reserva.objects.get(id=reserva.id)
+            transporte.reserva =reserva_obj
+            transporte.desde = request.POST.get('desde')
+            transporte.hacia = request.POST.get('hacia')
+            # Verifico si tiene ya un transporte
+            if hasattr(reserva_obj, 'transporte'):
+                messages.error(request,'Usted ya solicito un transporte')
+     
+                return redirect('Mis reservas')
+
+            try:
+                transporte.save()
+                messages.success(request,'Transporte solicitado ')
+                return redirect('Mis reservas')
+            except Exception as err:
+                messages.error(request,'No se pudo solicitar el transporte')
+                print('VMISRESERVASTRANSPORTE',err)
+                return redirect('Mis reservas')
+               
         if request.method == 'POST' and 'btn-cancelar' in request.POST:
             departamento = Departamento.objects.filter(usuario=request.user.id)
             try:

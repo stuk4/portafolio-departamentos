@@ -80,7 +80,7 @@ class Reserva(models.Model):
     def __str__(self):
         return 'ID reserva:{} {}'.format(self.id,self.usuario)
 class Transporte(models.Model):
-    reserva = models.ForeignKey(Reserva, related_name="transporte", on_delete=models.CASCADE)
+    reserva = models.OneToOneField(Reserva, related_name="transporte", on_delete=models.CASCADE)
     estado_verificado = models.BooleanField(default=False)
     desde = models.CharField(null=False,blank=False,max_length=50)
     hacia =  models.CharField(null=False,blank=False,max_length=50)

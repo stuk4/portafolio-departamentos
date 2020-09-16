@@ -15,8 +15,6 @@ urlpatterns = [
     path('departamentos/admin/eliminar_departamento/<int:id>/',views.eliminar_departamento,name="Eliminar departamento"),
     path('departamentos/admin/actualizar_estado_mantencion/<int:id>/',views.actualizar_estado_mantencion,name="Actualizar estado mantencion"),
     path('departamentos/admin/actualizar_estado_inventario/<int:id>/',views.actualizar_estado_inventario,name="Actualizar inventario departamento"),
-    path('departamentos/admin/listar_usuarios/',views.listar_usuarios,name="Administracion usuarios"),
-    path('departamentos/admin/actualizar_estado_usuario/<int:id>/',views.actualizar_estado_usuario,name="Actualizar estado usuario"),
 ]
 #Configuracion de imagenes
 if settings.DEBUG:

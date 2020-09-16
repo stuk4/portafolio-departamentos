@@ -189,3 +189,56 @@ def perfil_reservas(request):
         context = {'reserva':reserva}
     return render(request,'usuarios/perfil_reservas.html',context)
 
+# TODO tengo que pasar estas vistas y urls y templates a app usuarios ya que ahi deberian ir 
+    # Regla de seguridad: Solo si es admin puede ver usuarios
+@user_passes_test(lambda u:u.is_staff,login_url=('login'))  
+def listar_usuarios(request):
+    if request.resolver_match.url_name == 'Administracion usuarios':
+        usuarios = User.objects.all()
+    elif request.resolver_match.url_name == 'Administracion usuarios con reserva':
+        usuarios = User.objects.exclude(reserva__isnull=True)
+
+    if request.method == 'POST' and 'btn-transporte-aceptar' in request.POST:
+        transporte = get_object_or_404(Transporte,id=request.POST.get('id-transporte'))
+
+        transporte.hora = request.POST.get('hora')
+        transporte.vehiculo = request.POST.get('vehiculo')
+        transporte.conductor = request.POST.get('conductor')
+        transporte.estado_verificado = True
+        try:
+            transporte.save()
+            messages.success(request,'Transporte aceptado')
+            return redirect(request.META.get('HTTP_REFERER'))
+        except expression as identifier:
+            messages.error(request,'No se pudo realizar la operacion')
+            return redirect()
+    context = {'usuarios':usuarios}
+    return render(request,'usuarios/listar_usuarios_admin.html',context)
+    # Regla de seguridad: Solo si es admin puede actualizar usuarios
+
+
+         
+@user_passes_test(lambda u:u.is_superuser,login_url=('login'))  
+def actualizar_estado_usuario(request,id):
+    usuario = User.objects.filter(id=id)
+    # Esto lo hago para obtener los fields del model 
+    check_estado =  User.objects.get(id=id)
+
+ 
+    try:
+        if check_estado.is_active:
+            usuario.update(is_active=False)
+        else:
+            usuario.update(is_active=True)
+        messages.success(request,'Estado de {} {} actualizado'.format(check_estado.first_name,check_estado.last_name))
+        return redirect('Administracion usuarios')
+        
+    except Exception as err:
+
+        messages.error(request,'No se pudo actualizar el estado')
+        return redirect('Administracion usuarios')
+            
+   
+
+    return redirect('Administracion usuarios')
+# Fin de vistas correspondientes a parte del admin

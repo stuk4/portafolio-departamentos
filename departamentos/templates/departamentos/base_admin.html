@@ -70,18 +70,18 @@
                             <div class="sb-sidenav-menu-heading">Usuarios</div>
                    
                             <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseLayouts-usuarios" aria-expanded="false" aria-controls="collapseLayouts-usuarios">
-                                <div class="sb-nav-link-icon"><i class="fas fa-building"></i></div>
+                                <div class="sb-nav-link-icon"><i class="fas fa-users"></i></div>
                                 Usuarios
                                 <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
                             </a>
                             <div class="collapse 
-                                        {% if request.resolver_match.url_name == 'Administracion departamentos' or request.resolver_match.url_name == 'Administracion departamentos en mantención' or request.resolver_match.url_name == 'Administracion departamentos reservados' %}
+                                        {% if request.resolver_match.url_name == 'Administracion usuarios' or request.resolver_match.url_name == 'Administracion usuarios con reserva'  %}
                                         show
                                         {% endif %}
                                         " id="collapseLayouts-usuarios" aria-labelledby="headingOne" data-parent="#sidenavAccordion">
                                 <nav class="sb-sidenav-menu-nested nav">
                                     <a class="nav-link {% if request.resolver_match.url_name == "Administracion usuarios" %}active{% endif %}" href="{% url 'Administracion usuarios' %}">Disponibilidad </a>
-
+                                    <a class="nav-link {% if request.resolver_match.url_name == "Administracion usuarios con reserva" %}active{% endif %}" href="{% url 'Administracion usuarios con reserva' %}">Reserva </a>
                                 </nav>
                             </div>
                        

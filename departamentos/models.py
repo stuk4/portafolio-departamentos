@@ -66,7 +66,8 @@ class Reserva(models.Model):
         null=True, blank=True, auto_now=False, auto_now_add=False)
     abono = models.PositiveIntegerField(null=False,blank=False )
     dias_estadia =  models.PositiveIntegerField(null=False,blank=False,verbose_name="días estadia" )
-
+    def transporte(self):
+        return self.transporte_set.filter(reserva=self.id)
     @property
     def dia_salida(self):
         return self.dia_llegada + timedelta(days=self.dias_estadia)
@@ -81,7 +82,7 @@ class Reserva(models.Model):
         return 'ID reserva:{} {}'.format(self.id,self.usuario)
 class Transporte(models.Model):
     reserva = models.OneToOneField(Reserva, related_name="transporte", on_delete=models.CASCADE)
-    estado_verificado = models.BooleanField(default=False)
+    estado_verificado = models.BooleanField(null=True,blank=True)
     desde = models.CharField(null=False,blank=False,max_length=50)
     hacia =  models.CharField(null=False,blank=False,max_length=50)
     hora = models.TimeField(blank=True,null=True,auto_now=False, auto_now_add=False)

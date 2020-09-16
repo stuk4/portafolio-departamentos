@@ -1,0 +1,214 @@
+{% extends 'departamentos/base_admin.html' %}
+{% load static %}
+
+{% block contenido %}
+<div class="card mb-4">
+    <div class="card-header">
+        <i class="fas fa-users"></i>
+       Usuarios 
+       {% if user.is_superuser and request.resolver_match.url_name == 'Administracion usuarios' %}
+       <a class="btn btn-info " href="/admin/usuarios/user/add/?_to_field=id&_popup=1" role="button"><i class="fas fa-plus"></i> </a>
+       {% endif %}
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                <thead>
+                    <tr>
+                        {% if user.is_superuser and request.resolver_match.url_name == 'Administracion usuarios' %}
+                        <th>Editar</th>
+                        {% endif %}
+                        <th>ID</th>
+                        <th>Nombre</th>
+                        <th>Correo</th>
+                        <th>Telefono</th>
+                        {% if user.is_superuser and request.resolver_match.url_name == 'Administracion usuarios con reserva' %}
+                        <th>Transporte</th>
+                        {% endif %}
+                        {% if request.resolver_match.url_name == 'Administracion usuarios' %}
+                        <th>Tipo</th>
+                        <th>Estado</th>
+                        {% endif %}
+                    </tr>
+                </thead>
+        
+                <tbody>
+                    {% for usuario in usuarios %}
+                    <tr>
+                        {% if user.is_superuser and request.resolver_match.url_name == 'Administracion usuarios' %}
+                        <td>    
+                            <a class="btn btn-info" href="/admin/usuarios/user/{{ usuario.id }}/change/?_to_field=id&_popup=1" role="button">Editar </a>
+                        </td>
+                        {% endif %}
+                      
+                        <td>{{  usuario.id }}</td>
+                        <td>{{ usuario.first_name }}</td>
+                        <td>{{ usuario.email }}</td>
+                        <td>{{ usuario.telefono|stringformat:"d"  }}</td>
+                        {% if user.is_superuser and request.resolver_match.url_name == 'Administracion usuarios con reserva' %}
+                        <td align="center">
+                            
+                            <!-- Modal servicio transporte -->
+                            {% if usuario.transporte.estado_verificado %}
+                            <button type="button" class="btn btn-success" data-toggle="modal" data-target="#transporte-{{ usuario.id }}">
+                                <i class="fas fa-check"></i>
+                            </button>
+                            {% else %}
+                            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#transporte-{{ usuario.id }}">
+                                <i class="fas fa-car-alt"></i>
+                            </button>
+                            {% endif  %}
+
+                            <!-- Modal -->
+                            <div class="modal fade" id="transporte-{{ usuario.id }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModalLabel">Servicio transporte {{ usuario.first_name }}</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <form method="POST">{% csrf_token %}
+                                            <input type="hidden" name="id-transporte" value="{{ usuario.transporte.id }}" >
+                                        <div class="form-group row">
+                                            <div class="col">
+                                                <label for="desde">Desde:</label>
+                                                <input id="desde" readonly name="desde" value="{{ usuario.transporte.desde }}" class="form-control" type="text">
+                                            </div>
+                                            <div class="col">
+                                                <label for="hacia">Hacia: {{ usuario.transporte.estado }}</label>
+                                                <input name="hacia" readonly  id="hacia" value="{{ usuario.transporte.hacia }}
+                                                " class="form-control" type="text">
+                                                <!-- TODO recoradatorio para cambiar icono y color del icono xd -->
+                                                <script>
+                                                    var estado  ='{{ usuario.transporte.estado_verificado }}'
+                                                    if(estado===''){
+                                                        console.log('NADAA')
+                                                    }else{
+                                                        console.log('False o true')
+                                                    }
+                                                    
+                                                </script>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <div class="col">
+                                                <label for="hora">Hora:</label>
+                                                <input
+                                                    id="hora" 
+                                                    {% if usuario.transporte.estado_verificado %}    
+                                                    readonly
+                                                    value="{{ usuario.transporte.hora }}"
+                                                    {% endif %}
+                                                    name="hora"  class="form-control" type="time">
+                                            </div>
+                                            <div class="col">
+                                                <label for="vehiculo">Vehiculo:</label>
+                                                <input 
+                                                    name="vehiculo"  
+                                                    id="vehiculo" 
+                                                    {% if usuario.transporte.estado_verificado %}    
+                                                    readonly
+                                                    value="{{ usuario.transporte.vehiculo }}"
+                                                    {% endif %}
+                                                    class="form-control" type="text">
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <div class="col">
+                                                
+                                                <label for="vehiconductorculo">Nombre conductor:</label>
+                                                <input 
+                                                    type="text" 
+                                                    name="conductor" 
+                                                    {% if usuario.transporte.conductor %}    
+                                                    readonly
+                                                    value="{{ usuario.transporte.conductor }}"
+                                                    {% endif %}
+                                                    class="form-control" id="conductor">
+                                            </div>
+                                        </div>
+                                        <div class="form-group d-flex justify-content-center align-items-center">
+                                            
+                                            <button class="btn btn-info" name="btn-transporte-aceptar" type="submit" >Aprobar</button>
+                                        </div>
+                                    </form>
+                                    </div>
+                                    <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                                
+                                    </div>
+                                </div>
+                                </div>
+                            </div>
+                            </div>   
+                            <!-- Fin modal servicio transporte -->
+                        </td>
+                        {% endif %}
+                        {% if request.resolver_match.url_name == 'Administracion usuarios' %}
+                        <td>
+                            {% if usuario.is_staff %}
+                                Funcionario
+                            {% else  %}
+                                Cliente
+                            {% endif %}
+                            
+                        </td>
+
+                        <td>
+                            {% if usuario.is_active %}
+                                {%  if usuario.is_superuser %}
+                                ADMIN
+                                {% else %}
+                                Activo  <a class="btn btn-info"  href="{% url 'Actualizar estado usuario' usuario.id  %}"  role="button"> <i class="fas fa-exchange-alt"></i></a>
+                                {% endif %}
+                                {% if user.is_staff %}
+                                {% else %}
+                                <a class="btn btn-info"  href="{% url 'Actualizar estado usuario' usuario.id  %}"  role="button"> <i class="fas fa-exchange-alt"></i></a>
+                                {% endif %}
+                            {% else %}
+                                Inactivo  <a class="btn btn-info"  href="{% url 'Actualizar estado usuario' usuario.id  %}"  role="button"> <i class="fas fa-exchange-alt"></i></a>
+                                {% if user.is_staff %}
+                                {% else %}
+                                <a class="btn btn-info"  href="{% url 'Actualizar estado usuario' usuario.id  %}"  role="button"> <i class="fas fa-exchange-alt"></i></a>
+                                {% endif %}
+                            {% endif %}
+                        </td>
+                    {% endif %}
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock contenido %}
+
+{% block extra_js %} 
+
+{% if messages %}
+{% for message in messages  %}
+  <script>   
+  
+  {% if message.tags == 'error' %}
+  Swal.fire({
+    title: 'Error!',
+    text: '{{ message }}',
+    icon: 'error',
+    confirmButtonText: 'Ok'
+  })
+  {% else  %}
+  Swal.fire({
+    title: 'Éxito!',
+    text: '{{ message }}',
+    icon: 'success',
+    confirmButtonText: 'Ok'
+
+  })
+{% endif %}
+  </script>
+  {% endfor %}
+{% endif %}
+{% endblock extra_js %}

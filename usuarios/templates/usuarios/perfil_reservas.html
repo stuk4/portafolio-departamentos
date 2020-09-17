@@ -101,11 +101,33 @@
                   </div>
                   <div class="details col-12 d-flex justify-content-center align-items-center">
                     <div class="form-group">
-                     
+                      
                       <!-- Modal servicio transporte -->
-                      <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+                      {% if request.user.transporte.estado_verificado == None %}
+                      <div class="alert alert-info" role="alert">
+                          Transporte solicitado, espere aprobación
+                      </div>
+                      {% elif  request.user.transporte.estado_verificado == True %}
+                      <div class="alert alert-success" role="alert">
+                        <button type="button" class="btn btn-sm btn-info" data-container="body" data-toggle="popover" data-placement="top" data-content="Se le informará 48h antes de su llegada.">
+                          <i class="fas fa-info"></i>
+                        </button>
+                        
+                        Solicitud de transporte aprobada
+                    </div>
+                      {% else %}
+                      <button type="button" class="btn 
+                                   {% if request.user.transporte.estado_verificado == False %}
+                                    btn-warning
+                                    {% else %}
+                                    btn-primary
+                                    {% endif  %}
+                                    " data-toggle="modal" data-target="#exampleModal">
                         Servicio Transporte
                       </button>
+                      {% endif %}
+                     
+                     
 
                       <!-- Modal -->
                       <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -118,15 +140,34 @@
                               </button>
                             </div>
                             <div class="modal-body">
+                              {% if request.user.transporte.estado_verificado == False %}
+                              <div class="alert alert-danger" role="alert">
+                                Transporte rechazado actualice por favor
+                              </div>
+                              {% endif %}
                               <form method="POST" > {% csrf_token %}
                                   <div class="form-group row">
                                       <div class="col">
                                         <label for="desde">Desde:</label>
-                                        <input id="desde" name="desde" class="form-control" type="text">
+                                        <input 
+                                             {% if request.user.transporte.estado_verificado == False %}
+                                             placeholder="Antes: {{ request.user.transporte.desde }}"
+                                             {% endif %}
+                                              id="desde" 
+                                              name="desde" 
+                                              class="form-control" 
+                                              type="text">
                                       </div>
                                       <div class="col">
                                         <label for="hacia">Hacia:</label>
-                                        <input name="hacia" id="hacia" class="form-control" type="text">
+                                        <input 
+                                            {% if request.user.transporte.estado_verificado == False %}
+                                            placeholder="Antes: {{ request.user.transporte.hacia }}"
+                                            {% endif %}
+                                            name="hacia" 
+                                            id="hacia" 
+                                            class="form-control" 
+                                            type="text">
                                       </div>
                                   </div>
                                   <div class="form-group d-flex justify-content-center align-items-center">
@@ -172,6 +213,9 @@
 {% block extra_js %} 
     <!-- Script para eliminar un departamento -->
     <script>
+      $(function () {
+        $('[data-toggle="popover"]').popover()
+      })
       const cancelarReserva = async () => {
           const {
               value: accept

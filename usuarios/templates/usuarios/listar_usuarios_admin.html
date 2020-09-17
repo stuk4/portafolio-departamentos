@@ -49,14 +49,22 @@
                         <td align="center">
                             
                             <!-- Modal servicio transporte -->
+                            <!-- Iconos segun el estado del transporte -->
                             {% if usuario.transporte.estado_verificado %}
                             <button type="button" class="btn btn-success" data-toggle="modal" data-target="#transporte-{{ usuario.id }}">
                                 <i class="fas fa-check"></i>
                             </button>
-                            {% else %}
-                            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#transporte-{{ usuario.id }}">
-                                <i class="fas fa-car-alt"></i>
+                            {% elif usuario.transporte.estado_verificado == False %}
+                            <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#transporte-{{ usuario.id }}">
+                                <i class="fas fa-times"></i>
                             </button>
+                            {% elif usuario.transporte == '' %}
+                                No solicitado
+
+                            {%  elif usuario.transporte.estado_verificado == None %}
+                                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#transporte-{{ usuario.id }}">
+                                    <i class="fas fa-car-alt"></i>
+                                </button>
                             {% endif  %}
 
                             <!-- Modal -->
@@ -81,18 +89,13 @@
                                                 <label for="hacia">Hacia: {{ usuario.transporte.estado }}</label>
                                                 <input name="hacia" readonly  id="hacia" value="{{ usuario.transporte.hacia }}
                                                 " class="form-control" type="text">
-                                                <!-- TODO recoradatorio para cambiar icono y color del icono xd -->
-                                                <script>
-                                                    var estado  ='{{ usuario.transporte.estado_verificado }}'
-                                                    if(estado===''){
-                                                        console.log('NADAA')
-                                                    }else{
-                                                        console.log('False o true')
-                                                    }
-                                                    
-                                                </script>
                                             </div>
                                         </div>
+                                        {% if usuario.transporte.estado_verificado == False %} 
+                                        <div class="alert alert-info" role="alert">
+                                            Esperando modificacion del cliente
+                                          </div>
+                                        {% else %}  
                                         <div class="form-group row">
                                             <div class="col">
                                                 <label for="hora">Hora:</label>
@@ -123,17 +126,32 @@
                                                 <input 
                                                     type="text" 
                                                     name="conductor" 
-                                                    {% if usuario.transporte.conductor %}    
+                                                    {% if usuario.transporte.estado_verificado %}    
                                                     readonly
                                                     value="{{ usuario.transporte.conductor }}"
                                                     {% endif %}
                                                     class="form-control" id="conductor">
                                             </div>
                                         </div>
-                                        <div class="form-group d-flex justify-content-center align-items-center">
-                                            
-                                            <button class="btn btn-info" name="btn-transporte-aceptar" type="submit" >Aprobar</button>
+                                        <div class="form-group row">
+                                            <div class="col">
+                                                <button class="btn btn-danger" name="btn-transporte-rechazar" type="submit" >
+                                                    {%  if usuario.transporte.estado_verificado != True %}
+                                                        Rechazar
+                                                    {% else %}
+                                                        Cancelar
+                                                    {% endif %}
+
+                                                </button>
+                                            </div>
+                                            {%  if usuario.transporte.estado_verificado != True %}
+                                            <div class="col">
+                                                <button class="btn btn-info" name="btn-transporte-aceptar" type="submit" >Aprobar</button>
+                                            </div>
+                                            {% endif %}
+           
                                         </div>
+                                        {% endif %}
                                     </form>
                                     </div>
                                     <div class="modal-footer">

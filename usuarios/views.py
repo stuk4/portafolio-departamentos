@@ -111,7 +111,7 @@ def perfil(request):
             return redirect('Perfil')
         validadores = [MinimumLengthValidator,NumericPasswordValidator,CommonPasswordValidator]
       
-        if request.POST.get('newpass') is not '':
+        if request.POST.get('newpass') != '':
             try:
                 for validador in validadores:
                     validador().validate(request.POST.get('newpass'))
@@ -138,7 +138,7 @@ def perfil_reservas(request):
     if Departamento.objects.filter(usuario=request.user.id).exists():
         # obtengo la ultima reserva hecha por el usuario actual
         reserva = Reserva.objects.filter(usuario=request.user.id).last()
-
+        # print(Transporte.objects.get(reserva=reserva.id).estado_verificado)
         imagenes = Imagen.objects.filter(departamento=reserva.departamento.id)
         context = {'reserva':reserva,
                 'imagenes':imagenes}
@@ -156,16 +156,25 @@ def perfil_reservas(request):
                 return redirect('Mis reservas')
         
         if request.method == 'POST' and 'btn-transporte' in request.POST:
-            transporte = Transporte()
+            
+            if Reserva.objects.exclude(transporte__isnull=True).filter(id=reserva.id).exists():
+                transporte = Transporte.objects.get(reserva=reserva.id)
+     
+            else:
+                transporte = Transporte()
             reserva_obj = Reserva.objects.get(id=reserva.id)
             transporte.reserva =reserva_obj
             transporte.desde = request.POST.get('desde')
             transporte.hacia = request.POST.get('hacia')
+            transporte.estado_verificado = None
+          
             # Verifico si tiene ya un transporte
-            if hasattr(reserva_obj, 'transporte'):
-                messages.error(request,'Usted ya solicito un transporte')
-     
-                return redirect('Mis reservas')
+            if Reserva.objects.exclude(transporte__isnull=True).filter(id=reserva.id).exists() :
+                if ransporte.objects.get(reserva=reserva.id).estado_verificado == None  :
+                    messages.error(request,'Usted ya solicito un transporte')   
+                    return redirect('Mis reservas')
+                # elif  Transporte.objects.get(reserva=reserva.id).estado_verificado == False:
+                #     pass
 
             try:
                 transporte.save()
@@ -189,7 +198,7 @@ def perfil_reservas(request):
         context = {'reserva':reserva}
     return render(request,'usuarios/perfil_reservas.html',context)
 
-# TODO tengo que pasar estas vistas y urls y templates a app usuarios ya que ahi deberian ir 
+
     # Regla de seguridad: Solo si es admin puede ver usuarios
 @user_passes_test(lambda u:u.is_staff,login_url=('login'))  
 def listar_usuarios(request):
@@ -198,16 +207,20 @@ def listar_usuarios(request):
     elif request.resolver_match.url_name == 'Administracion usuarios con reserva':
         usuarios = User.objects.exclude(reserva__isnull=True)
 
-    if request.method == 'POST' and 'btn-transporte-aceptar' in request.POST:
+    if request.method == 'POST' and 'btn-transporte-aceptar'  in request.POST or 'btn-transporte-rechazar'  in request.POST :
         transporte = get_object_or_404(Transporte,id=request.POST.get('id-transporte'))
-
-        transporte.hora = request.POST.get('hora')
-        transporte.vehiculo = request.POST.get('vehiculo')
-        transporte.conductor = request.POST.get('conductor')
-        transporte.estado_verificado = True
+        if 'btn-transporte-aceptar' in request.POST:
+            transporte.hora = request.POST.get('hora')
+            transporte.vehiculo = request.POST.get('vehiculo')
+            transporte.conductor = request.POST.get('conductor')
+            transporte.estado_verificado = True
+            mensaje = 'Transporte aceptado'
+        elif 'btn-transporte-rechazar' in request.POST:
+            transporte.estado_verificado = False
+            mensaje = 'Transporte rechazado'
         try:
             transporte.save()
-            messages.success(request,'Transporte aceptado')
+            messages.success(request,mensaje)
             return redirect(request.META.get('HTTP_REFERER'))
         except expression as identifier:
             messages.error(request,'No se pudo realizar la operacion')

@@ -80,10 +80,12 @@ class Reserva(models.Model):
         return self.departamento.precio * self.dias_estadia
     def __str__(self):
         return 'ID reserva:{} {}'.format(self.id,self.usuario)
-        # TODO me falta agregar la fecha de solicitud y hacer qe muestre en alguna parte que quedan 48 hrs
+        # TODO me falta agregar la fecha de solicitud y hacer qe muestre en alguna parte que quedan 48 hrs ademas de emitir info si quedan 48 hrs
         # para ser arrenado ( puedo crear un metodo en este models que verifique si esta a 48hrs de ser arrendado o no)
 class Transporte(models.Model):
     reserva = models.OneToOneField(Reserva, related_name="transporte", on_delete=models.CASCADE)
+    fecha_solicitud = models.DateField(
+        null=True, blank=True, auto_now=True)
     estado_verificado = models.BooleanField(null=True,blank=True)
     desde = models.CharField(null=False,blank=False,max_length=50)
     hacia =  models.CharField(null=False,blank=False,max_length=50)

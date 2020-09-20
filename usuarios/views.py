@@ -170,7 +170,7 @@ def perfil_reservas(request):
           
             # Verifico si tiene ya un transporte
             if Reserva.objects.exclude(transporte__isnull=True).filter(id=reserva.id).exists() :
-                if ransporte.objects.get(reserva=reserva.id).estado_verificado == None  :
+                if Transporte.objects.get(reserva=reserva.id).estado_verificado == None:
                     messages.error(request,'Usted ya solicito un transporte')   
                     return redirect('Mis reservas')
                 # elif  Transporte.objects.get(reserva=reserva.id).estado_verificado == False:
@@ -203,7 +203,7 @@ def perfil_reservas(request):
 @user_passes_test(lambda u:u.is_staff,login_url=('login'))  
 def listar_usuarios(request):
     if request.resolver_match.url_name == 'Administracion usuarios':
-        usuarios = User.objects.all()
+        usuarios = User.objects.exclude(reserva__isnull=False)
     elif request.resolver_match.url_name == 'Administracion usuarios con reserva':
         usuarios = User.objects.exclude(reserva__isnull=True)
 

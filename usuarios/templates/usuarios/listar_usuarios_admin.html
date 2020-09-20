@@ -42,7 +42,7 @@
                         {% endif %}
                       
                         <td>{{  usuario.id }}</td>
-                        <td>{{ usuario.first_name }}</td>
+                        <td>{{ usuario.first_name }}  </td>
                         <td>{{ usuario.email }}</td>
                         <td>{{ usuario.telefono|stringformat:"d"  }}</td>
                         {% if user.is_superuser and request.resolver_match.url_name == 'Administracion usuarios con reserva' %}
@@ -61,6 +61,7 @@
                             {% elif usuario.transporte == '' %}
                                 No solicitado
 
+                         
                             {%  elif usuario.transporte.estado_verificado == None %}
                                 <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#transporte-{{ usuario.id }}">
                                     <i class="fas fa-car-alt"></i>
@@ -91,11 +92,30 @@
                                                 " class="form-control" type="text">
                                             </div>
                                         </div>
-                                        {% if usuario.transporte.estado_verificado == False %} 
-                                        <div class="alert alert-info" role="alert">
-                                            Esperando modificacion del cliente
+                                        {% if usuario.transporte_fecha and usuario.transporte.estado_verificado == False    %}
+                                        <div class="alert alert-danger" role="alert">
+                                            Fecha de solicitud {{ usuario.transporte.fecha_solicitud }}<br>
+                                            Fecha de llegada {{ usuario.reserva_actual.dia_llegada }}
                                           </div>
-                                        {% else %}  
+                                       
+                                        {% else %}
+                                        <div class="alert alert-info" role="alert">
+                                            Fecha de solicitud {{ usuario.transporte.fecha_solicitud }}<br>
+                                            Fecha de llegada {{ usuario.reserva_actual.dia_llegada }}
+                                          </div>
+                                        {% endif %}
+                                        
+                                        {% if usuario.transporte.estado_verificado == False  %}
+                                        <div class="alert alert-success" role="alert">
+                                            <button type="button" class="btn btn-sm btn-info" data-container="body" data-toggle="popover" data-placement="top" data-content="Si el usuario aun no esta a menos de 48hrs de su llegada, puede modiicar su solicitud">
+                                                <i class="fas fa-info"></i>
+                                              </button>
+                                              
+                                            Transporte rechazado
+                                          </div>
+                                       
+                                        {% elif usuario.transporte.estado_verificado == None or usuario.transporte.estado_verificado  %}  
+                                 
                                         <div class="form-group row">
                                             <div class="col">
                                                 <label for="hora">Hora:</label>
@@ -135,14 +155,17 @@
                                         </div>
                                         <div class="form-group row">
                                             <div class="col">
+                                                {% if usuario.transporte_fecha != True %}
                                                 <button class="btn btn-danger" name="btn-transporte-rechazar" type="submit" >
                                                     {%  if usuario.transporte.estado_verificado != True %}
                                                         Rechazar
                                                     {% else %}
                                                         Cancelar
+                                                
                                                     {% endif %}
 
                                                 </button>
+                                                {%  endif %}
                                             </div>
                                             {%  if usuario.transporte.estado_verificado != True %}
                                             <div class="col">

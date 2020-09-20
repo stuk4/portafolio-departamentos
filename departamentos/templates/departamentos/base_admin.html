@@ -131,6 +131,11 @@
         <script src="{% static 'js/jquery.min.js' %}"></script>
         <script src="{% static 'js/bootstrap.min.js' %}"></script>
         <script src="{% static 'js/menu_admin.js' %}" ></script>
+        <script>
+            $(function () {
+                $('[data-toggle="popover"]').popover()
+              })
+        </script>
         {% block extra_js %} 
         {% endblock extra_js %}
     </body>

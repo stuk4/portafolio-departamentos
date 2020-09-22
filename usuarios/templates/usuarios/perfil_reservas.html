@@ -103,18 +103,23 @@
                     <div class="form-group">
                       
                       <!-- Modal servicio transporte -->
-                      {% if request.user.transporte_fecha   %}
+                      <!-- TODO faLta agregAr ver info transporte -->
+                      {% if request.user.transporte_fecha and request.user.transporte.estado_verificado == True %}
                       <div class="alert alert-success" role="alert">
-                        <button type="button" class="btn btn-sm btn-info" data-container="body" data-toggle="popover" data-placement="top" data-content="Al parecer esta a menos de 48h de su llegada, ya no puede contratar el servicio o si por algun motivo la envio en este plazo será rechazada">
+                        <button type="button" class="btn btn-sm btn-info" data-container="body" data-toggle="popover" data-placement="top" data-content="">
                           <i class="fas fa-info"></i>
                         </button>
-                        
-                        Solicitud de transporte fuera de plazo
-                      </div>  
+                        Ver inforamcion de transporte
+                      </div>
+       
                       {% elif request.user.transporte.estado_verificado == None %}
                       <div class="alert alert-info" role="alert">
-                          Transporte solicitado, espere aprobación
+                        Transporte solicitado, espere aprobación
                       </div>
+                      {% elif request.user.transporte.estado_verificado == False %}
+                      <div class="alert alert-danger" role="alert">
+                        Transporte Rechazado, ya no puede modificar
+                     </div>
                       {% elif  request.user.transporte.estado_verificado == True %}
                       <div class="alert alert-success" role="alert">
                         <button type="button" class="btn btn-sm btn-info" data-container="body" data-toggle="popover" data-placement="top" data-content="Se le informará 48h antes de su llegada.">

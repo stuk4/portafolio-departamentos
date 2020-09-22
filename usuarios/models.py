@@ -23,8 +23,7 @@ class User(AbstractUser):
         reserva_obj = Reserva.objects.get(id=reserva.id)
         return reserva_obj
 
-    # Metodo para saber si esta a 48h de su llegada su peticion se cancelaria segun la fecha de solicitud
-    # TODO me falta enviar documento con la inforamcion del tranposrte
+
     @property
     def transporte_fecha(self):
         reserva  =self.reserva.filter(usuario=self.id).last()

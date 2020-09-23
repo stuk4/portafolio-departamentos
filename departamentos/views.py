@@ -32,6 +32,7 @@ def ver_departamento(request,id):
     # Condicion si el usuario esta logeado verifica si contiene una reserva
     if request.user.is_active:
         tiene_reserva = Departamento.objects.filter(usuario=request.user.id).exists()
+   
        
 
     if request.method == 'POST':
@@ -56,7 +57,7 @@ def ver_departamento(request,id):
         try:
             # Condicion si tiene una reserva no deja reservar
             if tiene_reserva:
-                messages.error(request,'Lo sentimos usted ya tiene una reseva')
+                messages.error(request,'Lo sentimos usted ya tiene una reseva o un arriendo')
                 return render(request,'departamentos/ver_departamento.html',context)
             
             reserva.save()

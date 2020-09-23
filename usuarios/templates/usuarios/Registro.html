@@ -10,7 +10,8 @@
     <title>Registro</title>
     <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}" />
     <link rel="stylesheet" href="{% static 'fonts/ionicons.min.css' %}" />
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/js/all.min.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="{% static 'font/font-awesome.min.css' %}">
     <link rel="stylesheet" href="{% static 'css/registro.css' %}" />
     <link rel="stylesheet" href="{% static 'css/styles.css' %}" />
   </head>
@@ -87,9 +88,98 @@
             />
           </div>
         </div>
-        <div class="form-group">
-            <label for="dateb">N tarjeta:</label
-            ><input required class="form-control"  name="card" type="number" />
+        <div class="form-group d-flex justify-content-center align-items-center">
+          <!-- Ingresar modal de tarjeta  -->
+          <!-- Button trigger modal -->
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+              Ingresar tarjeta
+            </button>
+
+            <!-- Modal -->
+            <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+              <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Tarjeta de credito</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                  <div class="modal-body">
+                    <div class="row">
+                      <div class="col-sm-12">
+                          <div class="form-group">
+                              <label for="name">Nombre:</label>
+                              <input class="form-control" id="name" type="text" placeholder="Ingresa tu nombre">
+                          </div>
+                      </div>
+                  </div>
+                  <div class="row">
+                      <div class="col-sm-12">
+                          <div class="form-group">
+                              <label for="ccnumber">Numero de tarjeta: </label>
+                              <div class="input-group">
+                                  <input class="form-control" type="text" placeholder="0000 0000 0000 0000" autocomplete="email">
+                                  <div class="input-group-append">
+                                      <span class="input-group-text">
+                                        <i class="fas fa-credit-card"></i>
+                                      </span>
+                                  </div>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+                  <div class="row">
+                      <div class="form-group col-sm-4">
+                          <label for="ccmonth">Mes</label>
+                          <select class="form-control" id="ccmonth">
+                              <option>1</option>
+                              <option>2</option>
+                              <option>3</option>
+                              <option>4</option>
+                              <option>5</option>
+                              <option>6</option>
+                              <option>7</option>
+                              <option>8</option>
+                              <option>9</option>
+                              <option>10</option>
+                              <option>11</option>
+                              <option>12</option>
+                          </select>
+                      </div>
+                      <div class="form-group col-sm-4">
+                          <label for="ccyear">Año</label>
+                          <select class="form-control" id="ccyear">
+                              <option>2014</option>
+                              <option>2015</option>
+                              <option>2016</option>
+                              <option>2017</option>
+                              <option>2018</option>
+                              <option>2019</option>
+                              <option>2020</option>
+                              <option>2021</option>
+                              <option>2022</option>
+                              <option>2023</option>
+                              <option>2024</option>
+                              <option>2025</option>
+                          </select>
+                      </div>
+                      <div class="col-sm-4">
+                          <div class="form-group">
+                              <label for="cvv">CVV/CVC</label>
+                              <input class="form-control" id="cvv" type="text" placeholder="123">
+                          </div>
+                      </div>
+                  </div>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">Aceptar</button>
+             
+                  </div>
+                </div>
+              </div>
+            </div>
+         
           </div> 
         <div class="form-group">
             <label for="dateb">Correo:</label

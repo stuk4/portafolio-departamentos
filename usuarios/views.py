@@ -78,7 +78,7 @@ def registro(request):
         user.first_name = request.POST.get('name')
         user.last_name = request.POST.get('lastname')
         user.telefono = request.POST.get('phone')
-        user.fecha_nacimiento = request.POST.get('date')
+        user.edad = request.POST.get('age')
         user.N_tarjeta = request.POST.get('card')
         try:
            
@@ -106,6 +106,7 @@ def perfil(request):
         usuario.first_name = request.POST.get('nombres')
         usuario.last_name = request.POST.get('apellidos')
         usuario.telefono = request.POST.get('telefono')
+        usuario.edad = request.POST.get('age')
         if usuario.check_password(request.POST.get('oldpass')) is False:
             messages.error(request,'Esa no es su contraseña')
             return redirect('Perfil')

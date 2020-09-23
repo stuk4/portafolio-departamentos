@@ -103,23 +103,25 @@
                     <div class="form-group">
                       
                       <!-- Modal servicio transporte -->
-                      <!-- TODO faLta agregAr ver info transporte -->
-                      {% if request.user.transporte_fecha and request.user.transporte.estado_verificado == True %}
+                      <!-- TODO faLta agregAr ver info transporte en el modal -->
+                      {% if request.user.transporte_fecha_documento and request.user.transporte.estado_verificado == True %}
+                      <button type="button" class="btn 
+                        btn-success
+                       " data-toggle="modal" data-target="#exampleModal">
+                        Mi transporte 
+                      </button>
+       
+                      {% elif request.user.transporte_fecha_documento %}
                       <div class="alert alert-success" role="alert">
-                        <button type="button" class="btn btn-sm btn-info" data-container="body" data-toggle="popover" data-placement="top" data-content="">
+                        <button type="button" class="btn btn-sm btn-info" data-container="body" data-toggle="popover" data-placement="top" data-content="Esta a menos de 48h de llegar a su reserva">
                           <i class="fas fa-info"></i>
                         </button>
-                        Ver inforamcion de transporte
+                        Ya no puede solicitar servicio de transporte
                       </div>
-       
                       {% elif request.user.transporte.estado_verificado == None %}
                       <div class="alert alert-info" role="alert">
                         Transporte solicitado, espere aprobación
                       </div>
-                      {% elif request.user.transporte.estado_verificado == False %}
-                      <div class="alert alert-danger" role="alert">
-                        Transporte Rechazado, ya no puede modificar
-                     </div>
                       {% elif  request.user.transporte.estado_verificado == True %}
                       <div class="alert alert-success" role="alert">
                         <button type="button" class="btn btn-sm btn-info" data-container="body" data-toggle="popover" data-placement="top" data-content="Se le informará 48h antes de su llegada.">
@@ -136,7 +138,7 @@
                                     btn-primary
                                     {% endif  %}
                                     " data-toggle="modal" data-target="#exampleModal">
-                        Servicio Transporte
+                        Servicio Transporte 
                       </button>
                       {% endif %}
                      
@@ -153,9 +155,59 @@
                               </button>
                             </div>
                             <div class="modal-body">
+                              {% if request.user.transporte_fecha_documento and request.user.transporte.estado_verificado == True %}
+                              <div class="form-group row">
+                                <div class="col text-center">
+                                  Desde:
+                                </div>
+                                <div class="col">
+                                  {{ request.user.transporte.desde  }}
+                                </div>
+                           
+                              </div>
+                              <hr>
+                              <div class="form-group row">
+                                <div class="col text-center">
+                                  Hacia:
+                                </div>
+                                <div class="col">
+                                  {{ request.user.transporte.hacia  }}
+                                </div>
+                           
+                              </div>
+                              <hr>
+                              <div class="form-group row">
+                                <div class="col text-center">
+                                  Hora:
+                                </div>
+                                <div class="col">
+                                  {{ request.user.transporte.hora  }}
+                                </div>
+                              </div>
+                              <hr>
+                              <div class="form-group row">
+                                <div class="col text-center">
+                                  Vehiculo:
+                                </div>
+                                <div class="col">
+                                  {{ request.user.transporte.vehiculo  }}
+                                </div>
+                              </div>
+                              <hr>
+                              <div class="form-group row">
+                                <div class="col text-center">
+                                  Conductor:
+                                </div>
+                                <div class="col">
+                                  {{ request.user.transporte.conductor  }}
+                                </div>
+                              </div>
+                              
+                              
+                              {% else %}
                               {% if request.user.transporte.estado_verificado == False %}
                               <div class="alert alert-danger" role="alert">
-                                Transporte rechazado actualice por favor
+                                Transporte rechazado, actualice por favor
                               </div>
                               {% endif %}
                               <form method="POST" > {% csrf_token %}
@@ -187,6 +239,7 @@
                                     <button class="btn btn-info" name="btn-transporte" type="submit" >Solicitar</button>
                                   </div>
                               </form>
+                              {% endif %}
                             </div>
                             <div class="modal-footer">
                               <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>

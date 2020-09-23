@@ -6,7 +6,7 @@ from departamentos.models import Transporte,Reserva
 from datetime import date,timedelta
 class User(AbstractUser):
     telefono = models.IntegerField(null=True,blank=False)
-    fecha_nacimiento = models.DateField( null=True,blank=False,auto_now=False, auto_now_add=False)
+    edad = models.IntegerField(null=False,blank=False)
     N_tarjeta = models.IntegerField(null=True,blank=False)
     imagen = models.ImageField(upload_to='usuarios/%Y/%m',blank=True)
     
@@ -30,8 +30,13 @@ class User(AbstractUser):
         transporte = Transporte.objects.get(reserva=reserva.id) 
         dia_salida =  reserva.dia_llegada + timedelta(days=reserva.dias_estadia)
         return transporte.fecha_solicitud >= ( reserva.dia_llegada - timedelta(days=2))
+    # TODO Agregar info y validacion de mostrar
+    @property
+    def transporte_fecha_documento(self):
+        reserva  =self.reserva.filter(usuario=self.id).last()
+        dia_salida =  reserva.dia_llegada + timedelta(days=reserva.dias_estadia)
+        return date.today() >= ( reserva.dia_llegada - timedelta(days=2))
        
-
         #Metodo para mostrar imagen en admin
     def mostrar_imagen(self):
         if self.imagen:

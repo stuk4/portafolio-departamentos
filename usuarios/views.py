@@ -70,7 +70,8 @@ def registro(request):
            
             user = User.objects.create_user(username=request.POST['email'],password=request.POST['password'],is_active=True)
 
-        except:
+        except Exception as err:
+            print('VREGISTRO ===',err)
             messages.error(request,'Usuario ya registrado')
             return render(request,'usuarios/Registro.html')
        

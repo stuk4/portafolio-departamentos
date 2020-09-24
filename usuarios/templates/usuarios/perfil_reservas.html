@@ -101,13 +101,44 @@
                   </div>
                   <div class="details col-12 d-flex justify-content-center align-items-center">
                     <div class="form-group">
+                      <!-- TODO agregar modal selccionar tour -->
+                        <!-- Modal tours -->
+                      <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+                        Servicio tour
+                      </button>
+
+                      <!-- Modal -->
+                      <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+                          <div class="modal-content">
+                            <div class="modal-header">
+                              <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                              </button>
+                            </div>
+                            <div class="modal-body">
+                              ...
+                            </div>
+                            <div class="modal-footer">
+                              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                              <button type="button" class="btn btn-primary">Save changes</button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <!-- Fin modal tours -->
+                    </div>
+                  </div>
+                  <div class="details col-12 d-flex justify-content-center align-items-center">
+                    <div class="form-group">
                       
                       <!-- Modal servicio transporte -->
-                      <!-- TODO faLta agregAr ver info transporte en el modal -->
+                    
                       {% if request.user.transporte_fecha_documento and request.user.transporte.estado_verificado == True %}
                       <button type="button" class="btn 
                         btn-success
-                       " data-toggle="modal" data-target="#exampleModal">
+                       " data-toggle="modal" data-target="#modal-transporte">
                         Mi transporte 
                       </button>
        
@@ -137,7 +168,7 @@
                                     {% else %}
                                     btn-primary
                                     {% endif  %}
-                                    " data-toggle="modal" data-target="#exampleModal">
+                                    " data-toggle="modal" data-target="#modal-transporte">
                         Servicio Transporte 
                       </button>
                       {% endif %}
@@ -145,11 +176,11 @@
                      
 
                       <!-- Modal -->
-                      <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                      <div class="modal fade" id="modal-transporte" tabindex="-1" aria-labelledby="modal-transporteLabel" aria-hidden="true">
                         <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
                           <div class="modal-content">
                             <div class="modal-header">
-                              <h5 class="modal-title" id="exampleModalLabel">Servicio transporte</h5>
+                              <h5 class="modal-title" id="modal-transporteLabel">Servicio transporte</h5>
                               <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                 <span aria-hidden="true">&times;</span>
                               </button>

@@ -91,13 +91,20 @@ class Transporte(models.Model):
     hora = models.TimeField(blank=True,null=True,auto_now=False, auto_now_add=False)
     vehiculo = models.CharField(null=True,blank=True,max_length=50)
     conductor = models.CharField(null=True,blank=True,max_length=50)
-
+class Tour(models.Model):
+    nombre = models.CharField(null=False,blank=False,max_length=50)
+    fecha = models.DateTimeField(auto_now=False, auto_now_add=False)
+    duracion = models.PositiveIntegerField(null=False,blank=False)
+    reserva = models.ForeignKey(Reserva, related_name="tour", on_delete=models.CASCADE)
+    precio = models.PositiveIntegerField(null=False,blank=False)
+    descripcion = models.TextField(null=True)
 class Arriendo(models.Model):
     reserva = models.ForeignKey(Reserva, related_name="arriendo", on_delete=models.CASCADE)
     diferencia = models.PositiveIntegerField(null=True,blank=True )
     total = models.PositiveIntegerField(null=False,blank=False )
     def __str__(self):
         return '{}'.format(self.reserva)
+
 
 
 

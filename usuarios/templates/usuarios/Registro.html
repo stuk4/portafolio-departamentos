@@ -110,7 +110,7 @@
                       <div class="col-sm-12">
                           <div class="form-group">
                               <label for="name">Nombre:</label>
-                              <input class="form-control" id="name" type="text" placeholder="Ingresa tu nombre">
+                              <input required class="form-control" id="name" type="text" placeholder="Nombre titular">
                           </div>
                       </div>
                   </div>
@@ -119,7 +119,7 @@
                           <div class="form-group">
                               <label for="ccnumber">Numero de tarjeta: </label>
                               <div class="input-group">
-                                  <input class="form-control" type="text" placeholder="0000 0000 0000 0000" autocomplete="email">
+                                  <input class="form-control" type="text" name="card" required placeholder="0000 0000 0000 0000" >
                                   <div class="input-group-append">
                                       <span class="input-group-text">
                                         <i class="fas fa-credit-card"></i>
@@ -132,7 +132,7 @@
                   <div class="row">
                       <div class="form-group col-sm-4">
                           <label for="ccmonth">Mes</label>
-                          <select class="form-control" id="ccmonth">
+                          <select required class="form-control" id="ccmonth">
                               <option>1</option>
                               <option>2</option>
                               <option>3</option>
@@ -149,7 +149,7 @@
                       </div>
                       <div class="form-group col-sm-4">
                           <label for="ccyear">Año</label>
-                          <select class="form-control" id="ccyear">
+                          <select required class="form-control" id="ccyear">
                               <option>2014</option>
                               <option>2015</option>
                               <option>2016</option>
@@ -167,7 +167,7 @@
                       <div class="col-sm-4">
                           <div class="form-group">
                               <label for="cvv">CVV/CVC</label>
-                              <input class="form-control" id="cvv" type="text" placeholder="123">
+                              <input required class="form-control" id="cvv" type="text" placeholder="123">
                           </div>
                       </div>
                   </div>

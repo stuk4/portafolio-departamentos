@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Departamento,Imagen,Inventario,Reserva,Arriendo,Transporte
+from .models import Departamento,Imagen,Inventario,Reserva,Arriendo,Transporte,Tour
 from django.contrib.auth.admin import UserAdmin 
 from django.contrib.auth import admin as auth_admin
 
@@ -14,6 +14,7 @@ admin.site.register(Transporte)
 admin.site.register(Inventario)
 admin.site.register(Reserva)
 admin.site.register(Arriendo)
+admin.site.register(Tour)
 # Customizacion de modelo Departamento en admin
 @admin.register(Departamento)
 class CustomUserAdmin(admin.ModelAdmin):

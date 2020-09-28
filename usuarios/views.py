@@ -6,7 +6,7 @@ from django.http import HttpResponseRedirect
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from usuarios.models import User
-from departamentos.models import Reserva,Arriendo,Imagen,Departamento,Transporte
+from departamentos.models import Reserva,Arriendo,Imagen,Departamento,Transporte,Tour
 from django.contrib.auth.decorators import user_passes_test
 from django.contrib.auth.password_validation import MinimumLengthValidator,NumericPasswordValidator,CommonPasswordValidator
 from django.core.exceptions import ValidationError
@@ -142,8 +142,11 @@ def perfil_reservas(request):
         reserva = Reserva.objects.filter(usuario=request.user.id).last()
         # print(Transporte.objects.get(reserva=reserva.id).estado_verificado)
         imagenes = Imagen.objects.filter(departamento=reserva.departamento.id)
+
+        tours = Tour.objects.all()
         context = {'reserva':reserva,
-                'imagenes':imagenes}
+                'imagenes':imagenes,
+                'tours':tours}
         if request.method == 'POST' and 'btn-acompanantes' in request.POST:
             try:
                 # Aqui no uso el metodo update 
@@ -186,7 +189,19 @@ def perfil_reservas(request):
                 messages.error(request,'No se pudo solicitar el transporte')
                 print('VMISRESERVASTRANSPORTE',err)
                 return redirect('Mis reservas')
-               
+        if request.method == 'POST' and 'btn-tour' in request.POST:
+            tour = Tour.objects.filter(id=request.POST.get('id-tour'))
+            reserva = Reserva.objects.filter(usuario=request.user.id).last()
+            try:
+                tour.update(reserva=reserva)
+                messages.success(request,'Tour solicitado con exito')
+                return redirect('Mis reservas')
+            except Exception as err:
+                print('VERRRSOLICITARTour ====',err)
+                messages.error(request,'No se pudo solicitar el tour')
+                return redirect('Mis reservas')
+                
+        #POST si desea cancelar la reserva
         if request.method == 'POST' and 'btn-cancelar' in request.POST:
             departamento = Departamento.objects.filter(usuario=request.user.id)
             try:
@@ -199,6 +214,7 @@ def perfil_reservas(request):
         reserva = False
         context = {'reserva':reserva}
     return render(request,'usuarios/perfil_reservas.html',context)
+
 
 
     # Regla de seguridad: Solo si es admin puede ver usuarios

@@ -26,7 +26,7 @@
                         <th>Detalles</th>
                         <th>Imagenes</th>
                         <th>Inventario</th>
-                        <!-- TODO agregar aqui tour -->
+                    
                         <th>Tours</th>
                         {% if user.is_superuser and request.resolver_match.url_name == 'Administracion departamentos en mantención' or  request.resolver_match.url_name == 'Administracion departamentos' %}
                         <th>Mantención</th>
@@ -310,10 +310,7 @@
 
 
                                         {% endfor %}
-
-
-                                        </tr>
-
+                                   
                                     </tbody>
                                 </table>
                             </div>
@@ -330,7 +327,7 @@
     </div>
     <!-- Fin modal ver inventario -->
 </td>
-<!-- TODO hacer view de agregar tour  y eliminar  -->
+
 
 <td align="center">
     <!-- Modal ver tours -->
@@ -341,7 +338,7 @@
 
     <div class="modal fade" id="ver-tour-{{ departamento.id }}" tabindex="-1" aria-labelledby="exampleModalLabel"
         aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable ">
+        <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable ">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="exampleModalLabel">Tours departamento {{ departamento.id }}</h5>
@@ -350,7 +347,7 @@
                     </button>
                 </div>
                 <div id='accordion' class="modal-body">
-
+                    {% if user.is_superuser and request.resolver_match.url_name == 'Administracion departamentos en mantención' %}
                     <div class="card mb-4">
                         <div class="card-header text-center" id="headingTwo">
                           <h5 class="mb-0">
@@ -362,34 +359,51 @@
                         <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordion">
                           <div class="card-body">
                             <form method="POST" >{% csrf_token %}
-                                <input type="hidden" value="{{ departamento.id }}" name="idReserva">
+                                <input type="hidden" value="{{ departamento.id }}" name="idTour">
                                 <div class="form-group">
                                     <label for="nombre-tour">Nombre del tour:</label>
-                                    <input id="nombre-tour" name="nombretour" type="text" class="form-control">
+                                    <input required id="nombre-tour" name="nombretour" type="text" class="form-control">
+                                </div>
+                                <div class="form-group">
+                                    <label for="direccion-tour">Dirección:</label>
+                                    <input required id="direccion-tour" name="direcciontour" class="form-control" required type="text">
                                 </div>
                                 <div class="form-group row">
                                     <div class="col">
-                                        <label for="fecha-tour">Fecha:</label>
-                                        <input type="datetime-local" class="form-control" name="fechatour" id="fecha-tour">
+                                        <label for="dia-tour">Dia:</label>
+                                        <select required class="form-control" name="dia" id="dia-tour">
+                                            <option value="Lunes">Lunes</option>
+                                            <option value="Martes">Martes</option>
+                                            <option value="Miercoles">Miercoles</option>
+                                            <option value="Jueves">Jueves</option>
+                                            <option value="Virenes">Viernes</option>
+                                            <option value="Sabado">Sabado</option>
+                                            <option value="Domingo">Domingo</option>
 
+                                        </select>
                                     </div>
                                     <div class="col">
                                         <label for="duracion-tour">Duracion (hrs):</label>
-                                        <input class="form-control" id="duracion-tour" name="duraciontour"  type="number">
+                                        <input required class="form-control" id="duracion-tour" name="duraciontour"  type="number">
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <label for="precio-tour">Precio:</label>
-                                    <input type="number" class="form-control" name="preciotour" id="precio-tour">
+                                    <input required type="number" class="form-control" name="preciotour" id="precio-tour">
                                 </div>
                                 <div class="form-group">
                                     <label for="descripcion-tour">Descripcion:</label>
-                                    <textarea name="descripcion-tour" class="form-control" id="descripcion-tour" cols="15" rows="5"></textarea>
+                                    <textarea required name="descripciontour" class="form-control" id="descripcion-tour" cols="15" rows="5"></textarea>
+                                </div>
+                                <div class="form-group d-flex justify-content-center">
+                                    <button name="btn-tour" class="btn btn-info" type="submit">Agregar</button>
+
                                 </div>
                             </form>
                           </div>
                         </div>
-                      </div>
+                    </div>
+                    {% endif %}
                     <div class="card mb-4">
                         <div class="card-header text-center ">
 
@@ -397,7 +411,43 @@
                         <div class="card-body">
                             <div class="table-responsive">
                                 <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-
+                                    <thead>
+                                        <tr>
+                                            <th>Nombre</th>
+                                            <th>Dia</th>
+                                            <th>Dirección</th>
+                                            <th>Duracion</th>
+                                            <th>Descripción</th>
+                                            <th>Precio</th>
+                                            {% if user.is_superuser and request.resolver_match.url_name == 'Administracion departamentos en mantención' %}
+                                            <th>Eliminar</th>
+                                            {% endif %}
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for tour in tours %}
+                                        {% if tour.departamento.id == departamento.id %}
+                                        <tr>
+                                            <td>{{ tour.nombre }}</td>
+                                            <td>{{ tour.dia }}</td>
+                                            <td>{{ tour.direccion }}</td>
+                                            <td>{{ tour.duracion  }}</td>
+                                            <td align="center">
+                                                <button type="button" class="btn btn-sm btn-info" data-container="body" data-toggle="popover" data-placement="top" data-content="{{ tour.descripcion }}">
+                                                    <i class="fas fa-eye"></i>
+                                                  </button>
+                                            </td>
+                                            <td>{{ tour.precio }}</td>
+                                            {% if user.is_superuser and request.resolver_match.url_name == 'Administracion departamentos en mantención' %}
+                                            <td class="align-middle text-white"> <a class="btn btn-danger"
+                                                  href="{% url 'Eliminar tour departamento' tour.id %}"  role="button"> <i class="fas fa-trash-alt"></i></a>
+                                                </td>
+                                            {% endif  %}    
+                       
+                                        </tr>
+                                        {% endif %}
+                                        {% endfor %}
+                                    </tbody>
                                 </table>
                             </div>
                         </div>

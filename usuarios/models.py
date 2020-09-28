@@ -33,7 +33,7 @@ class User(AbstractUser):
 
     @property
     def transporte_fecha_documento(self):
-        reserva  =self.reserva.filter(usuario=self.id).last()
+        reserva  = self.reserva.filter(usuario=self.id).last()
         dia_salida =  reserva.dia_llegada + timedelta(days=reserva.dias_estadia)
         return date.today() >= ( reserva.dia_llegada - timedelta(days=2))
        

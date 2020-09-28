@@ -1,5 +1,5 @@
 from django.shortcuts import render,get_object_or_404,redirect
-from departamentos.models import Departamento,Imagen,Inventario,Reserva,Arriendo
+from departamentos.models import Departamento,Imagen,Inventario,Reserva,Arriendo,Tour
 from usuarios.models import User
 from django.contrib.auth.decorators import user_passes_test
 from django.contrib import messages
@@ -92,10 +92,11 @@ def listar_departamentos_admin(request):
         departamentos = Departamento.objects.exclude(usuario__isnull=True).filter(estado_mantencion=False)
     inventarios = Inventario.objects.all()
     imagenes = Imagen.objects.all()
-
+    tours = Tour.objects.all()
     context = {'departamentos':departamentos,
                'imagenes':imagenes,
-               'inventarios':inventarios}
+               'inventarios':inventarios,
+               'tours':tours}
                
     # Metodo post para agregar imagenes
     if request.method == 'POST' and 'btn-imagenes' in request.POST:
@@ -139,11 +140,31 @@ def listar_departamentos_admin(request):
             print(err)
             messages.error(request,'Verifique los campos porfavor')
             return redirect(request.resolver_match.url_name)
+    #Metood post para agregar tours
+    if request.method == 'POST' and 'btn-tour' in request.POST:
+        tour = Tour()
+        departamento = get_object_or_404(Departamento,id=request.POST.get('idTour'))
+        tour.departamento = departamento
+        tour.nombre = request.POST.get('nombretour')
+        tour.dia = request.POST.get('dia')
+        tour.direccion = request.POST.get('direcciontour')
+        tour.duracion = request.POST. get('duraciontour')
+        tour.precio = request.POST.get('preciotour')
+        tour.descripcion = request.POST.get('descripciontour')
+        try:
+            tour.save()
+            messages.success(request,'Tour {}'.format(request.POST.get('nombretour')))
+            return redirect(request.resolver_match.url_name)
+        except Exception as err:
+            print('VAGREGARTOUR ===',err)
+            messages.error(request,'Verifique los campos porfavor')
+            return redirect(request.resolver_match.url_name)
+
     #Metodo POST para asginar dia de mantencion
     if request.method == 'POST' and 'btn-mantencion' in request.POST:
         # Condicion de fecha
         if parse_date(request.POST.get('fechamantencion')) < date.today():
-            messages.error(request,'El dia mantencion debe ser superior a hoy')
+            messages.error(request,'La fecha a asignar debe ser a partir de hoy')
             return redirect('Administracion departamentos')
         print('ESTEEEEE  ===> ',parse_date(request.POST.get('fechamantencion')))
         departamento = Departamento.objects.filter(id=request.POST.get('idDepMantencion'))
@@ -224,19 +245,31 @@ def actualizar_estado_mantencion(request,id):
             return redirect(request.META.get('HTTP_REFERER'))
 
     return redirect('Administracion departamentos') 
+# Regla de seguirdad: Solo si es admin puede eliminar tours
+@user_passes_test(lambda u:u.is_superuser,login_url=('login'))  
+def eliminar_tour_departamento(request,id):
+    tour = Tour.objects.filter(id=id)
+    try:
+        messages.success(request,'Tour eliminado')
+        tour.delete()
+        return redirect(request.META.get('HTTP_REFERER'))
+    except Exception as err:
+        print('ERRVELIMINARTOUR ====',)
+        messages.error(request,'No se pudo eliminar el tour')
+        return redirect(request.META.get('HTTP_REFERER'))
+    return redirect(request.META.get('HTTP_REFERER'))
 
-# Regla de seguridad: Solo si esadmin puede eliminar
+# Regla de seguridad: Solo si esadmin puede eliminar departamento
 @user_passes_test(lambda u:u.is_superuser,login_url=('login'))  
 def eliminar_inventario_departamento(request,id):
     inventario = Inventario.objects.filter(id=id)
-    print(request.META.get('HTTP_REFERER'))
 
     try:
         messages.success(request,'Inventario eliminado ')
         inventario.delete()
         return redirect(request.META.get('HTTP_REFERER'))
     except Exception as err:
-        print(err)
+        print('ERRVELIMINARINVENTARIO ==== ',err)
         messages.error(request,'No se pudo eliminar el inventario')
         return redirect(request.META.get('HTTP_REFERER'))
     return redirect(request.META.get('HTTP_REFERER'))

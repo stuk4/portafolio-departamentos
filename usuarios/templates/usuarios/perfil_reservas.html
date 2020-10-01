@@ -335,23 +335,24 @@
                     </div>   
                      <!-- Fin modal servicio transporte -->
                  </div>
-                  <div class="details w-50">
+                  <div class="details w-50 ">
                     <form name="form-cancelar "    id="form-cancelar" method="POST">{% csrf_token %}
                       
                       <button onclick="cancelarReserva()" type="button" class="btn btn-danger">Cancelar</button>
                       <button  id="btn-cancelar"  name="btn-cancelar" type="submit"  class="btn btn-danger">Cancelar</button>
                     </form>
                   </div>
-               
-                  <div class="details w-50 d-flex justify-content-end align-items-end ">
-                   
-                      <button class="btn  btn-info">Arrendar</button>
-
-            
-
+                  <div class="details w-50 d-flex justify-content-end align-items-end ">              
+                    {% if request.user.reserva_actual.llegada %}
+                      <button  class="btn  btn-info ">Arrendar</button>
+                    {% else %}
+                      <button type="button" class="btn disabled  btn-info" data-container="body" data-toggle="popover" data-placement="top" data-content="Espere al día de su llegada">
+                          Arrendar
+                        </button>
+                    
+                    {% endif %}
                   </div>
-               
-		            </div>
+		          </div>
 		            
             </div>
             {% endif %}

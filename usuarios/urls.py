@@ -12,6 +12,7 @@ urlpatterns = [
    path('admin/listar_usuarios/disponibilidad',views.listar_usuarios,name="Administracion usuarios"),
    path('admin/listar_usuarios/reserva',views.listar_usuarios,name="Administracion usuarios con reserva"),
    path('admin/actualizar_estado_usuario/<int:id>/',views.actualizar_estado_usuario,name="Actualizar estado usuario"),
+   path('admin/actualizar_llegada_usuario/<int:id>/',views.actualizar_llegada_usuario,name="Actualizar llegada usuario"),
 ]
 #Configuracion de imagenes
 if settings.DEBUG:

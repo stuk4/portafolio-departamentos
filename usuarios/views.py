@@ -217,7 +217,7 @@ def perfil_reservas(request):
 
 
 
-    # Regla de seguridad: Solo si es admin puede ver usuarios
+# Regla de seguridad: Solo si es admin puede ver usuarios
 @user_passes_test(lambda u:u.is_staff,login_url=('login'))  
 def listar_usuarios(request):
     if request.resolver_match.url_name == 'Administracion usuarios':
@@ -245,10 +245,27 @@ def listar_usuarios(request):
             return redirect()
     context = {'usuarios':usuarios}
     return render(request,'usuarios/listar_usuarios_admin.html',context)
-    # Regla de seguridad: Solo si es admin puede actualizar usuarios
+def actualizar_llegada_usuario(request,id):
+    usuario = User.objects.get(id=id)
+    reserva = Reserva.objects.filter(id=usuario.reserva_actual.id)
+   
+    try:
+        if usuario.reserva_actual.llegada:
+            reserva.update(llegada=False)
+            messages.success(request,'LLegada actualizada')
+            return redirect(request.META.get('HTTP_REFERER'))
+        else:
+            reserva.update(llegada=True)
+            messages.success(request,'LLegada actualizada')
+            return redirect(request.META.get('HTTP_REFERER'))
 
+    except Exception as err:
+        print('VERRORACTUALIZARLLEGADA ===== ',err)
+        messages.error(request,'No se pudo actualizar la llegada')
+        return redirect(request.META.get('HTTP_REFERER'))
+    return redirect(request.META.get('HTTP_REFERER'))
 
-         
+# Regla de seguridad: Solo si es admin puede actualizar usuarios         
 @user_passes_test(lambda u:u.is_superuser,login_url=('login'))  
 def actualizar_estado_usuario(request,id):
     usuario = User.objects.filter(id=id)

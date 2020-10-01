@@ -24,11 +24,13 @@
                         <th>Telefono</th>
                         {% if user.is_superuser and request.resolver_match.url_name == 'Administracion usuarios con reserva' %}
                         <th>Transporte</th>
+                        <th>Llegada</th>
                         {% endif %}
                         {% if request.resolver_match.url_name == 'Administracion usuarios' %}
                         <th>Tipo</th>
                         <th>Estado</th>
                         {% endif %}
+                        
                     </tr>
                 </thead>
         
@@ -186,6 +188,14 @@
                             </div>
                             </div>   
                             <!-- Fin modal servicio transporte -->
+                        </td>
+                        <td>
+                            <!-- TODO  agregar boton cambiar estado que cambie el color de verde a rojo -->
+                        {% if usuario.reserva_actual.llegada  %}
+                        <a class="btn btn-success"  href="{% url 'Actualizar llegada usuario' usuario.id  %}"  role="button"> <i class="fas fa-exchange-alt"></i></a>
+                        {% else %}
+                        <a class="btn btn-danger"  href="{% url 'Actualizar llegada usuario' usuario.id  %}"  role="button"> <i class="fas fa-exchange-alt"></i></a>
+                        {% endif %}
                         </td>
                         {% endif %}
                         {% if request.resolver_match.url_name == 'Administracion usuarios' %}

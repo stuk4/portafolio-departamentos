@@ -190,7 +190,7 @@
                             <!-- Fin modal servicio transporte -->
                         </td>
                         <td>
-                            <!-- TODO  agregar boton cambiar estado que cambie el color de verde a rojo -->
+                         
                         {% if usuario.reserva_actual.llegada  %}
                         <a class="btn btn-success"  href="{% url 'Actualizar llegada usuario' usuario.id  %}"  role="button"> <i class="fas fa-exchange-alt"></i></a>
                         {% else %}

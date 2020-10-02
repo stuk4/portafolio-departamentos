@@ -110,7 +110,8 @@ class Arriendo(models.Model):
     total = models.PositiveIntegerField(null=False,blank=False )
     def __str__(self):
         return '{}'.format(self.reserva)
-
+# class Check_in(models.Model):
+#     arriendo = models.ForeignKey(Arriendo, related_name="check_in", on_delete=models.CASCADE)
 
 
 

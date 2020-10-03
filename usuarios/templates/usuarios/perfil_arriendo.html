@@ -24,7 +24,7 @@
 		        <div class="card-body">
 		            <div class="row">
 		                <div class="col-md-12">
-		                    <h4>Mis reservas</h4>
+		                    <h4>Mis arriendos</h4>
 		                    <hr>
 		                </div>
                 </div>
@@ -79,11 +79,7 @@
                   <div class="details pl-0 col-md-5">
                     <h6 class="price">Pago: Débito/Crédito </h6>
                     <h6 class="price">estadía: {{ reserva.dias_estadia }} </h6>
-                    <h6  class="price ">Acompañantes: 
-                      <form class="row ml-1" method="POST" >{% csrf_token %}
-                        <input type="number" value="{{ reserva.acompanantes }}" name="acompanantes" class="w-25 form-control-sm form-control" name="" id="">
-                        <button name="btn-acompanantes" class="btn btn-info btn-sm"><i class="fas fa-exchange-alt"></i></button>
-                      </form>
+                    <h6  class="price ">Acompañantes: {{ reserva.acompanantes }}
                     </h6>
                     <h6  class="price">Día llegada: {{ reserva.dia_llegada|date:"SHORT_DATE_FORMAT" }} </h6>
                     <h6  class="price">Día salida: {{ reserva.dia_salida|date:"SHORT_DATE_FORMAT" }} </h6>
@@ -94,10 +90,13 @@
            
               
                
-                    <h5 class="price "><span>${{ reserva.departamento.precio }}</span>/Dia </h5>
-                    <h5 class="price"><span>${{ reserva.abono }}</span>/Abono </h5>
-                    <h5 class="price"><span>${{ reserva.diferencia  }}</span>/Dif.</h5>
-                    <h5 class="price"><span>${{ reserva.total }}</span>/Total </h5>            
+                    <h5 class="price"><span class="text-success" >${{ arriendo.total }}</span>/Arriendo </h5>
+                    <!-- TODO MOSTRAR PRECIO DE TRANSPORTE EN PERFIL RESERVASS -->
+                    <!-- TODO TERMINAR DE PONER COSTOS Y CREAR CHECK OUT CON OBJETOS DAÑADOS Y ESO -->
+                    <h5 class="price "><span>$ {{ arriendo.total_tours }} </span>/TOURS </h5>
+                    <!-- TODO CREAR PRECIO DE LOS DAÑOS Y EL TOTAL DE TODO (TOUR,ARRIENDO,DAÑOS,TRANSPORTE) -->
+                    <h5 class="price"><span>$</span>/Dif.</h5>
+                    <h5 class="price"><span>$</span>/Total </h5>            
                   </div>
                   <div class="details col-12 d-flex justify-content-center align-items-center">
                     <div class="form-group">
@@ -149,25 +148,13 @@
                                               <td>$ {{ tour.precio }}</td>
                                              
                                               <td class="align-middle">
-                                              <!-- TODO ARREGLAR BUG QUE MUESTRE LOS YA SOLICITADOS -->
-                                                {% for reserva_tour in tour.reserva.all %}
-                                                 
-                                                  {% if reserva_tour.id == reserva.id %}
-                                                  LO TIENEE
-                                                                                          
-                                                  {% endif %}
-                                                  {% if reserva_tour.id != reserva.id %}
-                                                  CACA
-                                                  {% endif  %}
-                                                {% endfor %}
                                                {%  if tour.reserva.id != reserva.id %}
                                           
                                            
                                                 <form method="POST">{% csrf_token %}
                                                   <input type="hidden" value="{{ tour.id }}" name="id-tour">
                                                   <input type="hidden" value="{{ reserva.id }}" name="id-reserva">
-                                               
-                                                  <button class="btn btn-primary"name="btn-tour"><i class="fas fa-route"></i> </button>
+                                                  <button class="btn btn-primary"name="btn-tour"><i class="fas fa-route"></i></button>
 
                                                 </form>
                                                 {% else %}
@@ -204,35 +191,10 @@
                        " data-toggle="modal" data-target="#modal-transporte">
                         Mi transporte 
                       </button>
-       
-                      {% elif request.user.transporte_fecha_documento %}
-                      <div class="alert alert-success" role="alert">
-                        <button type="button" class="btn btn-sm btn-info" data-container="body" data-toggle="popover" data-placement="top" data-content="Esta a menos de 48h de llegar a su reserva">
-                          <i class="fas fa-info"></i>
-                        </button>
-                        Ya no puede solicitar servicio de transporte
-                      </div>
-                      {% elif request.user.transporte.estado_verificado == None %}
-                      <div class="alert alert-info" role="alert">
-                        Transporte solicitado, espere aprobación
-                      </div>
-                      {% elif  request.user.transporte.estado_verificado == True %}
-                      <div class="alert alert-success" role="alert">
-                        <button type="button" class="btn btn-sm btn-info" data-container="body" data-toggle="popover" data-placement="top" data-content="Se le informará 48h antes de su llegada.">
-                          <i class="fas fa-info"></i>
-                        </button>
-                        
-                        Solicitud de transporte aprobada
-                     </div>
+
                       {% else %}
-                      <button type="button" class="btn 
-                                   {% if request.user.transporte.estado_verificado == False %}
-                                    btn-warning
-                                    {% else %}
-                                    btn-primary
-                                    {% endif  %}
-                                    " data-toggle="modal" data-target="#modal-transporte">
-                        Servicio Transporte 
+                      <button type="button" class="btn  btn-warning" >
+                        No cuenta con servicio transporte 
                       </button>
                       {% endif %}
                      
@@ -249,7 +211,6 @@
                               </button>
                             </div>
                             <div class="modal-body">
-                              {% if request.user.transporte_fecha_documento and request.user.transporte.estado_verificado == True %}
                               <div class="form-group row">
                                 <div class="col text-center">
                                   Desde:
@@ -298,44 +259,8 @@
                               </div>
                               
                               
-                              {% else %}
-                              {% if request.user.transporte.estado_verificado == False %}
-                              <div class="alert alert-danger" role="alert">
-                                Transporte rechazado, actualice por favor
-                              </div>
-                              {% endif %}
-                              <form method="POST" > {% csrf_token %}
-                                  <div class="form-group row">
-                                      <div class="col">
-                                        <label for="desde">Desde:</label>
-                                        <input 
-                                             {% if request.user.transporte.estado_verificado == False %}
-                                             placeholder="Antes: {{ request.user.transporte.desde }}"
-                                             {% endif %}
-                                              id="desde" 
-                                              name="desde" 
-                                              class="form-control" 
-                                              type="text"
-                                              required>
-                                      </div>
-                                      <div class="col">
-                                        <label for="hacia">Hacia:</label>
-                                        <input 
-                                            {% if request.user.transporte.estado_verificado == False %}
-                                            placeholder="Antes: {{ request.user.transporte.hacia }}"
-                                            {% endif %}
-                                            name="hacia" 
-                                            id="hacia" 
-                                            class="form-control" 
-                                            type="text"
-                                            required>
-                                      </div>
-                                  </div>
-                                  <div class="form-group d-flex justify-content-center align-items-center">
-                                    <button class="btn btn-info" name="btn-transporte" type="submit" >Solicitar</button>
-                                  </div>
-                              </form>
-                              {% endif %}
+                            
+                    
                             </div>
                             <div class="modal-footer">
                               <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
@@ -350,20 +275,21 @@
                   <div class="details w-50 ">
                     <form name="form-cancelar "    id="form-cancelar" method="POST">{% csrf_token %}
                       
-                      <button onclick="cancelarReserva()" type="button" class="btn btn-danger">Cancelar</button>
-                      <button  id="btn-cancelar"  name="btn-cancelar" type="submit"  class="btn btn-danger">Cancelar</button>
+                      <button type="button" class="btn disabled  btn-danger" data-container="body" data-toggle="popover" data-placement="top" data-content="Para cancelar su arriendo contactese con un funcionario.">
+                        Cancelar
+                      </button>
                     </form>
                   </div>
                   <div class="details w-50 d-flex justify-content-end align-items-end ">              
                     {% if request.user.reserva_actual.llegada %}
                     <form method="POST">{% csrf_token %}
-
-                      <button  onclick="arrendar()" type="button" class="btn  btn-info ">Arrendar</button>
+                      <!-- TODO cambiar funcion a finalizar arriendo osea generar checko ut -->
+                      <button  onclick="arrendar()" type="button" class="btn  btn-info ">Finalizar</button>
                       <button id="btn-arrendar" type="submit" name="btn-arrendar" class="btn  btn-info ">Arrendar</button>
                     </form>
                     {% else %}
                       <button type="button" class="btn disabled  btn-info" data-container="body" data-toggle="popover" data-placement="top" data-content="Espere al día de su llegada">
-                          Arrendar
+                          Finalizar
                         </button>
                         
                     {% endif %}
@@ -383,30 +309,7 @@
       $(function () {
         $('[data-toggle="popover"]').popover()
       })
-      const cancelarReserva = async () => {
-          const {
-              value: accept
-          } = await Swal.fire({
-              title: '¿Desea cancelar su reserva?',
-              input: 'checkbox',
-              icon: 'info',
-              confirmButtonColor: '#CD2737',
-              inputValue: 0,
-              showCloseButton: true,
-              inputPlaceholder: `Estoy de acuerdo en cancelar mi reserva`,
-              confirmButtonText: 'Eliminar <i class="fas fa-trash-alt"></i>',
-              cancelButtonText: 'Cancelar',
-              inputValidator: (result) => {
-                  return !result && 'Por favor marque la casilla'
-              }
-          })
 
-          if (accept) {
-
-            document.getElementById('btn-cancelar').click()
-         
-          } 
-      }
       const arrendar = async () => {
         const {
             value: accept

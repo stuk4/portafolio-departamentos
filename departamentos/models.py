@@ -1,7 +1,7 @@
 from django.db import models
 from django.utils.html import mark_safe
 from datetime import date,timedelta
-
+from django.contrib.auth.models import User 
 class Departamento(models.Model):
 
     mantencion = models.DateField(
@@ -87,6 +87,7 @@ class Transporte(models.Model):
     fecha_solicitud = models.DateField(
         null=True, blank=True, auto_now=True)
     estado_verificado = models.BooleanField(null=True,blank=True)
+    precio = models.PositiveIntegerField(null=False,blank=False,default=10000)
     desde = models.CharField(null=False,blank=False,max_length=50)
     hacia =  models.CharField(null=False,blank=False,max_length=50)
     hora = models.TimeField(blank=True,null=True,auto_now=False, auto_now_add=False)
@@ -100,7 +101,7 @@ class Tour(models.Model):
     dia = models.CharField(null=True,blank=True,max_length=50)
     duracion = models.PositiveIntegerField(null=False,blank=False)
     departamento = models.ForeignKey(Departamento,null=True,blank=True, related_name="tour", on_delete=models.CASCADE)
-    reserva = models.ForeignKey(Reserva,null=True,blank=True, related_name="tour", on_delete=models.CASCADE)
+    reserva = models.ManyToManyField(Reserva,blank=True, related_name="tour")
     direccion = models.CharField(null=True,blank=True,max_length=50)
     precio = models.PositiveIntegerField(null=False,blank=False)
     descripcion = models.TextField(null=True)
@@ -108,10 +109,23 @@ class Arriendo(models.Model):
     reserva = models.ForeignKey(Reserva, related_name="arriendo", on_delete=models.CASCADE)
     diferencia = models.PositiveIntegerField(null=True,blank=True )
     total = models.PositiveIntegerField(null=False,blank=False )
+    @property
+    def total_tours(self):
+        reserva = Reserva.objects.filter(id=self.reserva.id).last()
+        reserva_obj = Reserva.objects.get(id=reserva.id)
+      
+        total = 0
+        for tour in Tour.objects.all():
+            if tour.reserva.id == reserva_obj.id:
+                total += tour.precio
+        
+        return total
     def __str__(self):
         return '{}'.format(self.reserva)
-# class Check_in(models.Model):
-#     arriendo = models.ForeignKey(Arriendo, related_name="check_in", on_delete=models.CASCADE)
+class Check_in(models.Model):
+    arriendo = models.ForeignKey(Arriendo, related_name="check_in", on_delete=models.CASCADE)
 
+class Check_out(models.Model):
+    arriendo = models.ForeignKey(Arriendo, related_name="check_out", on_delete=models.CASCADE)
 
 

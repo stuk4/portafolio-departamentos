@@ -16,7 +16,7 @@ class CustomUserAdmin(UserAdmin):
    list_display = ["mostrar_imagen",
                     "username", 
                     "is_superuser"]
-   fieldsets = (("User", {"fields": ("telefono","edad","N_tarjeta","imagen",)}),) + auth_admin.UserAdmin.fieldsets
+   fieldsets = (("User", {"fields": ("telefono","edad","reserva_activa",'arriendo_activo',"N_tarjeta","imagen",)}),) + auth_admin.UserAdmin.fieldsets
    def response_add(self,request,obj):
       return redirect('Administracion usuarios')
    def response_change(self,request, obj):

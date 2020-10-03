@@ -6,7 +6,7 @@ from django.http import HttpResponseRedirect
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from usuarios.models import User
-from departamentos.models import Reserva,Arriendo,Imagen,Departamento,Transporte,Tour
+from departamentos.models import Reserva,Arriendo,Imagen,Departamento,Transporte,Tour,Check_in,Check_out
 from django.contrib.auth.decorators import user_passes_test
 from django.contrib.auth.password_validation import MinimumLengthValidator,NumericPasswordValidator,CommonPasswordValidator
 from django.core.exceptions import ValidationError
@@ -134,16 +134,23 @@ def perfil(request):
     return render(request,'usuarios/perfil.html')
 
 def perfil_reservas(request):
-    # TODO me falta agregar si esque ya esta arrenaddo tampoco tiene que mostrar la reserva
     
+
     # Verifico se existe un departamento relacionado con el usuario actual
     if Departamento.objects.filter(usuario=request.user.id).exists():
+        print('TIENE RESERVA')        
         # obtengo la ultima reserva hecha por el usuario actual
         reserva = Reserva.objects.filter(usuario=request.user.id).last()
-        # print(Transporte.objects.get(reserva=reserva.id).estado_verificado)
-        imagenes = Imagen.objects.filter(departamento=reserva.departamento.id)
-
+        reserva_obj = Reserva.objects.get(id=reserva.id)
+        # Si ya paso por el check in y pago para arrendar no se le mostrar la reserva
+ 
+        if Arriendo.objects.filter(reserva=reserva_obj.id).exists():
+            print('TIENE ARRIENDO ===')
+            reserva = False
+            context = {'reserva':reserva}
+            return render(request,'usuarios/perfil_reservas.html',context)
         tours = Tour.objects.all()
+        imagenes = Imagen.objects.filter(departamento=reserva.departamento.id)
         context = {'reserva':reserva,
                 'imagenes':imagenes,
                 'tours':tours}
@@ -178,8 +185,7 @@ def perfil_reservas(request):
                 if Transporte.objects.get(reserva=reserva.id).estado_verificado == None:
                     messages.error(request,'Usted ya solicito un transporte')   
                     return redirect('Mis reservas')
-                # elif  Transporte.objects.get(reserva=reserva.id).estado_verificado == False:
-                #     pass
+    
 
             try:
                 transporte.save()
@@ -190,10 +196,11 @@ def perfil_reservas(request):
                 print('VMISRESERVASTRANSPORTE',err)
                 return redirect('Mis reservas')
         if request.method == 'POST' and 'btn-tour' in request.POST:
-            tour = Tour.objects.filter(id=request.POST.get('id-tour'))
+            tour = Tour.objects.get(id=request.POST.get('id-tour'))
             reserva = Reserva.objects.filter(usuario=request.user.id).last()
             try:
-                tour.update(reserva=reserva)
+                tour.reserva.add(reserva)
+                tour.save()
                 messages.success(request,'Tour solicitado con exito')
                 return redirect('Mis reservas')
             except Exception as err:
@@ -210,20 +217,64 @@ def perfil_reservas(request):
                 return redirect('Mis reservas')
             except Exception as err:
                 print(err)
+        if request.method == 'POST' and 'btn-arrendar' in request.POST:
+            arriendo = Arriendo()
+            check_in = Check_in()
+
+            arriendo.reserva = reserva_obj   
+            arriendo.diferencia =  reserva_obj.diferencia
+            arriendo.total = reserva_obj.total
+            user = User.objects.filter(id=request.user.id)
+            try:
+                arriendo_obj = arriendo.save()
+                user.update(reserva_activa=False)
+                user.update(arriendo_activo=True)
+                check_in.arriendo  = Arriendo.objects.get(id=arriendo.id)
+                check_in.save()
+                messages.success(request,'Arriendo realizado con exito!')
+                return redirect('Mis reservas')
+            except Exception as err:
+                print('VERRORARRENDAR ==== ',err)
+                messages.error(request,'No se pudo realizar la reserva')
+                return redirect('Mis reservas')
     else:
+        print('NOO TIENE RESERVA')   
         reserva = False
         context = {'reserva':reserva}
     return render(request,'usuarios/perfil_reservas.html',context)
-
+def perfil_arriendos(request):
+        # Verifico se existe un departamento relacionado con el usuario actual
+       
+    if Departamento.objects.filter(usuario=request.user.id).exists() and request.user.arriendo_activo:
+        # obtengo la ultima reserva hecha por el usuario actual
+        reserva = Reserva.objects.filter(usuario=request.user.id).last()
+        reserva_obj = Reserva.objects.get(id=reserva.id)
+        arriendo = Arriendo.objects.get(reserva=reserva_obj.id)
+        # Si ya paso por el check in y pago para arrendar no se le mostrar la reserva
+        if Arriendo.objects.filter(reserva=reserva_obj.id).exists() == False:
+            reserva = False
+            context = {'reserva':reserva}
+            return render(request,'usuarios/perfil_reservas.html',context)
+        tours = Tour.objects.all()
+        imagenes = Imagen.objects.filter(departamento=reserva.departamento.id)
+        context = {'reserva':reserva,
+                'imagenes':imagenes,
+                'tours':tours,
+                'arriendo':arriendo}
+    else:
+        reserva = False
+        context = {'reserva':reserva}
+        return render(request,'usuarios/perfil_arriendo.html',context)
+    return render(request,'usuarios/perfil_arriendo.html',context)
 
 
 # Regla de seguridad: Solo si es admin puede ver usuarios
 @user_passes_test(lambda u:u.is_staff,login_url=('login'))  
 def listar_usuarios(request):
     if request.resolver_match.url_name == 'Administracion usuarios':
-        usuarios = User.objects.exclude(reserva__isnull=False)
+        usuarios = User.objects.filter(reserva_activa=False).filter(arriendo_activo=False)
     elif request.resolver_match.url_name == 'Administracion usuarios con reserva':
-        usuarios = User.objects.exclude(reserva__isnull=True)
+        usuarios = User.objects.filter(reserva_activa=True).filter(arriendo_activo=False)
 
     if request.method == 'POST' and 'btn-transporte-aceptar'  in request.POST or 'btn-transporte-rechazar'  in request.POST :
         transporte = get_object_or_404(Transporte,id=request.POST.get('id-transporte'))

@@ -9,7 +9,8 @@ class User(AbstractUser):
     edad = models.PositiveIntegerField(null=True,blank=False)
     N_tarjeta = models.IntegerField(null=True,blank=False)
     imagen = models.ImageField(upload_to='usuarios/%Y/%m',blank=True)
-    
+    reserva_activa = models.BooleanField(default=False)
+    arriendo_activo = models.BooleanField(default=False)
     # Metodo para obtener el transporte  actual del usuario
     @property
     def transporte(self):   

@@ -13,7 +13,7 @@
 		     <div class="list-group ">
               <a href="{%  url 'Perfil' %}" class="list-group-item list-group-item-action {% if request.resolver_match.url_name == "Perfil" %}active{% endif %}">Perfil</a>
               <a href="{% url 'Mis reservas' %}" class="list-group-item list-group-item-action {% if request.resolver_match.url_name == "Mis reservas" %}active{% endif %}">Reservas</a>
-              <a href="{% url 'Mis arriendos' %}" class="list-group-item list-group-item-action">Mis Arriendos</a>
+              <a href="{% url 'Mis arriendos' %}" class="list-group-item list-group-item-action {% if request.resolver_match.url_name == "Mis arriendos" %}active{% endif %}">Mis Arriendos</a>
      
               
               
@@ -148,18 +148,19 @@
                                               <td>$ {{ tour.precio }}</td>
                                              
                                               <td class="align-middle">
-                                               {%  if tour.reserva.id != reserva.id %}
+                                                {%  if reserva in tour.reserva.all %}
                                           
-                                           
-                                                <form method="POST">{% csrf_token %}
-                                                  <input type="hidden" value="{{ tour.id }}" name="id-tour">
-                                                  <input type="hidden" value="{{ reserva.id }}" name="id-reserva">
-                                                  <button class="btn btn-primary"name="btn-tour"><i class="fas fa-route"></i></button>
-
-                                                </form>
-                                                {% else %}
+                                               
                                                 <p class="text-black">Ya solicitado</p>
-                                               {% endif %}
+                                                {% else %}
+                                                   <form method="POST">{% csrf_token %}
+                                                     <input type="hidden" value="{{ tour.id }}" name="id-tour">
+                                                     <input type="hidden" value="{{ reserva.id }}" name="id-reserva">
+                                                  
+                                                     <button class="btn btn-primary"name="btn-tour"><i class="fas fa-route"></i> </button>
+   
+                                                   </form>
+                                                {% endif %}
                                               </td>
                                           
                          

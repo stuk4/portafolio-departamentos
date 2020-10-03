@@ -3,6 +3,9 @@
 #btn-cancelar{
   display: none;
 }
+#btn-arrendar{
+  display: none;
+}
 /* #contenedor{
     padding-top: 70px;
   } */

@@ -41,6 +41,7 @@ def ver_departamento(request,id):
         arriendo = Arriendo()
 
         usuario = get_object_or_404(User,id=request.user.id)
+        user = User.objects.filter(id=usuario.id)
         reserva.usuario = usuario
         reserva.departamento = departamento
         reserva.dia_llegada = request.POST.get('diallegada')
@@ -59,7 +60,7 @@ def ver_departamento(request,id):
             if tiene_reserva:
                 messages.error(request,'Lo sentimos usted ya tiene una reseva o un arriendo')
                 return render(request,'departamentos/ver_departamento.html',context)
-            
+            user.update(reserva_activa=True)
             reserva.save()
             departamento_u.update(usuario=request.user)
 

@@ -149,29 +149,18 @@
                                               <td>$ {{ tour.precio }}</td>
                                              
                                               <td class="align-middle">
-                                              <!-- TODO ARREGLAR BUG QUE MUESTRE LOS YA SOLICITADOS -->
-                                                {% for reserva_tour in tour.reserva.all %}
-                                                 
-                                                  {% if reserva_tour.id == reserva.id %}
-                                                  LO TIENEE
-                                                                                          
-                                                  {% endif %}
-                                                  {% if reserva_tour.id != reserva.id %}
-                                                  CACA
-                                                  {% endif  %}
-                                                {% endfor %}
-                                               {%  if tour.reserva.id != reserva.id %}
+                                               {%  if reserva in tour.reserva.all %}
                                           
-                                           
-                                                <form method="POST">{% csrf_token %}
-                                                  <input type="hidden" value="{{ tour.id }}" name="id-tour">
-                                                  <input type="hidden" value="{{ reserva.id }}" name="id-reserva">
                                                
-                                                  <button class="btn btn-primary"name="btn-tour"><i class="fas fa-route"></i> </button>
-
-                                                </form>
-                                                {% else %}
-                                                <p class="text-black">Ya solicitado</p>
+                                               <p class="text-black">Ya solicitado</p>
+                                               {% else %}
+                                                  <form method="POST">{% csrf_token %}
+                                                    <input type="hidden" value="{{ tour.id }}" name="id-tour">
+                                                    <input type="hidden" value="{{ reserva.id }}" name="id-reserva">
+                                                 
+                                                    <button class="btn btn-primary"name="btn-tour"><i class="fas fa-route"></i> </button>
+  
+                                                  </form>
                                                {% endif %}
                                               </td>
                                           

@@ -250,17 +250,26 @@ def perfil_arriendos(request):
         reserva = Reserva.objects.filter(usuario=request.user.id).last()
         reserva_obj = Reserva.objects.get(id=reserva.id)
         arriendo = Arriendo.objects.get(reserva=reserva_obj.id)
-        # Si ya paso por el check in y pago para arrendar no se le mostrar la reserva
-        if Arriendo.objects.filter(reserva=reserva_obj.id).exists() == False:
-            reserva = False
-            context = {'reserva':reserva}
-            return render(request,'usuarios/perfil_reservas.html',context)
+
         tours = Tour.objects.all()
         imagenes = Imagen.objects.filter(departamento=reserva.departamento.id)
         context = {'reserva':reserva,
                 'imagenes':imagenes,
                 'tours':tours,
                 'arriendo':arriendo}
+        if request.method == 'POST' and 'btn-tour' in request.POST:
+            tour = Tour.objects.get(id=request.POST.get('id-tour'))
+            reserva = Reserva.objects.filter(usuario=request.user.id).last()
+            try:
+                tour.reserva.add(reserva)
+                tour.save()
+                messages.success(request,'Tour solicitado con exito')
+                return redirect('Mis arriendos')
+            except Exception as err:
+                print('VERRRSOLICITARTour ====',err)
+                messages.error(request,'No se pudo solicitar el tour')
+                return redirect('Mis arriendos')
+                         
     else:
         reserva = False
         context = {'reserva':reserva}

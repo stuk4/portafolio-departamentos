@@ -113,12 +113,11 @@ class Arriendo(models.Model):
     def total_tours(self):
         reserva = Reserva.objects.filter(id=self.reserva.id).last()
         reserva_obj = Reserva.objects.get(id=reserva.id)
-      
         total = 0
-        for tour in Tour.objects.all():
-            if tour.reserva.id == reserva_obj.id:
-                total += tour.precio
-        
+
+        for tour in reserva_obj.tour.all():
+            total += tour.precio    
+            
         return total
     def __str__(self):
         return '{}'.format(self.reserva)

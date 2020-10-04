@@ -10,6 +10,7 @@ urlpatterns = [
     path('departamentos/admin/',views.listar_departamentos_admin,name="Administracion departamentos"),
     path('departamentos_mantencion/admin/',views.listar_departamentos_admin,name="Administracion departamentos en mantención"),
     path('departamentos_reservados/admin/',views.listar_departamentos_admin,name="Administracion departamentos reservados"),
+    path('departamentos_arrendados/admin/',views.listar_departamentos_admin,name="Administracion departamentos arrendados"),
     path('departamentos/admin/eliminar_imagen/<int:id>/',views.eliminar_imagen_departamento,name="Eliminar imagen departamento"),
     path('departamentos/admin/eliminar_inventario/<int:id>/',views.eliminar_inventario_departamento,name="Eliminar inventario departamento"),
     path('departamentos/admin/eliminar_tour/<int:id>/',views.eliminar_tour_departamento,name="Eliminar tour departamento"),

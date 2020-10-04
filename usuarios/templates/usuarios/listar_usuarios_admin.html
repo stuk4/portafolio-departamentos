@@ -22,8 +22,10 @@
                         <th>Nombre</th>
                         <th>Correo</th>
                         <th>Telefono</th>
-                        {% if user.is_superuser and request.resolver_match.url_name == 'Administracion usuarios con reserva' %}
+                        {% if request.resolver_match.url_name == 'Administracion usuarios con reserva' or request.resolver_match.url_name == 'Administracion usuarios con arriendo'  %}
                         <th>Transporte</th>
+                        {% endif %}
+                        {% if request.resolver_match.url_name == 'Administracion usuarios con reserva'  %}
                         <th>Llegada</th>
                         {% endif %}
                         {% if request.resolver_match.url_name == 'Administracion usuarios' %}
@@ -47,12 +49,16 @@
                         <td>{{ usuario.first_name }}  </td>
                         <td>{{ usuario.email }}</td>
                         <td>{{ usuario.telefono|stringformat:"d"  }}</td>
-                        {% if user.is_superuser and request.resolver_match.url_name == 'Administracion usuarios con reserva' %}
+                        {% if  request.resolver_match.url_name == 'Administracion usuarios con reserva' or request.resolver_match.url_name == 'Administracion usuarios con arriendo' %}
                         <td align="center">
                             
                             <!-- Modal servicio transporte -->
                             <!-- Iconos segun el estado del transporte -->
-                            {% if usuario.transporte.estado_verificado %}
+                            {% if usuario.transporte.estado_verificado and  request.resolver_match.url_name == 'Administracion usuarios con arriendo'  %}
+                            <button type="button" class="btn   btn-success" data-container="body" data-toggle="popover" data-placement="top" data-content="Transporte aceptado,">
+                                <i class="fas fa-info"></i>
+                            </button>
+                            {% elif usuario.transporte.estado_verificado %}
                             <button type="button" class="btn btn-success" data-toggle="modal" data-target="#transporte-{{ usuario.id }}">
                                 <i class="fas fa-check"></i>
                             </button>
@@ -68,6 +74,7 @@
                                 <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#transporte-{{ usuario.id }}">
                                     <i class="fas fa-car-alt"></i>
                                 </button>
+                            
                             {% endif  %}
 
                             <!-- Modal -->
@@ -189,6 +196,8 @@
                             </div>   
                             <!-- Fin modal servicio transporte -->
                         </td>
+                        {% endif %}
+                        {% if request.resolver_match.url_name == 'Administracion usuarios con reserva'  %}
                         <td>
                          
                         {% if usuario.reserva_actual.llegada  %}
@@ -211,19 +220,20 @@
                         <td>
                             {% if usuario.is_active %}
                                 {%  if usuario.is_superuser %}
-                                ADMIN
+                                    ADMIN
                                 {% else %}
-                                Activo  <a class="btn btn-info"  href="{% url 'Actualizar estado usuario' usuario.id  %}"  role="button"> <i class="fas fa-exchange-alt"></i></a>
+                                    Activo  <a class="btn btn-info"  href="{% url 'Actualizar estado usuario' usuario.id  %}"  role="button"> <i class="fas fa-exchange-alt"></i></a>
                                 {% endif %}
                                 {% if user.is_staff %}
+                                 
                                 {% else %}
-                                <a class="btn btn-info"  href="{% url 'Actualizar estado usuario' usuario.id  %}"  role="button"> <i class="fas fa-exchange-alt"></i></a>
+                                    <a class="btn btn-info"  href="{% url 'Actualizar estado usuario' usuario.id  %}"  role="button"> <i class="fas fa-exchange-alt"></i></a>
                                 {% endif %}
                             {% else %}
                                 Inactivo  <a class="btn btn-info"  href="{% url 'Actualizar estado usuario' usuario.id  %}"  role="button"> <i class="fas fa-exchange-alt"></i></a>
                                 {% if user.is_staff %}
                                 {% else %}
-                                <a class="btn btn-info"  href="{% url 'Actualizar estado usuario' usuario.id  %}"  role="button"> <i class="fas fa-exchange-alt"></i></a>
+                                    <a class="btn btn-info"  href="{% url 'Actualizar estado usuario' usuario.id  %}"  role="button"> <i class="fas fa-exchange-alt"></i></a>
                                 {% endif %}
                             {% endif %}
                         </td>

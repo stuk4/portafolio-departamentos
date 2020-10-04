@@ -284,6 +284,8 @@ def listar_usuarios(request):
         usuarios = User.objects.filter(reserva_activa=False).filter(arriendo_activo=False)
     elif request.resolver_match.url_name == 'Administracion usuarios con reserva':
         usuarios = User.objects.filter(reserva_activa=True).filter(arriendo_activo=False)
+    elif request.resolver_match.url_name == 'Administracion usuarios con arriendo':
+        usuarios = User.objects.filter(reserva_activa=False).filter(arriendo_activo=True)
 
     if request.method == 'POST' and 'btn-transporte-aceptar'  in request.POST or 'btn-transporte-rechazar'  in request.POST :
         transporte = get_object_or_404(Transporte,id=request.POST.get('id-transporte'))

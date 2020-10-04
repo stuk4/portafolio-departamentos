@@ -20,7 +20,7 @@
                     <tr>
                         <th>ID</th>
                         <th>Dirección</th>
-                        {% if request.resolver_match.url_name == 'Administracion departamentos reservados' %}
+                        {% if request.resolver_match.url_name == 'Administracion departamentos reservados' or request.resolver_match.url_name == 'Administracion departamentos arrendados'  %}
                         <th>Cliente</th>
                         {% endif %}
                         <th>Detalles</th>
@@ -50,7 +50,7 @@
 
                             <td>{{ departamento.id }}</td>
                             <td>{{ departamento.direccion }}</td>
-                            {% if request.resolver_match.url_name == 'Administracion departamentos reservados' %}
+                            {% if request.resolver_match.url_name == 'Administracion departamentos reservados' or request.resolver_match.url_name == 'Administracion departamentos arrendados' %}
                             <td> {{ departamento.usuario }}</td>
                             {% endif %}
 

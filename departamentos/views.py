@@ -90,7 +90,10 @@ def listar_departamentos_admin(request):
     elif request.resolver_match.url_name == 'Administracion departamentos en mantención':
         departamentos = Departamento.objects.exclude(usuario__isnull=False).filter(estado_mantencion=True)
     elif request.resolver_match.url_name == 'Administracion departamentos reservados':
-        departamentos = Departamento.objects.exclude(usuario__isnull=True).filter(estado_mantencion=False)
+        departamentos = Departamento.objects.exclude(reserva__isnull=True).exclude(usuario__isnull=True).filter(estado_mantencion=False).filter(usuario__reserva_activa=True)
+    elif request.resolver_match.url_name == 'Administracion departamentos arrendados':
+        departamentos = Departamento.objects.filter(reserva__arriendo__isnull=True).filter(estado_mantencion=False).filter(usuario__arriendo_activo=True)
+     
     inventarios = Inventario.objects.all()
     imagenes = Imagen.objects.all()
     tours = Tour.objects.all()

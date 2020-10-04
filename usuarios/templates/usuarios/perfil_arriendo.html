@@ -93,9 +93,17 @@
                     <h5 class="price"><span class="text-success" >${{ arriendo.total }}</span>/Arriendo </h5>
                     <!-- TODO MOSTRAR PRECIO DE TRANSPORTE EN PERFIL RESERVASS -->
                     <!-- TODO TERMINAR DE PONER COSTOS Y CREAR CHECK OUT CON OBJETOS DAÑADOS Y ESO -->
+                    <h5 class="price"><span>$     
+                      {% if arriendo.transporte.precio  > 0%}
+                      {{ arriendo.transporte.precio }}
+                      {% else %}
+                        0
+                      {% endif %}</span>/Transporte</h5>
                     <h5 class="price "><span>$ {{ arriendo.total_tours }} </span>/TOURS </h5>
                     <!-- TODO CREAR PRECIO DE LOS DAÑOS Y EL TOTAL DE TODO (TOUR,ARRIENDO,DAÑOS,TRANSPORTE) -->
-                    <h5 class="price"><span>$</span>/Dif.</h5>
+                    <h5 class="price"><span>$
+                      
+                    </span>/inmuebles </h5> 
                     <h5 class="price"><span>$</span>/Total </h5>            
                   </div>
                   <div class="details col-12 d-flex justify-content-center align-items-center">

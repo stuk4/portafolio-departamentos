@@ -116,9 +116,22 @@ class Arriendo(models.Model):
         total = 0
 
         for tour in reserva_obj.tour.all():
-            total += tour.precio    
-            
-        return total
+            total += tour.precio 
+        return total   
+    @property
+    def transporte(self):
+        transporte = 0
+        if Transporte.objects.filter(reserva=self.reserva.id).exists():
+            transporte = Transporte.objects.get(reserva=self.reserva.id)
+            print('asdf')
+        else:
+            print('asdf')
+            transporte = 0
+        return transporte
+    # TODO añadir inmuebles dañados en arriendo usuarios
+    @property
+    def inmuebles(self):
+        pass
     def __str__(self):
         return '{}'.format(self.reserva)
 class Check_in(models.Model):

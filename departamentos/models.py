@@ -97,18 +97,18 @@ class Transporte(models.Model):
         return '{}'.format(self.reserva.usuario)
     
 class Tour(models.Model):
+    departamento = models.ForeignKey(Departamento,null=True,blank=True, related_name="tour", on_delete=models.CASCADE)
+    reserva = models.ManyToManyField(Reserva,blank=True, related_name="tour")
     nombre = models.CharField(null=False,blank=False,max_length=50)
     dia = models.CharField(null=True,blank=True,max_length=50)
     duracion = models.PositiveIntegerField(null=False,blank=False)
-    departamento = models.ForeignKey(Departamento,null=True,blank=True, related_name="tour", on_delete=models.CASCADE)
-    reserva = models.ManyToManyField(Reserva,blank=True, related_name="tour")
     direccion = models.CharField(null=True,blank=True,max_length=50)
     precio = models.PositiveIntegerField(null=False,blank=False)
     descripcion = models.TextField(null=True)
+
+# TODO para hacer lode inventario tengo que mostrar el inventario actual del departamento y cambiarle el esasdo luego mostrarselop al usuario
 class Arriendo(models.Model):
     reserva = models.ForeignKey(Reserva, related_name="arriendo", on_delete=models.CASCADE)
-    diferencia = models.PositiveIntegerField(null=True,blank=True )
-    total = models.PositiveIntegerField(null=False,blank=False )
     @property
     def total_tours(self):
         reserva = Reserva.objects.filter(id=self.reserva.id).last()
@@ -128,6 +128,7 @@ class Arriendo(models.Model):
             print('asdf')
             transporte = 0
         return transporte
+    
     # TODO añadir inmuebles dañados en arriendo usuarios
     @property
     def inmuebles(self):
@@ -135,9 +136,15 @@ class Arriendo(models.Model):
     def __str__(self):
         return '{}'.format(self.reserva)
 class Check_in(models.Model):
-    arriendo = models.ForeignKey(Arriendo, related_name="check_in", on_delete=models.CASCADE)
+    arriendo = models.OneToOneField(Arriendo, related_name="check_in", on_delete=models.CASCADE)
+    diferencia = models.PositiveIntegerField(null=False,blank=False )
+    total = models.PositiveIntegerField(null=False,blank=False )
 
 class Check_out(models.Model):
-    arriendo = models.ForeignKey(Arriendo, related_name="check_out", on_delete=models.CASCADE)
+    arriendo = models.OneToOneField(Arriendo, related_name="check_out", on_delete=models.CASCADE) 
+    valor_danos = models.PositiveIntegerField(null=False,blank=False,verbose_name='Valor daños' )
+    valor_transporte = models.PositiveIntegerField(null=False,blank=False )
+    valor_tours = models.PositiveIntegerField(null=False,blank=False )
+    total = models.PositiveIntegerField(null=False,blank=False )
 
 

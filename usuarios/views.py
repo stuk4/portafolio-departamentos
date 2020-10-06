@@ -217,14 +217,16 @@ def perfil_reservas(request):
                 return redirect('Mis reservas')
             except Exception as err:
                 print(err)
+        # POST para arrendar
         if request.method == 'POST' and 'btn-arrendar' in request.POST:
             arriendo = Arriendo()
             check_in = Check_in()
-
-            arriendo.reserva = reserva_obj   
-            arriendo.diferencia =  reserva_obj.diferencia
-            arriendo.total = reserva_obj.total
+            arriendo.reserva = reserva_obj
+            
+            check_in.diferencia =  reserva_obj.diferencia
+            check_in.total = reserva_obj.total
             user = User.objects.filter(id=request.user.id)
+
             try:
                 arriendo_obj = arriendo.save()
                 user.update(reserva_activa=False)

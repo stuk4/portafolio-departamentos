@@ -19,11 +19,17 @@
                         <th>Editar</th>
                         {% endif %}
                         <th>ID</th>
+                        {% if request.resolver_match.url_name != 'Administracion usuarios' %}
+                        <th>Departamento</th>
+                        {% endif %}
                         <th>Nombre</th>
                         <th>Correo</th>
                         <th>Telefono</th>
                         {% if request.resolver_match.url_name == 'Administracion usuarios con reserva' or request.resolver_match.url_name == 'Administracion usuarios con arriendo'  %}
                         <th>Transporte</th>
+                        {% endif %}
+                        {% if request.resolver_match.url_name == 'Administracion usuarios con arriendo'  %}
+                        <th>Check-Out</th>
                         {% endif %}
                         {% if request.resolver_match.url_name == 'Administracion usuarios con reserva'  %}
                         <th>Llegada</th>
@@ -46,6 +52,9 @@
                         {% endif %}
                       
                         <td>{{  usuario.id }}</td>
+                        {% if request.resolver_match.url_name != 'Administracion usuarios' %}
+                        <td>{{ usuario.departamento.direccion }}</td>
+                        {% endif %}
                         <td>{{ usuario.first_name }}  </td>
                         <td>{{ usuario.email }}</td>
                         <td>{{ usuario.telefono|stringformat:"d"  }}</td>
@@ -195,6 +204,153 @@
                             </div>
                             </div>   
                             <!-- Fin modal servicio transporte -->
+                        </td>
+                        {% endif %}
+                        {% if request.resolver_match.url_name == 'Administracion usuarios con arriendo'  %}
+                        <td align="center">
+                            <!-- Modal ver inventario -->
+                            <button type="button" class="btn " id="cambio-color-{{ usuario.departamento.id }}" data-toggle="modal"
+                                data-target="#ver-inventario-{{ usuario.departamento.id }}">
+                                <i class="fas fa-clipboard-list"></i>
+                            </button>
+
+
+                            <div class="modal fade" id="ver-inventario-{{ usuario.departamento.id }}" tabindex="-1" aria-labelledby="exampleModalLabel"
+                                aria-hidden="true">
+                                <div class="modal-dialog modal-lg  modal-dialog-centered modal-dialog-scrollable ">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="exampleModalLabel">Inventario departamento {{ usuario.departamento.id }}</h5>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div id="accordion" class="modal-body">
+                                            <div class="card mb-4">
+                                                <div class="card-header text-center" id="headingTwo">
+                                                  <h5 class="mb-0">
+                                                    <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                                      Check-List
+                                                    </button>
+                                                  </h5>
+                                                </div>
+                                                <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordion">
+                                                    <div class="card-body">
+                                                        <div class="table-responsive">
+                                                            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                                                <thead>
+                                                                    <tr>
+                                                                        <th>Nombre</th>
+                                                                        <th>Estado</th>
+                                                                        <th>Precio</th>
+    
+                                                                    </tr>
+                                                                </thead>
+    
+                                                                <tbody>
+                                                                    {% for inventario in inventarios %}
+    
+                                                                    {% if inventario.departamento.id == usuario.departamento.id  %}
+                                                                    <!-- Script para cambiar de color el boton segun el estado del inventario y mantencion -->
+                                                                    <script>
+                                                                        function ColorBotonVer() {
+                                                                            const estado = '{{ usuario.departamento.inventario.all }}';
+                                                                            if (estado.includes('Mal estado')) {
+                                                                                document.getElementById("cambio-color-{{ usuario.departamento.id }}")
+                                                                                    .classList.add("btn-warning");
+                                                                            } else {
+                                                                                document.getElementById("cambio-color-{{ usuario.departamento.id }}")
+                                                                                    .classList.add("btn-success");
+                                                                            }
+    
+    
+                                                                        }
+                                                                        ColorBotonVer()
+                                                                    </script>
+                                                                    <tr>
+                                                                        <td>{{ inventario.nombre}}</td>
+                                                                        <td>{{ inventario.estado }}
+                                                                          
+                                                                            <a class="btn btn-info"
+                                                                                href="{% url 'Actualizar inventario departamento' inventario.id  %}"
+                                                                                role="button"> <i class="fas fa-exchange-alt"></i>
+                                                                            </a>
+                                                                      
+                                                                        </td>
+                                                                        <td>${{ inventario.precio }}</td>
+                                                                    </tr>
+                                                                    {% endif %}
+    
+    
+                                                                    {% endfor %}
+                                                            
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="card mb-4">
+                                                <div class=" card-header">
+                                                </div>
+                                                <div class="card-body">
+                                                    <div class="table-responsive">
+                                                        <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th>Nombre</th>
+                                                                    <th>Precio</th>
+
+                                                                </tr>
+                                                            </thead>
+
+                                                            <tbody>
+                                                        
+
+                                                               
+                                                                <tr>
+                                                                    <td>Arriendo</td>
+                                                                    <td>$ {{ usuario.arriendo.check_in.total }}</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>Transporte</td>
+                                                                    <td>$
+                                                                        {% if usuario.arriendo.transporte.precio  > 0%}
+                                                                        {{ usuario.arriendo.transporte.precio }}
+                                                                        {% else %}
+                                                                          0
+                                                                        {% endif %}
+                                                                    </td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>Tours</td>
+                                                                    <td>$ {{ usuario.arriendo.total_tours }}</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>Daños inmuebles</td>
+                                                                    <td>$ {{ usuario.reserva_actual.danos_inmuebles }}</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>Total</td>
+                                                                    <td>$ {{ usuario.arriendo.total }}</td>
+                                                                </tr>
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <!-- TODO agregar boton generar check-out -->
+                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Fin modal ver inventario -->
+
                         </td>
                         {% endif %}
                         {% if request.resolver_match.url_name == 'Administracion usuarios con reserva'  %}

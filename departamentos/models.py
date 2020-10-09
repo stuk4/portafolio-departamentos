@@ -79,6 +79,16 @@ class Reserva(models.Model):
     @property
     def total(self):
         return self.departamento.precio * self.dias_estadia
+  
+    @property
+    def danos_inmuebles(self):
+        inventarios = Inventario.objects.filter(departamento=self.departamento)
+        total = 0 
+        for inventario in inventarios:
+            if inventario.estado == 'Mal estado':
+                total += inventario.precio
+        return total
+  
     def __str__(self):
         return 'ID reserva:{} {}'.format(self.id,self.usuario)
      
@@ -106,8 +116,9 @@ class Tour(models.Model):
     precio = models.PositiveIntegerField(null=False,blank=False)
     descripcion = models.TextField(null=True)
 
-# TODO para hacer lode inventario tengo que mostrar el inventario actual del departamento y cambiarle el esasdo luego mostrarselop al usuario
+
 class Arriendo(models.Model):
+    # TODO cambiar a onetoonep
     reserva = models.ForeignKey(Reserva, related_name="arriendo", on_delete=models.CASCADE)
     @property
     def total_tours(self):
@@ -122,17 +133,18 @@ class Arriendo(models.Model):
     def transporte(self):
         transporte = 0
         if Transporte.objects.filter(reserva=self.reserva.id).exists():
+            # Obtengo transporte.precio
             transporte = Transporte.objects.get(reserva=self.reserva.id)
-            print('asdf')
+           
         else:
-            print('asdf')
+         
             transporte = 0
         return transporte
-    
-    # TODO añadir inmuebles dañados en arriendo usuarios
     @property
-    def inmuebles(self):
-        pass
+    def total(self):
+        total = self.total_tours + self.transporte.precio + self.check_in.total + self.reserva.danos_inmuebles
+        return total
+
     def __str__(self):
         return '{}'.format(self.reserva)
 class Check_in(models.Model):
@@ -146,5 +158,5 @@ class Check_out(models.Model):
     valor_transporte = models.PositiveIntegerField(null=False,blank=False )
     valor_tours = models.PositiveIntegerField(null=False,blank=False )
     total = models.PositiveIntegerField(null=False,blank=False )
-
+    # TODO hacer propery del total para cuando haga post el user de pagar el check-out
 

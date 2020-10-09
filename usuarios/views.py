@@ -6,7 +6,7 @@ from django.http import HttpResponseRedirect
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from usuarios.models import User
-from departamentos.models import Reserva,Arriendo,Imagen,Departamento,Transporte,Tour,Check_in,Check_out
+from departamentos.models import Reserva,Arriendo,Imagen,Departamento,Transporte,Tour,Check_in,Check_out,Inventario
 from django.contrib.auth.decorators import user_passes_test
 from django.contrib.auth.password_validation import MinimumLengthValidator,NumericPasswordValidator,CommonPasswordValidator
 from django.core.exceptions import ValidationError
@@ -279,7 +279,7 @@ def perfil_arriendos(request):
     return render(request,'usuarios/perfil_arriendo.html',context)
 
 
-# Regla de seguridad: Solo si es admin puede ver usuarios
+# Regla de seguridad: Solo si es admin o staff puede ver usuarios
 @user_passes_test(lambda u:u.is_staff,login_url=('login'))  
 def listar_usuarios(request):
     if request.resolver_match.url_name == 'Administracion usuarios':
@@ -307,7 +307,10 @@ def listar_usuarios(request):
         except expression as identifier:
             messages.error(request,'No se pudo realizar la operacion')
             return redirect()
-    context = {'usuarios':usuarios}
+    # hacer post para generar checkout
+    inventarios = Inventario.objects.all()    
+    context = {'usuarios':usuarios,
+                'inventarios':inventarios}
     return render(request,'usuarios/listar_usuarios_admin.html',context)
 def actualizar_llegada_usuario(request,id):
     usuario = User.objects.get(id=id)

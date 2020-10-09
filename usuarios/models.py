@@ -2,7 +2,7 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.utils.html import mark_safe
 from datetime import date
-from departamentos.models import Transporte,Reserva
+from departamentos.models import Transporte,Reserva,Departamento,Arriendo
 from datetime import date,timedelta
 class User(AbstractUser):
     telefono = models.IntegerField(null=True,blank=False)
@@ -12,6 +12,10 @@ class User(AbstractUser):
     reserva_activa = models.BooleanField(default=False)
     arriendo_activo = models.BooleanField(default=False)
     # Metodo para obtener el transporte  actual del usuario
+    @property
+    def departamento(self):
+        departamento = Departamento.objects.get(usuario=self.id)
+        return departamento
     @property
     def transporte(self):   
         reserva  =self.reserva.filter(usuario=self.id).last()
@@ -23,6 +27,11 @@ class User(AbstractUser):
         reserva = self.reserva.filter(usuario=self.id).last()
         reserva_obj = Reserva.objects.get(id=reserva.id)
         return reserva_obj
+    @property
+    def arriendo(self):
+        reserva = self.reserva.filter(usuario=self.id).last()
+        arriendo = Arriendo.objects.get(reserva=reserva.id)
+        return arriendo
 
 
     @property

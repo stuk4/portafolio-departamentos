@@ -5,3 +5,5 @@ db.sqlite3
 media
 .vscode
 .prettierrc
+*.pyc
+*.pyo

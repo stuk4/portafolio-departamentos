@@ -18,7 +18,7 @@ class Departamento(models.Model):
     metros_cuadrados = models.PositiveIntegerField(null=True, blank=False)
     @property
     def dia_mantencion(self):
-        return date.today() == self.mantencion
+        return date.today() == self.mantencion  
    
     def __str__(self):
         return "ID {} Dep. {} Direc. {}".format(self.id,self.titulo,self.direccion)

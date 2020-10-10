@@ -1,9 +1,14 @@
 from django.conf import settings
 from django.conf.urls.static import static
-from django.urls import path
+from django.urls import path,include
+from rest_framework import routers
+from .viewsets import DepartamentoViewSet
+
+router = routers.SimpleRouter()
+router.register('departamentos', DepartamentoViewSet)
 
 from . import views
-# Urls de citt
+# Urls de citt  
 urlpatterns = [
     path('',views.listar_departamentos,name="Departamentos"),
     path('departamento/<int:id>/',views.ver_departamento,name="Departamento"),
@@ -17,6 +22,7 @@ urlpatterns = [
     path('departamentos/admin/eliminar_departamento/<int:id>/',views.eliminar_departamento,name="Eliminar departamento"),
     path('departamentos/admin/actualizar_estado_mantencion/<int:id>/',views.actualizar_estado_mantencion,name="Actualizar estado mantencion"),
     path('departamentos/admin/actualizar_estado_inventario/<int:id>/',views.actualizar_estado_inventario,name="Actualizar inventario departamento"),
+    path('api/',include(router.urls)),
 ]
 #Configuracion de imagenes
 if settings.DEBUG:

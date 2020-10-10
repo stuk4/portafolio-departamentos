@@ -17,6 +17,7 @@ class CustomUserAdmin(UserAdmin):
                     "username", 
                     "is_superuser"]
    fieldsets = (("User", {"fields": ("telefono","edad","reserva_activa",'arriendo_activo',"N_tarjeta","imagen",)}),) + auth_admin.UserAdmin.fieldsets
+   exclude = ('usuario',)
    def response_add(self,request,obj):
       return redirect('Administracion usuarios')
    def response_change(self,request, obj):

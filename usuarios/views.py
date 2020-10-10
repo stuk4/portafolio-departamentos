@@ -312,6 +312,30 @@ def listar_usuarios(request):
     context = {'usuarios':usuarios,
                 'inventarios':inventarios}
     return render(request,'usuarios/listar_usuarios_admin.html',context)
+@user_passes_test(lambda u:u.is_staff,login_url=('login'))  
+def generar_check_out(request,id):  
+    check_out = Check_out()
+    arriendo = Arriendo.objects.get(id=id)
+    check_out.arriendo = arriendo 
+
+    check_out.valor_danos = arriendo.reserva.danos_inmuebles
+    check_out.valor_transporte = arriendo.transporte.precio
+    check_out.valor_tours = arriendo.total_tours
+    check_out.total = arriendo.total + arriendo.check_in.total
+
+    try:
+        check_out.save()
+        messages.success(request,'Check out generado')
+        return redirect(request.META.get('HTTP_REFERER'))
+    except Exception as err:
+        print('VERRORGENERARCHECKOUT ======',err)
+        messages.error(request,'No se pudo generar el check out')
+        return redirect(request.META.get('HTTP_REFERER'))
+
+    return redirect(request.META.get('HTTP_REFERER'))
+
+
+@user_passes_test(lambda u:u.is_staff,login_url=('login'))  
 def actualizar_llegada_usuario(request,id):
     usuario = User.objects.get(id=id)
     reserva = Reserva.objects.filter(id=usuario.reserva_actual.id)

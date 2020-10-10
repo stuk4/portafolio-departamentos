@@ -6,6 +6,11 @@
 #btn-arrendar{
   display: none;
 }
+#ver-inv{
+  position: absolute;
+  right:-40px;
+  bottom: 45px;
+}
 /* #contenedor{
     padding-top: 70px;
   } */

@@ -90,7 +90,7 @@
            
               
                
-                    <h5 class="price"><span class="text-success" >${{ arriendo.check_in.total }}</span>/Arriendo </h5>
+                    <h5 class="price"><span class="text-success" >$ <strike>{{ arriendo.check_in.total }}</strike></span>/Arriendo </h5>
                     <!-- TODO TERMINAR DE PONER COSTOS Y CREAR CHECK OUT CON OBJETOS DAÑADOS Y ESO -->
                     <h5 class="price"><span>$     
                       {% if arriendo.transporte.precio  > 0%}
@@ -101,9 +101,54 @@
                     <h5 class="price "><span>$ {{ arriendo.total_tours }} </span>/TOURS </h5>
                     <!-- TODO CREAR PRECIO DE LOS DAÑOS Y EL TOTAL DE TODO (TOUR,ARRIENDO,DAÑOS,TRANSPORTE) -->
                     <h5 class="price"><span>$
-                      
-                    </span>/inmuebles </h5> 
-                    <h5 class="price"><span>$</span>/Total </h5>            
+                      {{ reserva.danos_inmuebles}}
+                    </span> /inmuebles 
+                      <!-- Modal inmuebles -->
+                      <button type="button" class="btn " id="ver-inv" data-toggle="modal" data-target="#modal-inventario">
+                        <i class="fas fa-eye"></i>
+                      </button>
+
+                      <!-- Modal -->
+                      <div class="modal fade" id="modal-inventario" tabindex="-1" aria-labelledby="modal-inventarioLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                          <div class="modal-content">
+                            <div class="modal-header">
+                              <h5 class="modal-title" id="modal-inventarioLabel">Inmuebles dañados</h5>
+                              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                              </button>
+                            </div>
+                            <div class="modal-body">
+                              <table class="table">
+                              
+                                <thead>
+                                  <tr>
+                                    <th scope="col">Nombre</th>
+                                    <th scope="col">Precio</th>
+                             
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  {% for inventario in request.user.departamento.inventario.all %}
+                                  <tr>
+                                    <td>{{ inventario.nombre }}</td>
+                                    <td>$ {{ inventario.precio }}</td>
+                                  </tr>
+                                  {% endfor %}
+                     
+                                </tbody>
+                              </table>
+                            </div>
+                            <div class="modal-footer">
+                              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                           
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                  </h5> 
+                    <h5 class="price"><span>$ {{ arriendo.total  }} </span>/Total </h5>            
                   </div>
                   <div class="details col-12 d-flex justify-content-center align-items-center">
                     <div class="form-group">
@@ -134,7 +179,6 @@
                                               <th>Duracion</th>
                                               <th>Descripción</th>
                                               <th>Precio</th>
-                                            
                                               <th>Solicitar   </th>
                                            
                                           </tr>
@@ -292,8 +336,9 @@
                     {% if request.user.reserva_actual.llegada %}
                     <form method="POST">{% csrf_token %}
                       <!-- TODO cambiar funcion a finalizar arriendo osea generar checko ut -->
-                      <button  onclick="arrendar()" type="button" class="btn  btn-info ">Finalizar</button>
-                      <button id="btn-arrendar" type="submit" name="btn-arrendar" class="btn  btn-info ">Arrendar</button>
+                      <button  onclick="finalizar()" type="button" class="btn  btn-info ">Finalizar</button>
+                        <!-- TODO falta hacer funcion de terminar arriendo -->
+                      <button id="btn-arrendar" type="submit" name="btn-arrendar" class="btn  btn-info ">Finalizar</button>
                     </form>
                     {% else %}
                       <button type="button" class="btn disabled  btn-info" data-container="body" data-toggle="popover" data-placement="top" data-content="Espere al día de su llegada">
@@ -313,23 +358,26 @@
 {% endblock contenido %}
 {% block extra_js %} 
     <!-- Script para eliminar un departamento -->
+  
     <script>
       $(function () {
         $('[data-toggle="popover"]').popover()
       })
-
-      const arrendar = async () => {
+      
+      const finalizar = async () => {
         const {
             value: accept
         } = await Swal.fire({
-            title: 'Check in ',
+            title: 'Check out ',
             input: 'checkbox',
             icon: 'question',
             confirmButtonColor: '#28A745',
             inputValue: 0,
             showCloseButton: true,
-            html:`<p class="text-justify">Este departamento es entregado en perfecto estado, en caso de dañar algun inmueble del departamento, estoy de acuerdo en pagar el valor completo de este, además de desalojar
-            el dia acordado el departamento arrendado</p>`,
+            html:`<p class="text-justify">
+              Estoy de acuerdo en pagar el monto de ${{ arriendo.total }}, que corresponde
+              a transportes, tours e inmuebles dañados.
+            </p>`,
             inputPlaceholder:`Estoy de acuerdo con los términos y condiciones`,
             confirmButtonText: 'Pagar diferencia <i class="fas fa-dollar-sign"></i>',
             cancelButtonText: 'Cancelar',

@@ -209,11 +209,18 @@
                         {% if request.resolver_match.url_name == 'Administracion usuarios con arriendo'  %}
                         <td align="center">
                             <!-- Modal ver inventario -->
+                            {% if usuario.arriendo.check_out %}
+                            {% if usuario.arriendo.check_out.estado == None %}
+                             En espera de respuesta
+                            {% endif %}
+                            {% else %}
                             <button type="button" class="btn " id="cambio-color-{{ usuario.departamento.id }}" data-toggle="modal"
-                                data-target="#ver-inventario-{{ usuario.departamento.id }}">
-                                <i class="fas fa-clipboard-list"></i>
+                            data-target="#ver-inventario-{{ usuario.departamento.id }}">
+                            <i class="fas fa-clipboard-list"></i>
                             </button>
 
+                            {% endif %}
+                      
 
                             <div class="modal fade" id="ver-inventario-{{ usuario.departamento.id }}" tabindex="-1" aria-labelledby="exampleModalLabel"
                                 aria-hidden="true">
@@ -310,7 +317,7 @@
                                                                
                                                                 <tr>
                                                                     <td>Arriendo</td>
-                                                                    <td>$ {{ usuario.arriendo.check_in.total }}</td>
+                                                                    <td>$ <strike> {{ usuario.arriendo.check_in.total }}</strike></td>
                                                                 </tr>
                                                                 <tr>
                                                                     <td>Transporte</td>
@@ -331,7 +338,10 @@
                                                                     <td>$ {{ usuario.reserva_actual.danos_inmuebles }}</td>
                                                                 </tr>
                                                                 <tr>
-                                                                    <td>Total</td>
+                                                                    <td>Total 
+                                                                       
+                                                                        
+                                                                    </td>
                                                                     <td>$ {{ usuario.arriendo.total }}</td>
                                                                 </tr>
                                                             </tbody>
@@ -341,9 +351,14 @@
 
                                             </div>
                                         </div>
-                                        <div class="modal-footer">
-                                            <!-- TODO agregar boton generar check-out -->
-                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                                        <div class="modal-footer row">
+                           
+                                            <div class="col">
+                                                <a class="btn btn-info"  href="{% url 'Generar check out' usuario.arriendo.id  %}"  role="button">Generar</a>
+                                            </div>
+                                            <div class="col">
+                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                                            </div>
 
                                         </div>
                                     </div>

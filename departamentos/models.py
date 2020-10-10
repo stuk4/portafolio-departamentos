@@ -118,8 +118,7 @@ class Tour(models.Model):
 
 
 class Arriendo(models.Model):
-    # TODO cambiar a onetoonep
-    reserva = models.ForeignKey(Reserva, related_name="arriendo", on_delete=models.CASCADE)
+    reserva = models.OneToOneField(Reserva, related_name="arriendo", on_delete=models.CASCADE)
     @property
     def total_tours(self):
         reserva = Reserva.objects.filter(id=self.reserva.id).last()
@@ -142,7 +141,7 @@ class Arriendo(models.Model):
         return transporte
     @property
     def total(self):
-        total = self.total_tours + self.transporte.precio + self.check_in.total + self.reserva.danos_inmuebles
+        total = self.total_tours + self.transporte.precio  + self.reserva.danos_inmuebles
         return total
 
     def __str__(self):
@@ -153,10 +152,13 @@ class Check_in(models.Model):
     total = models.PositiveIntegerField(null=False,blank=False )
 
 class Check_out(models.Model):
-    arriendo = models.OneToOneField(Arriendo, related_name="check_out", on_delete=models.CASCADE) 
+    estados = (('Aceptado','Aceptado'),
+            ('Rechazado','Rechazado'))
+    arriendo = models.OneToOneField(Arriendo, related_name="check_out", on_delete=models.CASCADE)
+    estado =  models.CharField(max_length=20,choices=estados,null=True,blank=True)
     valor_danos = models.PositiveIntegerField(null=False,blank=False,verbose_name='Valor daños' )
     valor_transporte = models.PositiveIntegerField(null=False,blank=False )
     valor_tours = models.PositiveIntegerField(null=False,blank=False )
     total = models.PositiveIntegerField(null=False,blank=False )
-    # TODO hacer propery del total para cuando haga post el user de pagar el check-out
+   
 

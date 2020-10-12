@@ -335,6 +335,21 @@ def generar_check_out(request,id):
     return redirect(request.META.get('HTTP_REFERER'))
 
 
+def aceptar_check_out(request,id):
+    check_out = Check_out.objects.filter(id=id)
+    usuario = User.objects.filter(id=request.user.id)
+    departamento = Departamento.objects.filter(usuario=request.user.id)
+    try:
+        check_out.update(estado='Aceptado')
+        usuario.update(arriendo_activo=False)
+        departamento.update(usuario=None)
+        messages.success(request,'Check out pagado')
+        return redirect(request.META.get('HTTP_REFERER'))
+    except Exception as err:
+        print('VERRORACEPTARCHECKOUT ==== ',err)
+        messages.error(request,'No se pudo aceptar el Check out')
+        return redirect(request.META.get('HTTP_REFERER'))
+    return redirect(request.META.get('HTTP_REFERER'))
 @user_passes_test(lambda u:u.is_staff,login_url=('login'))  
 def actualizar_llegada_usuario(request,id):
     usuario = User.objects.get(id=id)

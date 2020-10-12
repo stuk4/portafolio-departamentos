@@ -16,6 +16,7 @@ urlpatterns = [
    path('admin/actualizar_estado_usuario/<int:id>/',views.actualizar_estado_usuario,name="Actualizar estado usuario"),
    path('admin/actualizar_llegada_usuario/<int:id>/',views.actualizar_llegada_usuario,name="Actualizar llegada usuario"),
    path('admin/generar_check_out/<int:id>/',views.generar_check_out,name="Generar check out"),
+   path('admin/aceptar_check_out/<int:id>/',views.aceptar_check_out,name="Aceptar check out"),
 ]
 #Configuracion de imagenes
 if settings.DEBUG:

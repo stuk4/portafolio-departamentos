@@ -23,7 +23,7 @@ class CustomUserAdmin(admin.ModelAdmin):
     model = Departamento
     
 
-    exclude = ('estado_mantencion','mantencion','usuario',)
+    exclude = ('estado_mantencion','mantencion',)
     # Customizacion de interfaz
     list_display = ["mostrar_imagen","id","titulo","direccion",'mantencion','estado_mantencion']
     list_filter = ('titulo','direccion',)
@@ -61,4 +61,4 @@ class CustomUserAdmin(admin.ModelAdmin):
 #Edito los headers del admin
 admin.site.site_header = "Administracion Departamentos"
 admin.site.site_title = "Departamentos"
-admin.site.index_title = 'Administracion'
+admin.site.index_title = "Administracion"

@@ -3,9 +3,26 @@ from django.conf.urls.static import static
 from django.urls import path,include
 from rest_framework import routers
 from .viewsets import DepartamentoViewSet
+from usuarios.viewsets import UserViewSet
+
+## APIS PARA LUEGO EN CASO DE NECESITARLAS, SI NO, BORRAR COMENTARIOS
+
+# from .viewsets import InventarioViewSet
+# from .viewsets import ReservaViewSet
+# from .viewsets import TransporteViewSet
+# from .viewsets import TourViewSet
+# from .viewsets import Check_inViewSet
+# from .viewsets import Check_outViewSet
 
 router = routers.SimpleRouter()
 router.register('departamentos', DepartamentoViewSet)
+router.register('usuarios', UserViewSet)
+# router.register('inventario', InventarioViewSet)
+# router.register('reserva', ReservaViewSet)
+# router.register('transporte', TransporteViewSet)
+# router.register('tour', TourViewSet)
+# router.register('check_in', Check_inViewSet)
+# router.register('check_out', Check_outViewSet)
 
 from . import views
 # Urls de citt  
@@ -22,6 +39,7 @@ urlpatterns = [
     path('departamentos/admin/eliminar_departamento/<int:id>/',views.eliminar_departamento,name="Eliminar departamento"),
     path('departamentos/admin/actualizar_estado_mantencion/<int:id>/',views.actualizar_estado_mantencion,name="Actualizar estado mantencion"),
     path('departamentos/admin/actualizar_estado_inventario/<int:id>/',views.actualizar_estado_inventario,name="Actualizar inventario departamento"),
+    #Sección apis
     path('api/',include(router.urls)),
 ]
 #Configuracion de imagenes

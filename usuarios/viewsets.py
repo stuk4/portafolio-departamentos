@@ -5,5 +5,5 @@ from .models import User
 from .serializer import UserSerializer
 
 class UserViewSet(viewsets.ModelViewSet):
-    queryset = User.objects.all()
+    queryset = User.objects.filter(is_staff=True).filter(is_superuser=False)
     serializer_class = UserSerializer

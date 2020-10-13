@@ -197,13 +197,13 @@
         <a class="forgot" href="{% url 'login' %}">Ya registrado?, Ingresa</a>
       </form>
       <a
-        class="btn btn-primary btn-block btn-lg"
+        class="btn btn-info btn-block btn-lg"
         role="button"
         data-bs-hover-animate="pulse"
         id="btn-volver"
-        href="{% url 'Departamentos' %}"
-        style="background-color: rgb(23,162,184)"
-        >Vovler</a
+        href="{{ request.META.HTTP_REFERER }}"
+      
+        >Volver </a
       >
     </div>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>

@@ -6,16 +6,16 @@ class Departamento(models.Model):
 
     mantencion = models.DateField(
         null=True, blank=True,default=date.today, auto_now=False, auto_now_add=False)
-    titulo = models.CharField(null=True, blank=False, max_length=50)
+    titulo = models.CharField(null=True, blank=True, max_length=50)
     usuario = models.OneToOneField("usuarios.User", related_name="usuario",blank=True,null=True, on_delete=models.CASCADE)
-    banos = models.PositiveIntegerField(null=True, blank=False,verbose_name="baños")
-    dormitorios = models.PositiveIntegerField(null=True, blank=False)
+    banos = models.PositiveIntegerField(default=1,null=False, blank=False,verbose_name="baños")
+    dormitorios = models.PositiveIntegerField(default=1,null=False, blank=False)
     descripcion = models.TextField(null=True)
-    direccion = models.CharField(max_length=60)
+    direccion = models.CharField(null=False,blank=False,max_length=60)
     estado_mantencion = models.BooleanField(default=True,null=True, blank=True)
     imagen = models.ImageField(upload_to='departamentos_principal/%Y/%m',blank=True)
-    precio = models.PositiveIntegerField(null=True, blank=False)
-    metros_cuadrados = models.PositiveIntegerField(null=True, blank=False)
+    precio = models.PositiveIntegerField(default=0,null=False, blank=False)
+    metros_cuadrados = models.PositiveIntegerField(default=0,null=False, blank=False)
     @property
     def dia_mantencion(self):
         return date.today() == self.mantencion  
@@ -61,7 +61,7 @@ class Inventario(models.Model):
 class Reserva(models.Model):
     usuario = models.ForeignKey("usuarios.User",null=True,blank=True ,related_name="reserva", on_delete=models.CASCADE)
     departamento = models.ForeignKey(Departamento, related_name="reserva", on_delete=models.CASCADE)
-    acompanantes = models.PositiveIntegerField(null=True,blank=True,verbose_name="acompañantes" )
+    acompanantes = models.PositiveIntegerField(default=0,null=False,blank=False,verbose_name="acompañantes" )
     llegada = models.BooleanField(null=False,blank=False,default=False)
     dia_llegada = models.DateField(
         null=True, blank=True, auto_now=False, auto_now_add=False)
@@ -100,9 +100,9 @@ class Transporte(models.Model):
     precio = models.PositiveIntegerField(null=False,blank=False,default=10000)
     desde = models.CharField(null=False,blank=False,max_length=50)
     hacia =  models.CharField(null=False,blank=False,max_length=50)
-    hora = models.TimeField(blank=True,null=True,auto_now=False, auto_now_add=False)
-    vehiculo = models.CharField(null=True,blank=True,max_length=50)
-    conductor = models.CharField(null=True,blank=True,max_length=50)
+    hora = models.TimeField(blank=False,null=False,auto_now=False, auto_now_add=False)
+    vehiculo = models.CharField(null=False,blank=False,max_length=50)
+    conductor = models.CharField(null=False,blank=False,max_length=50)
     def __str__(self):
         return '{}'.format(self.reserva.usuario)
     
@@ -110,9 +110,9 @@ class Tour(models.Model):
     departamento = models.ForeignKey(Departamento,null=True,blank=True, related_name="tour", on_delete=models.CASCADE)
     reserva = models.ManyToManyField(Reserva,blank=True, related_name="tour")
     nombre = models.CharField(null=False,blank=False,max_length=50)
-    dia = models.CharField(null=True,blank=True,max_length=50)
+    dia = models.CharField(default=date.today(),null=False,blank=False,max_length=50)
     duracion = models.PositiveIntegerField(null=False,blank=False)
-    direccion = models.CharField(null=True,blank=True,max_length=50)
+    direccion = models.CharField(null=False,blank=False,max_length=50)
     precio = models.PositiveIntegerField(null=False,blank=False)
     descripcion = models.TextField(null=True)
 

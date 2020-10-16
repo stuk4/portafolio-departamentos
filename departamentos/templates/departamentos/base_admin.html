@@ -87,14 +87,14 @@
                                 </nav>
                             </div>
                        
-                            <div class="sb-sidenav-menu-heading">Addons</div>
-                            <a class="nav-link" href="charts.html">
+                            <div class="sb-sidenav-menu-heading">Reportes </div>
+                            <a class="nav-link  {% if request.resolver_match.url_name == "Reportes departamentos" %}active{% endif %}" href="{% url 'Reportes departamentos' %}">
                                 <div class="sb-nav-link-icon"><i class="fas fa-chart-area"></i></div>
-                                Charts
+                                Informes reserva
                             </a>
                             <a class="nav-link" href="tables.html">
                                 <div class="sb-nav-link-icon"><i class="fas fa-table"></i></div>
-                                Tables
+                                Estadisticas
                             </a>
                         </div>
                     </div>

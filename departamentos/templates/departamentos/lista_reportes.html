@@ -1,0 +1,155 @@
+{% extends 'departamentos/base_admin.html' %}
+{% load static %}
+{% block extra_css %}
+
+{% endblock extra_css %}
+{% block contenido %}
+<div class="card mb-4">
+    <div class="card-header">
+        Departamentos
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Dirección</th>
+                        <th>Zona</th>
+                        <th>Detalles</th>
+                        <th>Informe</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for departamento in departamentos %}
+                    <tr>
+                     
+                        <td>{{ departamento.id }}</td>
+                        <td>{{ departamento.direccion }}</td>
+                        <td>{{ departamento.zona }}</td>
+                        <td align="center">
+                            <!-- Modal ver detalles -->
+                            <button type="button" class="btn btn-primary" data-toggle="modal"
+                                data-target="#ver-detalle-{{ departamento.id }}">
+                                <i class="fas fa-eye"></i>
+                            </button>
+        
+        
+                        <div class="modal fade" id="ver-detalle-{{ departamento.id }}" tabindex="-1"
+                            aria-labelledby="exampleModalLabel" aria-hidden="true">
+                            <div class="modal-dialog  modal-dialog-centered modal-dialog-scrollable ">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="exampleModalLabel">Detalle departamento
+                                            {{ departamento.id }}</h5>
+                                        <button type="button" name="btn-imagenes" class="close" data-dismiss="modal"
+                                            aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div class="card mb-4">
+                                            <div class="card-header text-center ">
+        
+                                            </div>
+                                            <div class="card-body">
+                                                <div class="table-responsive">
+                                                    <table class="table table-bordered" id="dataTable" width="100%"
+                                                        cellspacing="0">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>Baños</th>
+                                                                <th>Dormitorios</th>
+                                                                <th>M²</th>
+                                                                <th>Precio</th>
+        
+                                                            </tr>
+                                                        </thead>
+        
+                                                        <tbody>
+        
+        
+                                                            <tr>
+                                                                <td>{{ departamento.banos }}</td>
+                                                                <td>{{departamento.dormitorios  }}</td>
+                                                                <td>{{ departamento.metros_cuadrados  }}</td>
+                                                                <td>$ {{ departamento.precio }}</td>
+                                                            </tr>
+        
+        
+        
+                                                                    </tr>
+        
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
+                                                    </div>
+        
+                                                </div>
+                                                </div>
+        
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+        
+                                                </div>
+                                </div>
+                                </div>
+                                                    </div>
+                            <!-- Fin modal ver detalles -->
+                            </td>
+                            <td align="center">   
+                                <a class="btn btn-info"
+                                href="{% url 'Generar reporte' departamento.id %}"
+                                role="button">  <i class="fas fa-file-pdf"></i>
+                            </a>
+
+                        </td>
+                        </tr>
+                    {% endfor %}
+                    
+                
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock contenido %}
+
+{% block extra_js %}
+
+{% if messages %}
+{% for message in messages  %}
+<script>
+    {% if message.tags == 'error' %}
+    Swal.fire({
+        title: 'Error!',
+        text: '{{ message }}',
+        icon: 'error',
+        confirmButtonText: 'Ok'
+    }) {% elif message.tags == 'info' %}
+    const Toast = Swal.mixin({
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 1500,
+        onOpen: (toast) => {
+            toast.addEventListener('mouseenter', Swal.stopTimer)
+            toast.addEventListener('mouseleave', Swal.resumeTimer)
+        }
+    })
+
+    Toast.fire({
+        icon: 'success',
+        title: '{{ message }}'
+    }) {%else %}
+    Swal.fire({
+        title: 'Éxito!',
+        text: '{{ message }}',
+        icon: 'success',
+        confirmButtonText: 'Ok'
+
+    }) {% endif %}
+</script>
+{% endfor %}
+{% endif %}
+{% endblock extra_js %}

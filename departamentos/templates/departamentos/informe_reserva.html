@@ -1,0 +1,85 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+    <title>Reporte</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<style>
+    .img-invoice {
+        width: 50px;
+        text-align: center;
+        margin: 0 auto;
+    }
+
+    .head {
+        text-align: center;
+        text-transform: uppercase;
+    }
+
+    #invoice thead tr th {
+        text-align: left;
+        border-bottom: 1px solid black;
+        border-top: 1px solid black;
+        padding-top: 4px;
+    }
+
+    #invoice thead tr {
+        margin-bottom: 0;
+        padding-bottom: 0;
+    }
+
+    #invoice tbody tr {
+        padding: 0;
+    }
+
+    .text-center{
+        text-align: center;
+    }
+</style>
+<body>
+<!-- <img src="" class="img-invoice"> -->
+<p class="head">
+    <b>
+
+        TURISMO REAL
+    </b>
+   <br>
+      INFORME DE RESERVAS  <br>
+     
+  
+</p>
+<p>
+    <!-- <b>ID INFORME:</b> RES{{ reserva.id }}  <br> -->
+    <b>FECHA EMISIÓN:</b>    {{ fecha_hoy|date:"DATETIME_FORMAT" }}  <br>
+    <b>DEPARTAMENTO:</b>    {{ departamento.direccion  }}   <br>
+ 
+</p>
+<table id="invoice">
+    <thead>
+    <tr>
+        <th style="width: 10%;">ID</th>
+        <th style="width: 15%;">Cliente</th>
+        <th style="width: 20%;">ESTADIA</th>
+        <th style="width: 40%;">ACOMPAÑANTES</th>
+        <th style="width: 15%; text-align:right;">TOTAL</th>
+    </tr>
+    </thead>
+    <tbody>
+        <!-- TODO terminar informe -->
+    {% for reserva in reservas %}
+        <tr {% if forloop.first %}style="padding-top: 3px;" {% endif %}>
+            <td class="text-center" style=" text-align:left;">  {{ reserva.id }}  </td>
+            <td class="text-center" style=" text-align:left;"> {{ reserva.usuario.first_name }}   </td>
+            <td>  {{ reserva.dias_estadia }} Días </td>
+            <td>   {{ reserva.acompanantes }} Personas </td>
+            <td style="text-align: right;">$   {{ reserva.abono }} </td>
+        </tr>
+    {% endfor %}
+    <tr style="padding-top: 0px;">
+        <td colspan="4"><b>TOTAL RECAUDADO</b></td>
+        <td style="text-align: right"> $ {{ total }}   </td>
+    </tr>
+    </tbody>
+</table>
+
+</body>
+</html>

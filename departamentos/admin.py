@@ -25,8 +25,8 @@ class CustomUserAdmin(admin.ModelAdmin):
 
     exclude = ('estado_mantencion','mantencion','usuario',)
     # Customizacion de interfaz
-    list_display = ["mostrar_imagen","id","titulo",'zona',"direccion",'mantencion','estado_mantencion']
-    list_filter = ('titulo','direccion',)
+    list_display = ["mostrar_imagen","id",'zona',"direccion",'mantencion','estado_mantencion']
+    list_filter = ('direccion',)
     list_editable = ('estado_mantencion','mantencion')      
 
     # Metodo para asignar redireccion cuando se edita una imagen
@@ -45,7 +45,7 @@ class CustomUserAdmin(admin.ModelAdmin):
                     ]
     
     def get_titulo(self, obj):
-        return obj.departamento.titulo
+        return obj.departamento.direccion
     get_titulo.short_description = "Deaprtamento"
     def get_direccion(self,obj):
         return obj.departamento.direccion

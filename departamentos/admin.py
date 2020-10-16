@@ -25,7 +25,7 @@ class CustomUserAdmin(admin.ModelAdmin):
 
     exclude = ('estado_mantencion','mantencion','usuario',)
     # Customizacion de interfaz
-    list_display = ["mostrar_imagen","id","titulo","direccion",'mantencion','estado_mantencion']
+    list_display = ["mostrar_imagen","id","titulo",'zona',"direccion",'mantencion','estado_mantencion']
     list_filter = ('titulo','direccion',)
     list_editable = ('estado_mantencion','mantencion')      
 

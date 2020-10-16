@@ -4,8 +4,18 @@ from usuarios.models import User
 from django.contrib.auth.decorators import user_passes_test
 from django.contrib import messages
 from django.urls import resolve
-from datetime import date
+from datetime import date,datetime
 from django.utils.dateparse import parse_date
+
+
+
+import os
+from django.conf import settings
+from django.http import HttpResponse
+from django.template.loader import get_template
+from xhtml2pdf import pisa
+from django.contrib.staticfiles import finders
+
 #  Views correspondientes a vistas del cliente
 def listar_departamentos(request):
     
@@ -170,7 +180,6 @@ def listar_departamentos_admin(request):
         if parse_date(request.POST.get('fechamantencion')) < date.today():
             messages.error(request,'La fecha a asignar debe ser a partir de hoy')
             return redirect('Administracion departamentos')
-        print('ESTEEEEE  ===> ',parse_date(request.POST.get('fechamantencion')))
         departamento = Departamento.objects.filter(id=request.POST.get('idDepMantencion'))
         try:
             
@@ -329,3 +338,33 @@ def actualizar_estado_inventario(request,id):
             return redirect(request.META.get('HTTP_REFERER'))
 
     return redirect('Administracion departamentos')
+
+def reportes_departamentos(request):
+    departamentos = Departamento.objects.all()
+    context = {'departamentos':departamentos}
+    return render(request,'departamentos/lista_reportes.html',context)
+
+def generar_informe(request,id):
+    try:
+        reservas = Reserva.objects.filter(departamento=id)
+        fecha_hoy = datetime.now()
+        departamento = Departamento.objects.get(id=id)
+        total = 0
+        for reserva in reservas:
+            total += reserva.abono
+        context = {'reservas':reservas,
+                    'fecha_hoy':fecha_hoy,
+                    'departamento':departamento,
+                    'total':total}
+        template = get_template('departamentos/informe_reserva.html')
+        html = template.render(context)
+        response = HttpResponse(content_type='application/pdf')
+        # response['Content-Disposition'] = 'attachment; filename="Reporte_reservas_dpto_{}.pdf"'.format(departamento.id)
+        pisa_status = pisa.CreatePDF(
+        html, dest=response)
+     
+    except Exception as err:
+        print('VERRORINFORMEGENERAR === ',err)
+        messages.error(request,'No se pudo generar el informe')
+        return redirect(request.META.get('HTTP_REFERER'))
+    return response

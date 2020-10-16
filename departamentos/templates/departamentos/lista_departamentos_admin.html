@@ -20,9 +20,11 @@
                     <tr>
                         <th>ID</th>
                         <th>Dirección</th>
+                        <th>Zona</th>
                         {% if request.resolver_match.url_name == 'Administracion departamentos reservados' or request.resolver_match.url_name == 'Administracion departamentos arrendados'  %}
                         <th>Cliente</th>
                         {% endif %}
+                        
                         <th>Detalles</th>
                         <th>Imagenes</th>
                         <th>Inventario</th>
@@ -50,6 +52,7 @@
 
                             <td>{{ departamento.id }}</td>
                             <td>{{ departamento.direccion }}</td>
+                            <td>{{ departamento.zona }}</td>
                             {% if request.resolver_match.url_name == 'Administracion departamentos reservados' or request.resolver_match.url_name == 'Administracion departamentos arrendados' %}
                             <td> {{ departamento.usuario }}</td>
                             {% endif %}
@@ -633,7 +636,7 @@
         toast: true,
         position: 'top-end',
         showConfirmButton: false,
-        timer: 3000,
+        timer: 1500,
         onOpen: (toast) => {
             toast.addEventListener('mouseenter', Swal.stopTimer)
             toast.addEventListener('mouseleave', Swal.resumeTimer)

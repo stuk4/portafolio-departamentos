@@ -3,7 +3,11 @@ from django.utils.html import mark_safe
 from datetime import date,timedelta
 from django.contrib.auth.models import User 
 class Departamento(models.Model):
-
+    zonas = (('Sur','Sur'),
+        ('Este','Este'),
+        ('Oeste','Oeste'),
+        ('Norte','Norte'))
+        
     mantencion = models.DateField(
         null=True, blank=True,default=date.today, auto_now=False, auto_now_add=False)
     titulo = models.CharField(null=True, blank=True, max_length=50)
@@ -11,6 +15,7 @@ class Departamento(models.Model):
     banos = models.PositiveIntegerField(default=1,null=False, blank=False,verbose_name="baños")
     dormitorios = models.PositiveIntegerField(default=1,null=False, blank=False)
     descripcion = models.TextField(null=True)
+    zona = models.CharField(choices=zonas,null=False,blank=False,max_length=60)
     direccion = models.CharField(null=False,blank=False,max_length=60)
     estado_mantencion = models.BooleanField(default=True,null=True, blank=True)
     imagen = models.ImageField(upload_to='departamentos_principal/%Y/%m',blank=True)
@@ -140,8 +145,14 @@ class Arriendo(models.Model):
             transporte = 0
         return transporte
     @property
-    def total(self):
-        total = self.total_tours + self.transporte.precio  + self.reserva.danos_inmuebles
+    def total(self): 
+        if Transporte.objects.filter(reserva=self.reserva.id).exists():
+            # Obtengo transporte.precio
+            trans_obj = Transporte.objects.get(reserva=self.reserva.id)
+            transporte = trans_obj.precio
+        else:
+            transporte = 0
+        total = self.total_tours + self.transporte  + self.reserva.danos_inmuebles
         return total
 
     def __str__(self):

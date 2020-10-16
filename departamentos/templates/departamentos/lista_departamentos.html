@@ -10,12 +10,12 @@
       {% if departamento.imagen %}
       <img
         src="{{  departamento.imagen.url }}"
-        alt="imagen {{ departamento.titulo }}"
+        alt="imagen {{ departamento.direccion }}"
       />
       {% else %}
       <img
         src="{% static 'img/default.jpg' %}"
-        alt="imagen default {{ departamento.titulo }}"
+        alt="imagen default {{ departamento.direccion }}"
       />
       {% endif %}
       <figcaption>

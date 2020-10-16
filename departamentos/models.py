@@ -13,7 +13,6 @@ class Departamento(models.Model):
     usuario = models.OneToOneField("usuarios.User", related_name="usuario",blank=True,null=True, on_delete=models.CASCADE)
     banos = models.PositiveIntegerField(default=1,null=False, blank=False,verbose_name="baños")
     dormitorios = models.PositiveIntegerField(default=1,null=False, blank=False)
-    descripcion = models.TextField(null=True)
     zona = models.CharField(choices=zonas,null=False,blank=False,max_length=60)
     direccion = models.CharField(null=False,blank=False,max_length=60)
     estado_mantencion = models.BooleanField(default=True,null=True, blank=True)

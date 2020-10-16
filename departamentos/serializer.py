@@ -10,7 +10,7 @@ from rest_framework import serializers
 class DepartamentoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Departamento
-        fields = [ "banos", "dormitorios", "descripcion", "direccion", "estado_mantencion", "precio", "metros_cuadrados"]
+        fields = ["zona", "banos", "dormitorios", "direccion", "estado_mantencion", "precio", "metros_cuadrados"]
 
 
 ## APIS PARA LUEGO EN CASO DE NECESITARLAS, SI NO, BORRAR COMENTARIOS

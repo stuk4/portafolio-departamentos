@@ -24,7 +24,7 @@ class Departamento(models.Model):
         return date.today() == self.mantencion  
    
     def __str__(self):
-        return "ID {} Dep. {} Direc. {}".format(self.id,self.titulo,self.direccion)
+        return "ID {}  Direc. {}".format(self.id,self.direccion)
     def mostrar_imagen(self):
         if self.imagen:
             return mark_safe('<img src="/media/%s" width="50" height="50" />' % (self.imagen))

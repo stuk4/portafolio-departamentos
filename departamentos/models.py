@@ -136,7 +136,8 @@ class Arriendo(models.Model):
         transporte = 0
         if Transporte.objects.filter(reserva=self.reserva.id).exists():
             # Obtengo transporte.precio
-            transporte = Transporte.objects.get(reserva=self.reserva.id)
+            trans_obj = Transporte.objects.get(reserva=self.reserva.id)
+            transporte = trans_obj.precio
            
         else:
          

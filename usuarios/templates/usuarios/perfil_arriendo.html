@@ -92,8 +92,9 @@
                
                     <h5 class="price"><span class="text-success" >$ <strike>{{ arriendo.check_in.total }}</strike></span>/Arriendo </h5>
                     <h5 class="price"><span>$     
-                      {% if arriendo.transporte.precio  > 0%}
-                      {{ arriendo.transporte.precio }}
+                    
+                      {% if arriendo.transporte  > 0%}
+                      {{ arriendo.transporte }}
                       {% else %}
                         0
                       {% endif %}</span>/Transporte</h5>
@@ -134,10 +135,7 @@
                                     <td>{{ inventario.nombre }}</td>
                                     <td>$ {{ inventario.precio }}</td>
                                   </tr>
-                                  {% else %}
-                                  <div class="alert alert-success" role="alert">
-                                    Usted no daño inmuebles
-                                  </div>
+                              
                                   {% endif %}
                                   {% endfor %}
                                
@@ -337,8 +335,9 @@
                       </button>
                     </form>
                   </div>
-                  <div class="details w-50 d-flex justify-content-end align-items-end ">              
-                    {% if request.user.reserva_actual.llegada %}
+                  <div class="details w-50 d-flex justify-content-end align-items-end ">      
+                           
+                    {% if request.user.reserva_actual.check_out.estado == 'Aceptado'  %}
               
                       <!-- TODO cambiar funcion a finalizar arriendo osea generar checko ut -->
                       <button  onclick="finalizar()" type="button" class="btn  btn-info ">Finalizar</button>
@@ -346,7 +345,7 @@
                         <a class="btn btn-info " id="btn-arrendar" href="{% url 'Aceptar check out' arriendo.id  %}" role="button">Finalizar </a>
 
                     {% else %}
-                      <button type="button" class="btn disabled  btn-info" data-container="body" data-toggle="popover" data-placement="top" data-content="Espere al día de su llegada">
+                      <button type="button" class="btn disabled  btn-info" data-container="body" data-toggle="popover" data-placement="top" data-content="Espere a un funcionario">
                           Finalizar
                         </button>
                         

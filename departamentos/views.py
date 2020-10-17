@@ -46,6 +46,7 @@ def ver_departamento(request,id):
        
 
     if request.method == 'POST':
+        #
         # Objetos arriendo y reserva
         reserva = Reserva()
         arriendo = Arriendo()
@@ -55,7 +56,8 @@ def ver_departamento(request,id):
         reserva.usuario = usuario
         reserva.departamento = departamento
         reserva.dia_llegada = request.POST.get('diallegada')
-        if request.POST.get('acompanantes') is None:
+      
+        if request.POST.get('acompanantes') is None or request.POST.get('acompanantes') is '':
             reserva.acompanantes = 0
         else:
             reserva.acompanantes = request.POST.get('acompanantes')
@@ -359,7 +361,7 @@ def generar_informe(request,id):
         template = get_template('departamentos/informe_reserva.html')
         html = template.render(context)
         response = HttpResponse(content_type='application/pdf')
-        # response['Content-Disposition'] = 'attachment; filename="Reporte_reservas_dpto_{}.pdf"'.format(departamento.id)
+        response['Content-Disposition'] = 'attachment; filename="Reporte_reservas_dpto_{}.pdf"'.format(departamento.id)
         pisa_status = pisa.CreatePDF(
         html, dest=response)
      

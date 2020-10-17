@@ -23,11 +23,12 @@
       style="
         min-height: 100vh;
         background: url({% static 'img/Piloto-17.jpg' %}) center / cover no-repeat;
-      "
+        "
     >
       <form
-        style="padding-top: 30px"
+        style="padding-top: 30px;"
         method="POST"
+       
       >{% csrf_token  %}
         <h2 class="sr-only">Login Form</h2>
         <div
@@ -119,7 +120,7 @@
                           <div class="form-group">
                               <label for="ccnumber">Numero de tarjeta: </label>
                               <div class="input-group">
-                                  <input class="form-control" type="text" name="card" required placeholder="0000 0000 0000 0000" >
+                                  <input class="form-control" type="text" id="ccnumber" name="card" required placeholder="0000 0000 0000 0000" >
                                   <div class="input-group-append">
                                       <span class="input-group-text">
                                         <i class="fas fa-credit-card"></i>
@@ -182,11 +183,11 @@
          
           </div> 
         <div class="form-group">
-            <label for="dateb">Correo:</label
-            ><input required class="form-control"  type="email" name="email" />
+            <label for="email">Correo:</label
+            ><input required class="form-control" id="email" type="email" name="email" />
           </div> 
           <div class="form-group">
-            <label for="dateb">Contraseña:</label
+            <label for="email">Contraseña:</label
             ><input required class="form-control" type="password" name="password" />
           </div>
         <div class="form-group">
@@ -197,13 +198,13 @@
         <a class="forgot" href="{% url 'login' %}">Ya registrado?, Ingresa</a>
       </form>
       <a
-        class="btn btn-info btn-block btn-lg"
+        class="btn btn-primary btn-block btn-lg"
         role="button"
         data-bs-hover-animate="pulse"
         id="btn-volver"
+        href="{% url 'Departamentos' %}"
         href="{{ request.META.HTTP_REFERER }}"
-      
-        >Volver </a
+        >Volver</a
       >
     </div>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>

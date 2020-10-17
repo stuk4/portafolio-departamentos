@@ -322,8 +322,8 @@
                                                                 <tr>
                                                                     <td>Transporte</td>
                                                                     <td>$
-                                                                        {% if usuario.arriendo.transporte.precio  > 0%}
-                                                                        {{ usuario.arriendo.transporte.precio }}
+                                                                        {% if usuario.arriendo.transporte  > 0 %}
+                                                                        {{ usuario.arriendo.transporte }}
                                                                         {% else %}
                                                                           0
                                                                         {% endif %}

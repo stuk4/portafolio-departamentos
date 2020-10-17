@@ -138,9 +138,9 @@ class Arriendo(models.Model):
             # Obtengo transporte.precio
             trans_obj = Transporte.objects.get(reserva=self.reserva.id)
             transporte = trans_obj.precio
-           
+
         else:
-         
+            
             transporte = 0
         return transporte
     @property

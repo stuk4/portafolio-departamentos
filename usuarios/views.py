@@ -319,7 +319,7 @@ def generar_check_out(request,id):
     check_out.arriendo = arriendo 
 
     check_out.valor_danos = arriendo.reserva.danos_inmuebles
-    check_out.valor_transporte = arriendo.transporte.precio
+    check_out.valor_transporte = arriendo.transporte
     check_out.valor_tours = arriendo.total_tours
     check_out.total = arriendo.total + arriendo.check_in.total
 

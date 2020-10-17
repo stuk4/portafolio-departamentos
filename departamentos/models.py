@@ -99,7 +99,7 @@ class Transporte(models.Model):
     reserva = models.OneToOneField(Reserva, related_name="transporte", on_delete=models.CASCADE)
     fecha_solicitud = models.DateField(
         null=True, blank=True, auto_now=True)
-    estado_verificado = models.BooleanField(null=False,blank=False)
+    estado_verificado = models.BooleanField(null=True,blank=True)
     precio = models.PositiveIntegerField(null=False,blank=False,default=10000)
     desde = models.CharField(null=False,blank=False,max_length=50)
     hacia =  models.CharField(null=False,blank=False,max_length=50)

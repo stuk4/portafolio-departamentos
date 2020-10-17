@@ -331,13 +331,13 @@
                     <form name="form-cancelar "    id="form-cancelar" method="POST">{% csrf_token %}
                       
                       <button type="button" class="btn disabled  btn-danger" data-container="body" data-toggle="popover" data-placement="top" data-content="Para cancelar su arriendo contactese con un funcionario.">
-                        Cancelar
+                        Cancelar  
                       </button>
                     </form>
                   </div>
                   <div class="details w-50 d-flex justify-content-end align-items-end ">      
                            
-                    {% if request.user.reserva_actual.check_out.estado == 'Aceptado'  %}
+                    {% if request.user.arriendo.check_out.estado == 'Aceptado'  %}
               
                       <!-- TODO cambiar funcion a finalizar arriendo osea generar checko ut -->
                       <button  onclick="finalizar()" type="button" class="btn  btn-info ">Finalizar</button>
@@ -346,7 +346,7 @@
 
                     {% else %}
                       <button type="button" class="btn disabled  btn-info" data-container="body" data-toggle="popover" data-placement="top" data-content="Espere a un funcionario">
-                          Finalizar
+                          Finalizar 
                         </button>
                         
                     {% endif %}

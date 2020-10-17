@@ -322,7 +322,7 @@ def generar_check_out(request,id):
     check_out.valor_transporte = arriendo.transporte
     check_out.valor_tours = arriendo.total_tours
     check_out.total = arriendo.total + arriendo.check_in.total
-
+    check_out.estado = 'Aceptado'
     try:
         check_out.save()
         messages.success(request,'Check out generado')

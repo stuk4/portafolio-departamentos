@@ -314,6 +314,7 @@ def listar_usuarios(request):
     return render(request,'usuarios/listar_usuarios_admin.html',context)
 @user_passes_test(lambda u:u.is_staff,login_url=('login'))  
 def generar_check_out(request,id):  
+    # TODO PASAR DEPTO A MANTENCION LUEGO DEL CHECK OUT
     check_out = Check_out()
     arriendo = Arriendo.objects.get(id=id)
     check_out.arriendo = arriendo 

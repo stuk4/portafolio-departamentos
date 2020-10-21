@@ -8,13 +8,15 @@ from datetime import date,datetime
 from django.utils.dateparse import parse_date
 
 
-
+# Librerias para crear pdfs
 import os
 from django.conf import settings
 from django.http import HttpResponse
 from django.template.loader import get_template
 from xhtml2pdf import pisa
 from django.contrib.staticfiles import finders
+# Librerias para oracle
+from django.db import connection
 
 #  Views correspondientes a vistas del cliente
 def listar_departamentos(request):
@@ -346,18 +348,47 @@ def reportes_departamentos(request):
     context = {'departamentos':departamentos}
     return render(request,'departamentos/lista_reportes.html',context)
 
+def plsql_listar_reservas_informe_reserva(id):
+     # PARTE PL/SQL
+    django_cursor = connection.cursor()
+    cursor = django_cursor.connection.cursor()
+    out_cursor = django_cursor.connection.cursor()
+
+    cursor.callproc('PL_LISTAR_RESERVAS',[out_cursor])
+    nombre_columnas =  [x[0] for x in out_cursor.description]
+
+    lista = []
+    for fila in out_cursor:
+        # Le agrego su respectiva columna y lo transformo a un diccionario
+        lista.append(dict(zip(nombre_columnas,fila)))
+    # Filtro la lista para q muestre solo las del depto
+    lista_filtrada = []
+    for reserva in lista:
+        if reserva['DEPARTAMENTO_ID'] == id:
+            lista_filtrada.append(reserva)
+    return lista_filtrada
+
+
+
 def generar_informe(request,id):
     try:
-        reservas = Reserva.objects.filter(departamento=id)
+       
         fecha_hoy = datetime.now()
         departamento = Departamento.objects.get(id=id)
+
+        usuarios = User.objects.all()
+    
         total = 0
-        for reserva in reservas:
-            total += reserva.abono
-        context = {'reservas':reservas,
+        for reserva in plsql_listar_reservas_informe_reserva(id):
+            total += reserva['ABONO']
+
+        context = { 'usuarios':usuarios,
                     'fecha_hoy':fecha_hoy,
                     'departamento':departamento,
-                    'total':total}
+                    'total':total,
+                    'reservas':plsql_listar_reservas_informe_reserva(id)}
+
+        
         template = get_template('departamentos/informe_reserva.html')
         html = template.render(context)
         response = HttpResponse(content_type='application/pdf')
@@ -370,3 +401,4 @@ def generar_informe(request,id):
         messages.error(request,'No se pudo generar el informe')
         return redirect(request.META.get('HTTP_REFERER'))
     return response
+

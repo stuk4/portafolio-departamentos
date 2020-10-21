@@ -209,10 +209,11 @@
                         {% if request.resolver_match.url_name == 'Administracion usuarios con arriendo'  %}
                         <td align="center">
                             <!-- Modal ver inventario -->
+                           
                             {% if usuario.arriendo.check_out %}
-                            {% if usuario.arriendo.check_out.estado == None %}
+                          
                              En espera de respuesta
-                            {% endif %}
+                    
                             {% else %}
                             <button type="button" class="btn " id="cambio-color-{{ usuario.departamento.id }}" data-toggle="modal"
                             data-target="#ver-inventario-{{ usuario.departamento.id }}">

@@ -113,7 +113,7 @@ class Tour(models.Model):
     departamento = models.ForeignKey(Departamento,null=True,blank=True, related_name="tour", on_delete=models.CASCADE)
     reserva = models.ManyToManyField(Reserva,blank=True, related_name="tour")
     nombre = models.CharField(null=False,blank=False,max_length=50)
-    dia = models.CharField(default=date.today(),null=False,blank=False,max_length=50)
+    dia = models.CharField(default='Lunes',null=False,blank=False,max_length=50)
     duracion = models.PositiveIntegerField(null=False,blank=False)
     direccion = models.CharField(null=False,blank=False,max_length=50)
     precio = models.PositiveIntegerField(null=False,blank=False)

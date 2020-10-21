@@ -234,7 +234,7 @@ def perfil_reservas(request):
                 check_in.arriendo  = Arriendo.objects.get(id=arriendo.id)
                 check_in.save()
                 messages.success(request,'Arriendo realizado con exito!')
-                return redirect('Mis reservas')
+                return redirect('Mis arriendos')
             except Exception as err:
                 print('VERRORARRENDAR ==== ',err)
                 messages.error(request,'No se pudo realizar la reserva')
@@ -304,9 +304,9 @@ def listar_usuarios(request):
             transporte.save()
             messages.success(request,mensaje)
             return redirect(request.META.get('HTTP_REFERER'))
-        except expression as identifier:
+        except Exception as err:
             messages.error(request,'No se pudo realizar la operacion')
-            return redirect()
+            return redirect(request.META.get('HTTP_REFERER'))
     # hacer post para generar checkout
     inventarios = Inventario.objects.all()    
     context = {'usuarios':usuarios,
@@ -314,7 +314,6 @@ def listar_usuarios(request):
     return render(request,'usuarios/listar_usuarios_admin.html',context)
 @user_passes_test(lambda u:u.is_staff,login_url=('login'))  
 def generar_check_out(request,id):  
-    # TODO PASAR DEPTO A MANTENCION LUEGO DEL CHECK OUT
     check_out = Check_out()
     arriendo = Arriendo.objects.get(id=id)
     check_out.arriendo = arriendo 
@@ -343,6 +342,7 @@ def aceptar_check_out(request,id):
     try:
         check_out.update(estado='Aceptado')
         usuario.update(arriendo_activo=False)
+        departamento.update(estado_mantencion=True)
         departamento.update(usuario=None)
         messages.success(request,'Check out pagado')
         return redirect(request.META.get('HTTP_REFERER'))

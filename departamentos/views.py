@@ -78,7 +78,7 @@ def ver_departamento(request,id):
 
             #Return si sale todo bien con reserva
             messages.success(request,'Depto {} reservado!!'.format(departamento.direccion))
-            return render(request,'departamentos/ver_departamento.html',context)
+            return redirect('Mis reservas')
         except Exception as err:
             print('Error al guardar Reserva ===',err)
             messages.error(request,'Lo sentimos no se realizo la reserva')

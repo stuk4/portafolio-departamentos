@@ -239,8 +239,8 @@
                     <div class="form-group">
                       
                       <!-- Modal servicio transporte -->
-                    
-                      {% if request.user.transporte_fecha_documento and request.user.transporte.estado_verificado == True %}
+        
+                      {% if request.user.transporte.estado_verificado == True %}
                       <button type="button" class="btn 
                         btn-success
                        " data-toggle="modal" data-target="#modal-transporte">
@@ -339,9 +339,8 @@
                            
                     {% if request.user.arriendo.check_out.estado == 'Aceptado'  %}
               
-                      <!-- TODO cambiar funcion a finalizar arriendo osea generar checko ut -->
+               
                       <button  onclick="finalizar()" type="button" class="btn  btn-info ">Finalizar</button>
-                        <!-- TODO camiar button a link -->
                         <a class="btn btn-info " id="btn-arrendar" href="{% url 'Aceptar check out' arriendo.id  %}" role="button">Finalizar </a>
 
                     {% else %}

@@ -22,7 +22,16 @@ class Departamento(models.Model):
     @property
     def dia_mantencion(self):
         return date.today() == self.mantencion  
+    @property
+    def tiene_checkout(self):
+        lista_valores = self.reserva.all().values('id')
+        lsita_reservas = [l['id'] for l in lista_valores]
+
+        lista_v_arriendos = Arriendo.objects.filter(reserva__in=lsita_reservas).values('id')
+        lsita_arriendos = [l['id'] for l in lista_v_arriendos]
+        lista_checkouts = Check_out.objects.filter(id__in=lista_v_arriendos)
    
+        return lista_checkouts.exists()
     def __str__(self):
         return "ID {}  Direc. {}".format(self.id,self.direccion)
     def mostrar_imagen(self):
@@ -75,7 +84,9 @@ class Reserva(models.Model):
     @property
     def dia_salida(self):
         return self.dia_llegada + timedelta(days=self.dias_estadia)
-
+    @property
+    def arriendo(self):
+        return self.arriendo.exists()
     @property
     def diferencia(self):
         return (self.departamento.precio * self.dias_estadia) - self.abono
@@ -93,7 +104,7 @@ class Reserva(models.Model):
         return total
   
     def __str__(self):
-        return 'ID reserva:{} {}'.format(self.id,self.usuario)
+        return 'ID reserva:{} Usuario {} Depto{}'.format(self.id,self.usuario,self.departamento.id)
      
 class Transporte(models.Model):
     reserva = models.OneToOneField(Reserva, related_name="transporte", on_delete=models.CASCADE)
@@ -122,6 +133,14 @@ class Tour(models.Model):
 
 class Arriendo(models.Model):
     reserva = models.OneToOneField(Reserva, related_name="arriendo", on_delete=models.CASCADE)
+    @property
+    def tiene_checkout(self):
+        tiene_checkout = False
+        try:
+            tiene_checkout = (self.check_out is not None)
+        except Check_out.DoesNotExist:
+            pass
+        return tiene_checkout
     @property
     def total_tours(self):
         reserva = Reserva.objects.filter(id=self.reserva.id).last()
@@ -160,7 +179,7 @@ class Check_in(models.Model):
     arriendo = models.OneToOneField(Arriendo, related_name="check_in", on_delete=models.CASCADE)
     diferencia = models.PositiveIntegerField(null=False,blank=False )
     total = models.PositiveIntegerField(null=False,blank=False )
-
+    
 class Check_out(models.Model):
     estados = (('Aceptado','Aceptado'),
             ('Rechazado','Rechazado'))
@@ -170,5 +189,6 @@ class Check_out(models.Model):
     valor_transporte = models.PositiveIntegerField(null=False,blank=False )
     valor_tours = models.PositiveIntegerField(null=False,blank=False )
     total = models.PositiveIntegerField(null=False,blank=False )
-   
+    def __str__(self):
+        return 'ID CHECKOUT {}'.format(self.id)
 

@@ -1,5 +1,5 @@
 from django.shortcuts import render,get_object_or_404,redirect
-from departamentos.models import Departamento,Imagen,Inventario,Reserva,Arriendo,Tour
+from departamentos.models import Departamento,Imagen,Inventario,Reserva,Arriendo,Tour,Check_out
 from usuarios.models import User
 from django.contrib.auth.decorators import user_passes_test
 from django.contrib import messages
@@ -342,11 +342,15 @@ def actualizar_estado_inventario(request,id):
     return redirect('Administracion departamentos')
 
 def reportes_departamentos(request):
-    departamentos = Departamento.objects.all()
+    
+    if request.resolver_match.url_name == 'Reportes departamento reservas':
+        departamentos = Departamento.objects.exclude(reserva__isnull=True)
+    elif request.resolver_match.url_name == 'Reportes departamento arriendos':
+        departamentos = Departamento.objects.exclude(reserva__isnull=True).filter(reserva__arriendo__isnull=True )
     context = {'departamentos':departamentos}
     return render(request,'departamentos/lista_reportes.html',context)
 
-def generar_informe(request,id):
+def generar_informe_reserva(request,id):
     try:
         reservas = Reserva.objects.filter(departamento=id)
         fecha_hoy = datetime.now()
@@ -362,6 +366,42 @@ def generar_informe(request,id):
         html = template.render(context)
         response = HttpResponse(content_type='application/pdf')
         response['Content-Disposition'] = 'attachment; filename="Reporte_reservas_dpto_{}.pdf"'.format(departamento.id)
+        pisa_status = pisa.CreatePDF(
+        html, dest=response)
+     
+    except Exception as err:
+        print('VERRORINFORMEGENERAR === ',err)
+        messages.error(request,'No se pudo generar el informe')
+        return redirect(request.META.get('HTTP_REFERER'))
+    return response
+
+def generar_informe_arriendo(request,id):
+    try:
+        fecha_hoy = datetime.now()
+
+        reservas = Reserva.objects.filter(departamento=id)
+        lsita_reservas = [l['id'] for l in reservas.values('id')]
+        lista_arriendos = Arriendo.objects.filter(reserva__in=lsita_reservas)
+        lista_v_arriendos = [l['id'] for l in lista_arriendos.values('id')]
+        departamento = Departamento.objects.get(id=id)
+        check_outs=Check_out.objects.filter(arriendo__in=lista_v_arriendos)
+        # for check_out in Check_out.objects.all():
+        #     if check_out.arriendo.id in lista_v_arriendos:
+        #         check_outs = check_out
+        #         print(check_outs)
+
+        # check_outs = Check_out.objects.filter(arriendo=departamento.reserva.arriendo.id)
+        total = 0
+        for check_out in check_outs:
+            total += check_out.total
+        context = {'check_outs':check_outs,
+                    'fecha_hoy':fecha_hoy,
+                    'departamento':departamento,
+                    'total':total}
+        template = get_template('departamentos/informe_arriendo.html')
+        html = template.render(context)
+        response = HttpResponse(content_type='application/pdf')
+        response['Content-Disposition'] = 'attachment; filename="Reporte_arriendos_dpto_{}.pdf"'.format(departamento.id)
         pisa_status = pisa.CreatePDF(
         html, dest=response)
      

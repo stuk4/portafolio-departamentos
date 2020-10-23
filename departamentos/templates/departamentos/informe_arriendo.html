@@ -1,0 +1,88 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+    <title>Reporte</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<style>
+    .img-invoice {
+        width: 50px;
+        text-align: center;
+        margin: 0 auto;
+    }
+
+    .head {
+        text-align: center;
+        text-transform: uppercase;
+    }
+
+    #invoice thead tr th {
+        text-align: left;
+        border-bottom: 1px solid black;
+        border-top: 1px solid black;
+        padding-top: 4px;
+    }
+
+    #invoice thead tr {
+        margin-bottom: 0;
+        padding-bottom: 0;
+    }
+
+    #invoice tbody tr {
+        padding: 0;
+    }
+
+    .text-center{
+        text-align: center;
+    }
+</style>
+<body>
+
+<p class="head">
+    <b>
+
+        TURISMO REAL
+    </b>
+   <br>
+      INFORME DE ARRIENDOS  
+    <br>
+     
+  
+</p>
+<p>
+   
+    <b>FECHA EMISIÓN:</b>    {{ fecha_hoy|date:"DATETIME_FORMAT" }}  <br>
+    <b>DEPARTAMENTO:</b>    {{ departamento.direccion  }}   <br>
+</p>
+<table id="invoice">
+    <thead>
+    <tr>
+        <th style="width: 16%;">ID CHECK OUT</th>
+        <th style="width: 16%;">Reserva</th>
+        <th style="width: 16%;">DAÑOS</th>
+        <th style="width: 16%;">TRANSPORTE</th>
+        <th style="width: 16%;">TOURS</th>
+        <th style="width:16%; text-align:right;">TOTAL</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for check_out in check_outs %}
+        <tr {% if forloop.first %}style="padding-top: 3px;" {% endif %}>
+            <td class="text-center" style=" text-align:left;">  {{ check_out.id }}  </td>
+            <td class="text-center" style=" text-align:left;"> {{ check_out.arriendo.check_in.total }}  </td>
+            <!-- {{ check_out.arriendo.reserva.usuario.first_name }} -->
+            <td>  {{ check_out.valor_danos }}   </td>
+            <td>  {{ check_out.valor_transporte }}  </td>
+            <td>  {{ check_out.valor_tours}}  </td>
+            <td style="text-align: right;">$   {{ check_out.total }}   </td>
+        </tr>
+    {% endfor %}
+
+    <tr style="padding-top: 0px;">
+        <td colspan="5"><b>TOTAL A PAGAR</b></td>
+        <td style="text-align: right; float: right; position: absolute;"> $ {{ total }}   </td>
+    </tr>
+    </tbody>
+</table>
+
+</body>
+</html>

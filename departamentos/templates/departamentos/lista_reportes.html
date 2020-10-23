@@ -17,7 +17,11 @@
                         <th>Dirección</th>
                         <th>Zona</th>
                         <th>Detalles</th>
-                        <th>Informe</th>
+                        {% if request.resolver_match.url_name == 'Reportes departamento reservas' %}
+                        <th>Reservas</th>
+                        {% elif request.resolver_match.url_name == 'Reportes departamento arriendos' %}
+                        <th>Arriendos</th>
+                        {% endif %}
                     </tr>
                 </thead>
                 <tbody>
@@ -97,11 +101,26 @@
                                                     </div>
                             <!-- Fin modal ver detalles -->
                             </td>
-                            <td align="center">   
-                                <a class="btn btn-info"
-                                href="{% url 'Generar reporte' departamento.id %}"
-                                role="button">  <i class="fas fa-file-pdf"></i>
-                            </a>
+                            <td align="center"> 
+                            {% if request.resolver_match.url_name == 'Reportes departamento reservas' %}
+                             
+                                    <a class="btn btn-info"
+                                        href="{% url 'Generar reporte reserva' departamento.id %}"
+                                        role="button">  <i class="fas fa-file-pdf"></i>
+                                       
+                                    </a> 
+                              
+                            {% elif request.resolver_match.url_name == 'Reportes departamento arriendos' %}  
+                                {% if departamento.tiene_checkout %}
+                                    <a class="btn btn-info"
+                                    href="{% url 'Generar reporte arriendo' departamento.id %}"
+                                    role="button">  <i class="fas fa-file-pdf"></i>
+                                    </a> 
+                                  
+                                {% else %}
+                                    Sin check out
+                                {% endif %}
+                            {% endif %}
 
                         </td>
                         </tr>

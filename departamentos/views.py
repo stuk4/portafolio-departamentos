@@ -348,7 +348,7 @@ def reportes_departamentos(request):
     if request.resolver_match.url_name == 'Reportes departamento reservas':
         departamentos = Departamento.objects.exclude(reserva__isnull=True)
     elif request.resolver_match.url_name == 'Reportes departamento arriendos':
-        departamentos = Departamento.objects.exclude(reserva__isnull=True).filter(reserva__arriendo__isnull=True )
+        departamentos = Departamento.objects.exclude(reserva__isnull=True).filter(reserva__arriendo__isnull=False )
     context = {'departamentos':departamentos}
     return render(request,'departamentos/lista_reportes.html',context)
 
@@ -405,27 +405,51 @@ def generar_informe_reserva(request,id):
         messages.error(request,'No se pudo generar el informe')
         return redirect(request.META.get('HTTP_REFERER'))
     return response
+
+def plsql_listar_checkouts_informe_arriendo(id):
+     # PARTE PL/SQL
+    django_cursor = connection.cursor()
+    cursor = django_cursor.connection.cursor()
+    out_cursor = django_cursor.connection.cursor()
+
+    cursor.callproc('PL_LISTAR_CHECKOUTS',[out_cursor])
+    nombre_columnas =  [x[0] for x in out_cursor.description]
+
+    lista = []
+    for fila in out_cursor:
+        # Le agrego su respectiva columna y lo transformo a un diccionario
+        lista.append(dict(zip(nombre_columnas,fila)))
+    # Filtro la lista para q muestre solo las del depto
+    lista_filtrada = []
+
+    reservas = Reserva.objects.filter(departamento=id)
+    lsita_reservas = [l['id'] for l in reservas.values('id')]
+    lista_arriendos = Arriendo.objects.filter(reserva__in=lsita_reservas)
+    lista_v_arriendos = [l['id'] for l in lista_arriendos.values('id')]
+
+    for checkout in lista:
+        if checkout['ARRIENDO_ID'] in lista_v_arriendos:
+            lista_filtrada.append(checkout)
+    return lista_filtrada
+
 # TODO pasar esto a plsql
 def generar_informe_arriendo(request,id):
     try:
         fecha_hoy = datetime.now()
 
         reservas = Reserva.objects.filter(departamento=id)
+        arriendos = Arriendo.objects.all()
         lsita_reservas = [l['id'] for l in reservas.values('id')]
         lista_arriendos = Arriendo.objects.filter(reserva__in=lsita_reservas)
         lista_v_arriendos = [l['id'] for l in lista_arriendos.values('id')]
         departamento = Departamento.objects.get(id=id)
-        check_outs=Check_out.objects.filter(arriendo__in=lista_v_arriendos)
-        # for check_out in Check_out.objects.all():
-        #     if check_out.arriendo.id in lista_v_arriendos:
-        #         check_outs = check_out
-        #         print(check_outs)
+        check_outs=plsql_listar_checkouts_informe_arriendo(id)
 
-        # check_outs = Check_out.objects.filter(arriendo=departamento.reserva.arriendo.id)
         total = 0
-        for check_out in check_outs:
-            total += check_out.total
+        for checkout in plsql_listar_checkouts_informe_arriendo(id):
+            total += checkout['TOTAL']
         context = {'check_outs':check_outs,
+                    'arriendos':arriendos,
                     'fecha_hoy':fecha_hoy,
                     'departamento':departamento,
                     'total':total}

@@ -346,7 +346,7 @@ def reportes_departamentos(request):
     if request.resolver_match.url_name == 'Reportes departamento reservas':
         departamentos = Departamento.objects.exclude(reserva__isnull=True)
     elif request.resolver_match.url_name == 'Reportes departamento arriendos':
-        departamentos = Departamento.objects.exclude(reserva__isnull=True).filter(reserva__arriendo__isnull=True )
+        departamentos = Departamento.objects.exclude(reserva__isnull=True).filter(reserva__arriendo=True )
     context = {'departamentos':departamentos}
     return render(request,'departamentos/lista_reportes.html',context)
 

@@ -394,7 +394,12 @@
                                 {%  if usuario.is_superuser %}
                                     ADMIN
                                 {% else %}
-                                    Activo  <a class="btn btn-info"  href="{% url 'Actualizar estado usuario' usuario.id  %}"  role="button"> <i class="fas fa-exchange-alt"></i></a>
+                                    {% if user.is_staff %}
+                                        Activo
+                                    {% else %}
+                                        Activo  
+                                        <a class="btn btn-info"  href="{% url 'Actualizar estado usuario' usuario.id  %}"  role="button"> <i class="fas fa-exchange-alt"></i></a>
+                                    {% endif %}
                                 {% endif %}
                                 {% if user.is_staff %}
                                  

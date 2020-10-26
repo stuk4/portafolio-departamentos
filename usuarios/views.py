@@ -81,6 +81,8 @@ def registro(request):
         user.telefono = request.POST.get('phone')
         user.edad = request.POST.get('age')
         user.N_tarjeta = request.POST.get('card')
+        
+        # TODO quitar espacion el tarjeta
         try:
            
             user.save()

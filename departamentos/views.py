@@ -309,7 +309,7 @@ def eliminar_imagen_departamento(request,id):
 
 
 # Regla de seguridad: Solo si es admin puede actualizar estado
-@user_passes_test(lambda u:u.is_superuser,login_url=('login'))  
+@user_passes_test(lambda u:u.is_staff,login_url=('login'))  
 def actualizar_estado_inventario(request,id):  
     
     inventario = Inventario.objects.filter(id=id)
@@ -348,7 +348,7 @@ def reportes_departamentos(request):
     if request.resolver_match.url_name == 'Reportes departamento reservas':
         departamentos = Departamento.objects.exclude(reserva__isnull=True)
     elif request.resolver_match.url_name == 'Reportes departamento arriendos':
-        departamentos = Departamento.objects.exclude(reserva__isnull=True).filter(reserva__arriendo=True )
+        departamentos = Departamento.objects.exclude(reserva__isnull=True).exclude(reserva__arriendo__isnull=True)
     context = {'departamentos':departamentos}
     return render(request,'departamentos/lista_reportes.html',context)
 

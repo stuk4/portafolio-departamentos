@@ -536,10 +536,12 @@
                                                 {% endif %}
                                             </td>
                                             <td>{{ departamento.estado_mantencion|yesno:"En Mantención,Buen estado" }}
-                                                {% if user.is_superuser  and request.resolver_match.url_name == 'Administracion departamentos en mantención' or request.resolver_match.url_name == 'Administracion departamentos'  %}
+                                                {% if  request.resolver_match.url_name == 'Administracion departamentos en mantención' or request.resolver_match.url_name == 'Administracion departamentos'  %}
+                                                {% if user.is_superuser %}
                                                 <a class="btn btn-info"
                                                     href="{% url 'Actualizar estado mantencion' departamento.id  %}"
                                                     role="button"> <i class="fas fa-exchange-alt"></i></a>
+                                                 {% endif %}
                                                 {% endif %}
                                             </td>
                                         </tr>
@@ -576,7 +578,7 @@
 </td>
 {% endif %}
 <!-- Solo si se encuentra departamentos disponibles muestra el boton eliminar -->
-{% if  request.resolver_match.url_name == 'Administracion departamentos' %}
+{% if  request.resolver_match.url_name == 'Administracion departamentos' and user.is_superuser %}
 <td align="center">
     <button onclick="eliminarDepto_{{ departamento.id }}()" class="btn btn-danger"><i class="fas fa-trash-alt"></i>
     </button>

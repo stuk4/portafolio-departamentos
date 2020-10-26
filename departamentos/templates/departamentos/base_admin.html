@@ -86,13 +86,18 @@
                       
                                 </nav>
                             </div>
-                       
-                            <div class="sb-sidenav-menu-heading">Reportes </div>
+                        
+                    
+
+                            {%  if user.is_superuser  %}
+                        <div class="sb-sidenav-menu-heading">Reportes </div>
                             <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseLayouts-reserva" aria-expanded="false" aria-controls="collapseLayouts-reserva">
                                 <div class="sb-nav-link-icon"><i class="fas fa-file-pdf"></i></div>
                                 Informes
                                 <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
                             </a>
+                        
+                     
                             <div class="collapse 
                                         {% if request.resolver_match.url_name == 'Reportes departamento reservas' or request.resolver_match.url_name == 'Reportes departamento arriendos' %}
                                             show
@@ -109,6 +114,7 @@
                                 <div class="sb-nav-link-icon"><i class="fas fa-table"></i></div>
                                 Estadisticas
                             </a>
+                            {% endif %}
                         </div>
                     </div>
                     <div class="sb-sidenav-footer">

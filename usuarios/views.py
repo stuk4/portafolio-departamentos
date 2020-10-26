@@ -213,7 +213,7 @@ def perfil_reservas(request):
             departamento = Departamento.objects.filter(usuario=request.user.id)
             try:
                 departamento.update(usuario=None)
-                messages.success(request,'Reserva cacnelada ')
+                messages.success(request,'Reserva cancelada')
                 return redirect('Mis reservas')
             except Exception as err:
                 print(err)

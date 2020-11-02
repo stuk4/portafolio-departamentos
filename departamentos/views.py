@@ -8,13 +8,15 @@ from datetime import date,datetime
 from django.utils.dateparse import parse_date
 
 
-
+# Librerias para crear pdfs
 import os
 from django.conf import settings
 from django.http import HttpResponse
 from django.template.loader import get_template
 from xhtml2pdf import pisa
 from django.contrib.staticfiles import finders
+# Librerias para oracle
+from django.db import connection
 
 #  Views correspondientes a vistas del cliente
 def listar_departamentos(request):
@@ -307,7 +309,7 @@ def eliminar_imagen_departamento(request,id):
 
 
 # Regla de seguridad: Solo si es admin puede actualizar estado
-@user_passes_test(lambda u:u.is_superuser,login_url=('login'))  
+@user_passes_test(lambda u:u.is_staff,login_url=('login'))  
 def actualizar_estado_inventario(request,id):  
     
     inventario = Inventario.objects.filter(id=id)
@@ -346,22 +348,46 @@ def reportes_departamentos(request):
     if request.resolver_match.url_name == 'Reportes departamento reservas':
         departamentos = Departamento.objects.exclude(reserva__isnull=True)
     elif request.resolver_match.url_name == 'Reportes departamento arriendos':
-        departamentos = Departamento.objects.exclude(reserva__isnull=True).filter(reserva__arriendo=True )
+        departamentos = Departamento.objects.exclude(reserva__isnull=True).exclude(reserva__arriendo__isnull=True)
     context = {'departamentos':departamentos}
     return render(request,'departamentos/lista_reportes.html',context)
 
+
+
+def plsql_listar_reservas_informe_reserva_filtro(id):
+     # PARTE PL/SQL
+    django_cursor = connection.cursor()
+    cursor = django_cursor.connection.cursor()
+    out_cursor = django_cursor.connection.cursor()
+
+    cursor.callproc('PL_LISTAR_RESERVAS_FILTRO',[id,out_cursor])
+    nombre_columnas =  [x[0] for x in out_cursor.description]
+
+    lista = []
+    for fila in out_cursor:
+        # Le agrego su respectiva columna y lo transformo a un diccionario
+        lista.append(dict(zip(nombre_columnas,fila)))
+    return lista
+
+
+
 def generar_informe_reserva(request,id):
     try:
-        reservas = Reserva.objects.filter(departamento=id)
+       
         fecha_hoy = datetime.now()
         departamento = Departamento.objects.get(id=id)
+
+        usuarios = User.objects.all()
+    
         total = 0
-        for reserva in reservas:
-            total += reserva.abono
-        context = {'reservas':reservas,
+        for reserva in plsql_listar_reservas_informe_reserva_filtro(id):
+            total += reserva['ABONO']
+    
+        context = { 'usuarios':usuarios,
                     'fecha_hoy':fecha_hoy,
                     'departamento':departamento,
-                    'total':total}
+                    'total':total,
+                    'reservas':plsql_listar_reservas_informe_reserva_filtro(id)}
         template = get_template('departamentos/informe_reserva.html')
         html = template.render(context)
         response = HttpResponse(content_type='application/pdf')
@@ -375,26 +401,50 @@ def generar_informe_reserva(request,id):
         return redirect(request.META.get('HTTP_REFERER'))
     return response
 
+def plsql_listar_checkouts_informe_arriendo(id):
+     # PARTE PL/SQL
+    django_cursor = connection.cursor()
+    cursor = django_cursor.connection.cursor()
+    out_cursor = django_cursor.connection.cursor()
+
+    cursor.callproc('PL_LISTAR_CHECKOUTS',[out_cursor])
+    nombre_columnas =  [x[0] for x in out_cursor.description]
+
+    lista = []
+    for fila in out_cursor:
+        # Le agrego su respectiva columna y lo transformo a un diccionario
+        lista.append(dict(zip(nombre_columnas,fila)))
+    # Filtro la lista para q muestre solo las del depto
+    lista_filtrada = []
+
+    reservas = Reserva.objects.filter(departamento=id)
+    lsita_reservas = [l['id'] for l in reservas.values('id')]
+    lista_arriendos = Arriendo.objects.filter(reserva__in=lsita_reservas)
+    lista_v_arriendos = [l['id'] for l in lista_arriendos.values('id')]
+
+    for checkout in lista:
+        if checkout['ARRIENDO_ID'] in lista_v_arriendos:
+            lista_filtrada.append(checkout)
+    return lista_filtrada
+
+# TODO pasar esto a plsql
 def generar_informe_arriendo(request,id):
     try:
         fecha_hoy = datetime.now()
 
         reservas = Reserva.objects.filter(departamento=id)
+        arriendos = Arriendo.objects.all()
         lsita_reservas = [l['id'] for l in reservas.values('id')]
         lista_arriendos = Arriendo.objects.filter(reserva__in=lsita_reservas)
         lista_v_arriendos = [l['id'] for l in lista_arriendos.values('id')]
         departamento = Departamento.objects.get(id=id)
-        check_outs=Check_out.objects.filter(arriendo__in=lista_v_arriendos)
-        # for check_out in Check_out.objects.all():
-        #     if check_out.arriendo.id in lista_v_arriendos:
-        #         check_outs = check_out
-        #         print(check_outs)
+        check_outs=plsql_listar_checkouts_informe_arriendo(id)
 
-        # check_outs = Check_out.objects.filter(arriendo=departamento.reserva.arriendo.id)
         total = 0
-        for check_out in check_outs:
-            total += check_out.total
+        for checkout in plsql_listar_checkouts_informe_arriendo(id):
+            total += checkout['TOTAL']
         context = {'check_outs':check_outs,
+                    'arriendos':arriendos,
                     'fecha_hoy':fecha_hoy,
                     'departamento':departamento,
                     'total':total}

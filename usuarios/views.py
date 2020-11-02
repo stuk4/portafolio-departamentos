@@ -63,6 +63,7 @@ def registro(request):
             for validador in validadores:
                 validador().validate(request.POST.get('password'))
         except ValidationError as e:
+            print('VERRORREGISTRO VALIDADORES === ',e)
             messages.error(request,str(e).replace("'", "").replace("[","").replace("]",""))
             return render(request,'usuarios/Registro.html')
             
@@ -71,7 +72,7 @@ def registro(request):
             user = User.objects.create_user(username=request.POST['email'],password=request.POST['password'],is_active=True)
 
         except Exception as err:
-            print('VREGISTRO ===',err)
+            print('VREGISTROUSERNAME ===',err)
             messages.error(request,'Usuario ya registrado')
             return render(request,'usuarios/Registro.html')
        
@@ -89,9 +90,9 @@ def registro(request):
             messages.success(request,'Registrado con exito')
             return render(request,'usuarios/Registro.html')
         except Exception as err:
-            context = {'alerta':'ok-alerta'}
+            user.delete()
             messages.error(request,'Verifique los campos porfavor')
-            print(err)
+            print('VREGISTROCAMPOS ==== ',err)
             return render(request,'usuarios/Registro.html')
     
     return render(request,'usuarios/Registro.html')

@@ -57,7 +57,7 @@
     <thead>
     <tr>
         <th style="width: 16%;">ID CHECK OUT</th>
-        <th style="width: 16%;">Reserva</th>
+        <th style="width: 16%;">RESERVA</th>
         <th style="width: 16%;">DAÑOS</th>
         <th style="width: 16%;">TRANSPORTE</th>
         <th style="width: 16%;">TOURS</th>
@@ -67,18 +67,18 @@
     <tbody>
     {% for check_out in check_outs %}
         <tr {% if forloop.first %}style="padding-top: 3px;" {% endif %}>
-            <td class="text-center" style=" text-align:left;">  {{ check_out.id }}  </td>
-            <td class="text-center" style=" text-align:left;"> {{ check_out.arriendo.check_in.total }}  </td>
+            <td class="text-center" style=" text-align:left;">  {{ check_out.ID }}  </td>
+            <td class="text-center" style=" text-align:left;">{% for arriendo in arriendos  %}{% if  arriendo.id == check_out.ARRIENDO_ID %} {{ arriendo.check_in.total }}{% endif %} {% endfor %} </td>
             <!-- {{ check_out.arriendo.reserva.usuario.first_name }} -->
-            <td>  {{ check_out.valor_danos }}   </td>
-            <td>  {{ check_out.valor_transporte }}  </td>
-            <td>  {{ check_out.valor_tours}}  </td>
-            <td style="text-align: right;">$   {{ check_out.total }}   </td>
+            <td>  {{ check_out.VALOR_DANOS }}   </td>
+            <td>  {{ check_out.VALOR_TRANSPORTE }}  </td>
+            <td>  {{ check_out.VALOR_TOURS}}  </td>
+            <td style="text-align: right;">$   {{ check_out.TOTAL }}   </td>
         </tr>
     {% endfor %}
 
     <tr style="padding-top: 0px;">
-        <td colspan="5"><b>TOTAL A PAGAR</b></td>
+        <td colspan="5"><b>TOTAL A RECAUDADO</b></td>
         <td style="text-align: right; float: right; position: absolute;"> $ {{ total }}   </td>
     </tr>
     </tbody>

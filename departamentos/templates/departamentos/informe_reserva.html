@@ -49,8 +49,10 @@
 </p>
 <p>
     <!-- <b>ID INFORME:</b> RES{{ reserva.id }}  <br> -->
-    <b>FECHA EMISIÓN:</b>    {{ fecha_hoy|date:"DATETIME_FORMAT" }}  <br>
-    <b>DEPARTAMENTO:</b>    {{ departamento.direccion  }}   <br>
+    <b>FECHA EMISIÓN:</b>    {{ fecha_hoy|date:"DATETIME_FORMAT" }}  
+    <br>
+    <b>DEPARTAMENTO:</b>  {{ departamento.direccion }}
+    <br>
  
 </p>
 <table id="invoice">
@@ -66,11 +68,13 @@
     <tbody>
     {% for reserva in reservas %}
         <tr {% if forloop.first %}style="padding-top: 3px;" {% endif %}>
-            <td class="text-center" style=" text-align:left;">  {{ reserva.id }}  </td>
-            <td class="text-center" style=" text-align:left;"> {{ reserva.usuario.first_name }}   </td>
-            <td>  {{ reserva.dias_estadia }} Días </td>
-            <td>   {{ reserva.acompanantes }} Personas </td>
-            <td style="text-align: right;">$   {{ reserva.abono }} </td>
+            <td class="text-center" style=" text-align:left;">  {{ reserva.ID }}  </td>
+            <td class="text-center" style=" text-align:left;">  {% for usuario in usuarios %} {% if usuario.id == reserva.USUARIO_ID %} {{ usuario.first_name }}{% endif %} {% endfor%} </td>
+
+           
+            <td>  {{ reserva.DIAS_ESTADIA}} Días </td>
+            <td>   {{ reserva.ACOMPANANTES }} Personas </td>
+            <td style="text-align: right;">$   {{ reserva.ABONO }} </td>
         </tr>
     {% endfor %}
     <tr style="padding-top: 0px;">

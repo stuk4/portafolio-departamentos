@@ -20,8 +20,9 @@
       {% endif %}
       <figcaption>
         <h3>{{ departamento.precio }}/Dia</h3>
+        <!-- TODO bonito -->
+        <p>  {{ departamento.direccion }}  </p>
         <span>{{ departamento.dormitorios }} - dorm</span>
-        
         <p>  {{ departamento.banos }} - baños </p>
         <p>  {{ departamento.banos }}/M2 </p>
         <a id="ver" href="{% url 'Departamento' departamento.id %}">Ver más </a>

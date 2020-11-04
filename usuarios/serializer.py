@@ -40,4 +40,5 @@ class UserSerializer(serializers.ModelSerializer):
     id = serializers.ReadOnlyField()
     class Meta:
         model = User
+        extra_kwargs = {'password': {'write_only': True}}
         fields = ["id", "first_name","last_name", "is_active", "is_staff","telefono", "edad", "username", "email", "password"]

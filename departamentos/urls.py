@@ -2,12 +2,15 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.urls import path,include
 from rest_framework import routers
-from .viewsets import DepartamentoViewSet
+from .viewsets import DepartamentoMantencionViewSet, DepartamentosDisponiblesViewSet, InventarioViewset
 from usuarios.viewsets import UserViewSet
 from . import views
 
 router = routers.SimpleRouter()
-router.register('departamentos', DepartamentoViewSet)
+router.register('departamentos_mantencion', DepartamentoMantencionViewSet)
+router.register('departamentos_disponibles', DepartamentosDisponiblesViewSet)
+router.register('inventario', InventarioViewset)
+#router.register(r'inventario/(?P<departamento_id>/d+)', InventarioViewset)
 router.register('usuarios', UserViewSet)
 
 # Urls de citt  

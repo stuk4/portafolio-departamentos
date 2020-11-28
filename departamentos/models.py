@@ -2,6 +2,7 @@ from django.db import models
 from django.utils.html import mark_safe
 from datetime import date,timedelta
 from django.contrib.auth.models import User 
+from django.db.models import Sum
 class Departamento(models.Model):
     zonas = (('Sur','Sur'),
         ('Este','Este'),
@@ -19,6 +20,14 @@ class Departamento(models.Model):
     imagen = models.ImageField(upload_to='departamentos_principal/%Y/%m',blank=True)
     precio = models.PositiveIntegerField(default=0,null=False, blank=False)
     metros_cuadrados = models.PositiveIntegerField(default=0,null=False, blank=False)
+
+    @property
+    def reservas_total_abono(self):
+        total = Reserva.objects.filter(departamento=self.id).aggregate(Sum('abono')).get('abono__sum')
+
+       
+        return total
+       
     @property
     def dia_mantencion(self):
         return date.today() == self.mantencion  

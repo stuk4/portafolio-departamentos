@@ -1,0 +1,146 @@
+{% extends 'departamentos/base_admin.html' %}
+{% load static %}
+{% block extra_css %}
+
+{% endblock extra_css %}
+{% block contenido %}
+<div id="accordion">
+  <div class="card mb-4">
+    <div class="card-header" id="headingOne">
+      <h5 class="mb-0">
+        <button class="btn btn-link " data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+          Cantidad de departamentos por zona
+        </button>
+      </h5>
+      </div>
+      <div id="collapseOne" class="collapse " aria-labelledby="headingOne" data-parent="#accordion">
+          <div class="card-body"><canvas id="graficoRadar" width="100%" height="30"></canvas></div>
+      </div>
+  </div>
+  <div class="card mb-4">
+    <div class="card-header" id="headingTwo">
+      <h5 class="mb-0">
+        <button class="btn btn-link " data-toggle="collapse" data-target="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
+          Cantidad de reservas por departamento
+        </button>
+      </h5>
+      </div>
+
+  <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordion">
+      <div class="card-body"><canvas id="graficoBarrasVerticalCRD" width="100%" height="30"></canvas></div>
+   </div>
+  </div>
+
+  <div class="card mb-4">
+      <div class="card-header" id="headingThree">
+        <h5 class="mb-0">
+          <button class="btn btn-link " data-toggle="collapse" data-target="#collapseThree" aria-expanded="true" aria-controls="collapseThree">
+            Departamentos con más ganancias en reserva
+          </button>
+        </h5>
+      </div>
+      <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordion">
+        <div class="card-body"><canvas id="graficoBarrasVerticalDMG" width="100%" height="30"></canvas></div>
+      </div>
+  </div>
+
+  <div class="card mb-4">
+    <div class="card-header" id="headingFour">
+      <h5 class="mb-0">
+        <button class="btn btn-link " data-toggle="collapse" data-target="#collapseFour" aria-expanded="true" aria-controls="collapseFour">
+          Ganancias por zonas
+        </button>
+      </h5>
+    </div>
+    <div id="collapseFour" class="collapse" aria-labelledby="headingFour" data-parent="#accordion">
+      <div class="card-body"><canvas id="graficoPie" width="100%" height="30"></canvas></div>
+    </div>
+</div>
+  
+
+</div>
+<!-- TODO seguir haciendo graficos por zona etc -->
+{% endblock contenido %}
+
+{% block extra_js %}
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js" integrity="sha512-hZf9Qhp3rlDJBvAKvmiG+goaaKRZA6LKUO35oK6EsM0/kjPK32Yw7URqrq3Q+Nvbbt8Usss+IekL7CRn83dYmw==" crossorigin="anonymous"></script>
+<script src="{% static 'js/graficos/graficos.js' %}"></script>
+<script>
+
+  graficoBarrasHroizontal(id="graficoBarrasVerticalCRD",
+                          label="Reservas",labels={{departamentos_reservados_label|safe}},
+                          values={{departamentos_reservados_cantidad_reservas|safe}}
+                          );
+
+  graficoBarrasHroizontal(id="graficoBarrasVerticalDMG",
+                          label="Total en abonos",
+                          labels={{departamentos_reservados_label|safe}},
+                          values={{departamentos_reservas_total_abono|safe}},
+                          colorFondo= "rgb(212,237,218)",
+                          colorBordes="rgb(88,140,100)"
+                          );
+  graficoRadar(id="graficoRadar",
+              label="Departamentos por zona",
+              labels={{zonas_departamento|safe}},
+              values=[{{zonas_deptos.departamentos_zona_norte|safe}},
+                      {{zonas_deptos.departamentos_zona_sur|safe}},
+                      {{zonas_deptos.departamentos_zona_este|safe}},
+                      {{zonas_deptos.departamentos_zona_oeste|safe}}],
+              min={{max_min.minimo_zona}},
+              max={{max_min.maximo_zona}},
+              colorFondo ='rgba(2,117,216,0.5)', 
+              colorBordes = 'rgba(2,117,216,1)'
+           
+              );
+  graficoPie(id="graficoPie",
+  label="Ganancias por zona",
+  labels={{zonas_departamento|safe}},
+  values=[{{zonas_ganancias_deptos.departamentos_ganancias_zona_norte|default_if_none:0|stringformat:"f"}},
+          {{zonas_ganancias_deptos.departamentos_ganancias_zona_sur|default_if_none:0|stringformat:"f"}},
+          {{zonas_ganancias_deptos.departamentos_ganancias_zona_este|default_if_none:0|stringformat:"f"}},
+          {{zonas_ganancias_deptos.departamentos_ganancias_zona_oeste|default_if_none:0|stringformat:"f"}}],
+
+
+  );
+
+
+
+</script>
+{% if messages %}
+{% for message in messages  %}
+<script>
+   
+    {% if message.tags == 'error' %}
+    Swal.fire({
+        title: 'Error!',
+        text: '{{ message }}',
+        icon: 'error',
+        confirmButtonText: 'Ok'
+    }) {% elif message.tags == 'info' %}
+    const Toast = Swal.mixin({
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 1500,
+        onOpen: (toast) => {
+            toast.addEventListener('mouseenter', Swal.stopTimer)
+            toast.addEventListener('mouseleave', Swal.resumeTimer)
+        }
+    })
+
+    Toast.fire({
+        icon: 'success',
+        title: '{{ message }}'
+    }) {%else %}
+    Swal.fire({
+        title: 'Éxito!',
+        text: '{{ message }}',
+        icon: 'success',
+        confirmButtonText: 'Ok'
+
+    }) {% endif %}
+</script>
+{% endfor %}
+{% endif %}
+{% endblock extra_js %}

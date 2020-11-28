@@ -59,7 +59,7 @@ def ver_departamento(request,id):
         reserva.departamento = departamento
         reserva.dia_llegada = request.POST.get('diallegada')
       
-        if request.POST.get('acompanantes') is None or request.POST.get('acompanantes') is '':
+        if request.POST.get('acompanantes') == None or request.POST.get('acompanantes') == '':
             reserva.acompanantes = 0
         else:
             reserva.acompanantes = request.POST.get('acompanantes')
@@ -460,3 +460,63 @@ def generar_informe_arriendo(request,id):
         messages.error(request,'No se pudo generar el informe')
         return redirect(request.META.get('HTTP_REFERER'))
     return response
+
+from django.db.models import Sum
+def estadisticas(request):
+    # Grafico de barras horizontal Cantidad de reservas por departamento
+    departamentos = Departamento.objects.exclude(reserva__isnull=True)
+    reservas = Reserva.objects.all()
+    departamentos_reservados_label = departamentos.values_list('direccion',flat=True)
+    departamentos_reservados_label = [ ]
+    departamentos_reservados_cantidad_reservas = []
+    # Esto para los totales del graficos ganancias
+    departamentos_reservas_total_abono = []
+
+    for deptos in departamentos:
+        departamentos_reservados_cantidad_reservas.append(deptos.reserva.count())
+        departamentos_reservados_label.append(deptos.direccion)
+        total_reservas = 0
+        departamentos_reservas_total_abono.append(deptos.reservas_total_abono)
+
+    print('----',departamentos_reservas_total_abono)
+      #FIN ========= Grafico de barras horizontal Cantidad de reservas por departamento
+    #Grafico radar
+    zonas_departamento = ['Norte','Sur','Este','Oeste']
+    departamentos_zona_norte = Departamento.objects.filter(zona='Norte').count()
+    departamentos_zona_sur = Departamento.objects.filter(zona='Sur').count()
+    departamentos_zona_este = Departamento.objects.filter(zona='Este').count()
+    departamentos_zona_oeste = Departamento.objects.filter(zona='Oeste').count()
+    zonas_deptos = {'departamentos_zona_norte':departamentos_zona_norte,
+                    'departamentos_zona_sur':departamentos_zona_sur,
+                    'departamentos_zona_este':departamentos_zona_este,
+                    'departamentos_zona_oeste':departamentos_zona_oeste}
+    maximo_key = max(zonas_deptos.keys(), key=(lambda k: zonas_deptos[k]))
+    minimo_key = min(zonas_deptos.keys(), key=(lambda k: zonas_deptos[k]))
+    maximo_zona = zonas_deptos[maximo_key]
+    minimo_zona = zonas_deptos[minimo_key]
+    max_min = {'maximo_zona':maximo_zona,
+                'minimo_zona':minimo_zona}
+    # Fin graficos radar
+    # Grafico ganancias por zona
+    departamentos_ganancias_zona_norte = Check_out.objects.filter(arriendo__reserva__departamento__zona ='Norte').aggregate(Sum('total')).get('total__sum')
+    departamentos_ganancias_zona_sur = Check_out.objects.filter(arriendo__reserva__departamento__zona ='Sur').aggregate(Sum('total')).get('total__sum')
+    departamentos_ganancias_zona_este = Check_out.objects.filter(arriendo__reserva__departamento__zona ='Este').aggregate(Sum('total')).get('total__sum')
+    departamentos_ganancias_zona_oeste = Check_out.objects.filter(arriendo__reserva__departamento__zona ='Oeste').aggregate(Sum('total')).get('total__sum')
+
+    zonas_ganancias_deptos = {'departamentos_ganancias_zona_norte':departamentos_ganancias_zona_norte,
+                    'departamentos_ganancias_zona_sur':departamentos_ganancias_zona_sur,
+                    'departamentos_ganancias_zona_este':departamentos_ganancias_zona_este,
+                    'departamentos_ganancias_zona_oeste':departamentos_ganancias_zona_oeste}
+    #Fina ganancias por zona
+    print("---- ",departamentos_ganancias_zona_norte)
+    context = {'departamentos_reservados_label':departamentos_reservados_label,
+                'departamentos_reservados_cantidad_reservas':departamentos_reservados_cantidad_reservas,
+                'departamentos_reservas_total_abono':departamentos_reservas_total_abono,
+
+                'zonas_departamento':zonas_departamento,
+                'zonas_deptos':zonas_deptos,
+                'max_min':max_min,
+                
+                'zonas_ganancias_deptos':zonas_ganancias_deptos,
+                }
+    return render(request,'departamentos/estadisticas.html',context) 

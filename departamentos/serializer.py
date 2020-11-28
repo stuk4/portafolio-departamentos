@@ -9,7 +9,7 @@ class DepartamentoSerializer(serializers.ModelSerializer):
 
 class InventarioSerializer(serializers.ModelSerializer):
     id = serializers.ReadOnlyField()
-
     class Meta:
+        fields= ["id", "departamento", "nombre", "estado", "precio"]
+     
         model = Inventario
-        fields= ["id", "departamento_id", "nombre", "estado", "precio"]

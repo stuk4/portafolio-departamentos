@@ -35,6 +35,7 @@ urlpatterns = [
     path('departamentos/admin/reportes_arriendo/',views.reportes_departamentos,name="Reportes departamento arriendos"),
     path('departamentos/admin/reportes_reserva/generar/<int:id>/',views.generar_informe_reserva,name="Generar reporte reserva"),
     path('departamentos/admin/reportes_arriendo/generar/<int:id>/',views.generar_informe_arriendo,name="Generar reporte arriendo"),
+    path('departamentos/admin/estadisticas/',views.estadisticas,name="Estadisticas"),
     #Sección apis
     path('api/',include(router.urls)),
 ]

@@ -4,10 +4,11 @@ from django.utils.html import mark_safe
 from datetime import date
 from departamentos.models import Transporte,Reserva,Departamento,Arriendo
 from datetime import date,timedelta
+from django.core.validators import MaxValueValidator
 class User(AbstractUser):
     telefono = models.IntegerField(null=True,blank=False)
     edad = models.PositiveIntegerField(null=True,blank=False)
-    N_tarjeta = models.IntegerField(null=True,blank=False)
+    N_tarjeta = models.PositiveIntegerField(null=True,blank=False, validators=[MaxValueValidator(26)])
     imagen = models.ImageField(upload_to='usuarios/%Y/%m',blank=True)
     reserva_activa = models.BooleanField(default=False)
     arriendo_activo = models.BooleanField(default=False)

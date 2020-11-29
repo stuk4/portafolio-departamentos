@@ -4,7 +4,7 @@ from usuarios.models import User
 from django.contrib.auth.decorators import user_passes_test
 from django.contrib import messages
 from django.urls import resolve
-from datetime import date,datetime
+from datetime import date,datetime,timedelta
 from django.utils.dateparse import parse_date
 
 
@@ -39,6 +39,7 @@ def ver_departamento(request,id):
     # Query para actuaslizar
     departamento_u = Departamento.objects.filter(id=id)
     imagenes = Imagen.objects.filter(departamento=id)
+    
     context = {'departamento':departamento,
                 'imagenes':imagenes}
     # Condicion si el usuario esta logeado verifica si contiene una reserva
@@ -58,7 +59,14 @@ def ver_departamento(request,id):
         reserva.usuario = usuario
         reserva.departamento = departamento
         reserva.dia_llegada = request.POST.get('diallegada')
-      
+
+        fecha_hoy_mas_2 = date.today()+timedelta(days=2)
+        print("===============",request.POST.get('diallegada'))
+        if datetime.strptime(request.POST.get('diallegada'), "%Y-%m-%d").date()  < fecha_hoy_mas_2:
+            messages.error(request,'Reservar al menos dos dias a partir de hoy')
+            return render(request,'departamentos/ver_departamento.html',context)
+    
+
         if request.POST.get('acompanantes') == None or request.POST.get('acompanantes') == '':
             reserva.acompanantes = 0
         else:
@@ -84,7 +92,7 @@ def ver_departamento(request,id):
         except Exception as err:
             print('Error al guardar Reserva ===',err)
             messages.error(request,'Lo sentimos no se realizo la reserva')
-            return render(request,'ver_departamento.html',context)
+            return render(request,'departamentos/ver_departamento.html',context)
     return render(request,'departamentos/ver_departamento.html',context)
 
 
@@ -348,7 +356,8 @@ def reportes_departamentos(request):
     if request.resolver_match.url_name == 'Reportes departamento reservas':
         departamentos = Departamento.objects.exclude(reserva__isnull=True)
     elif request.resolver_match.url_name == 'Reportes departamento arriendos':
-        departamentos = Departamento.objects.exclude(reserva__isnull=True).exclude(reserva__arriendo__isnull=True)
+
+        departamentos = Departamento.objects.exclude(reserva__arriendo__check_out=False).exclude(reserva__isnull=True)
     context = {'departamentos':departamentos}
     return render(request,'departamentos/lista_reportes.html',context)
 
@@ -427,7 +436,7 @@ def plsql_listar_checkouts_informe_arriendo(id):
             lista_filtrada.append(checkout)
     return lista_filtrada
 
-# TODO pasar esto a plsql
+
 def generar_informe_arriendo(request,id):
     try:
         fecha_hoy = datetime.now()
@@ -478,7 +487,6 @@ def estadisticas(request):
         total_reservas = 0
         departamentos_reservas_total_abono.append(deptos.reservas_total_abono)
 
-    print('----',departamentos_reservas_total_abono)
       #FIN ========= Grafico de barras horizontal Cantidad de reservas por departamento
     #Grafico radar
     zonas_departamento = ['Norte','Sur','Este','Oeste']
@@ -498,17 +506,17 @@ def estadisticas(request):
                 'minimo_zona':minimo_zona}
     # Fin graficos radar
     # Grafico ganancias por zona
-    departamentos_ganancias_zona_norte = Check_out.objects.filter(arriendo__reserva__departamento__zona ='Norte').aggregate(Sum('total')).get('total__sum')
-    departamentos_ganancias_zona_sur = Check_out.objects.filter(arriendo__reserva__departamento__zona ='Sur').aggregate(Sum('total')).get('total__sum')
-    departamentos_ganancias_zona_este = Check_out.objects.filter(arriendo__reserva__departamento__zona ='Este').aggregate(Sum('total')).get('total__sum')
-    departamentos_ganancias_zona_oeste = Check_out.objects.filter(arriendo__reserva__departamento__zona ='Oeste').aggregate(Sum('total')).get('total__sum')
+    departamentos_ganancias_zona_norte = sum(Check_out.objects.filter(arriendo__reserva__departamento__zona ='Norte').values_list('total',flat=True))
+    departamentos_ganancias_zona_sur = sum(Check_out.objects.filter(arriendo__reserva__departamento__zona ='Sur').values_list('total',flat=True))
+    departamentos_ganancias_zona_este = sum(Check_out.objects.filter(arriendo__reserva__departamento__zona ='Este').values_list('total',flat=True))
+    departamentos_ganancias_zona_oeste = sum(Check_out.objects.filter(arriendo__reserva__departamento__zona ='Oeste').values_list('total',flat=True))
 
     zonas_ganancias_deptos = {'departamentos_ganancias_zona_norte':departamentos_ganancias_zona_norte,
                     'departamentos_ganancias_zona_sur':departamentos_ganancias_zona_sur,
                     'departamentos_ganancias_zona_este':departamentos_ganancias_zona_este,
                     'departamentos_ganancias_zona_oeste':departamentos_ganancias_zona_oeste}
     #Fina ganancias por zona
-    print("---- ",departamentos_ganancias_zona_norte)
+
     context = {'departamentos_reservados_label':departamentos_reservados_label,
                 'departamentos_reservados_cantidad_reservas':departamentos_reservados_cantidad_reservas,
                 'departamentos_reservas_total_abono':departamentos_reservas_total_abono,

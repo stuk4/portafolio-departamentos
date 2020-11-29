@@ -199,5 +199,5 @@ class Check_out(models.Model):
     valor_tours = models.PositiveIntegerField(null=False,blank=False )
     total = models.PositiveIntegerField(null=False,blank=False )
     def __str__(self):
-        return 'ID CHECKOUT {}'.format(self.id)
+        return 'ID CHECKOUT {} Depto: {}'.format(self.id,self.arriendo.reserva.departamento.id)
 

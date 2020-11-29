@@ -11,6 +11,7 @@ from django.contrib.auth.decorators import user_passes_test
 from django.contrib.auth.password_validation import MinimumLengthValidator,NumericPasswordValidator,CommonPasswordValidator
 from django.core.exceptions import ValidationError
 from django.contrib.auth import update_session_auth_hash
+from datetime import date
 # Regla de segurdad: Solo si es anonimo puede entrar al login
 @user_passes_test(lambda u:u.is_anonymous,login_url=('Departamentos'))  
 def login_view(request):
@@ -214,7 +215,11 @@ def perfil_reservas(request):
         #POST si desea cancelar la reserva
         if request.method == 'POST' and 'btn-cancelar' in request.POST:
             departamento = Departamento.objects.filter(usuario=request.user.id)
+    
             try:
+                departamento.update(estado_mantencion=True)
+                departamento.update(mantencion=date.today())
+             
                 departamento.update(usuario=None)
                 messages.success(request,'Reserva cancelada')
                 return redirect('Mis reservas')
@@ -354,6 +359,9 @@ def aceptar_check_out(request,id):
         messages.error(request,'No se pudo aceptar el Check out')
         return redirect(request.META.get('HTTP_REFERER'))
     return redirect(request.META.get('HTTP_REFERER'))
+
+
+    
 @user_passes_test(lambda u:u.is_staff,login_url=('login'))  
 def actualizar_llegada_usuario(request,id):
     usuario = User.objects.get(id=id)

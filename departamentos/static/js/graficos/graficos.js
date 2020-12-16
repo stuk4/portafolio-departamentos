@@ -54,8 +54,8 @@ function graficoRadar(id, label, labels =['Running', 'Swimming', 'Eating', 'Cycl
                 display: false
             },
             ticks: {
-                suggestedMin: min+1,
-                suggestedMax: max+2
+                suggestedMin: 0,
+                suggestedMax: max
             }
         }
       };

@@ -80,9 +80,9 @@ def registro(request):
         user.email = request.POST.get('email')
         user.first_name = request.POST.get('name')
         user.last_name = request.POST.get('lastname')
-        user.telefono = request.POST.get('phone')
+        user.telefono = request.POST.get('phone').replace(" ", "")
         user.edad = request.POST.get('age')
-        user.N_tarjeta = request.POST.get('card')
+        user.N_tarjeta = request.POST.get('card').replace(" ", "")
         
         # TODO quitar espacion el tarjeta
         try:
